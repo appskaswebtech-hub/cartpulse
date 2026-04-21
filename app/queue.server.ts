@@ -48,7 +48,7 @@ export async function scheduleCartNotifications(cart: {
             productNames,
             shop: cart.shop,
         },
-        { delay: 5000 } // 10 seconds for testing (1hr in production)
+        { delay: 60 * 60 * 1000 }
     );
 
     // Job 2 — Email with discount after 3 hours
@@ -62,7 +62,7 @@ export async function scheduleCartNotifications(cart: {
             shop: cart.shop,
             discount: "10",
         },
-        { delay: 15000 } // 20 seconds for testing (3hrs in production)
+        { delay: 3 * 60 * 60 * 1000 } // 3 hours
     );
 
     // Job 3 — Final email reminder after 24 hours
@@ -75,7 +75,7 @@ export async function scheduleCartNotifications(cart: {
             productNames,
             shop: cart.shop,
         },
-        { delay: 20000 } // 30 seconds for testing (24hrs in production)
+        { delay: 24 * 60 * 60 * 1000 } // 24 hours
     );
 
     console.log(`✅ Notifications scheduled for cart: ${cart.id}`);
