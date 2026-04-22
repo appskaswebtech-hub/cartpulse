@@ -54,7 +54,7 @@ export default function Index() {
         {/* Header */}
         <div style={{ background: "linear-gradient(135deg, #1D9E75 0%, #085041 100%)", borderRadius: "16px", padding: "28px 32px", marginBottom: "24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
-            <h1 style={{ fontSize: "26px", fontWeight: "700", margin: "0 0 4px", color: "#fff" }}>Analytics Dashboard</h1>
+            <h1 style={{ fontSize: "26px", fontWeight: "700", margin: "0 0 4px", color: "#fff" }}>Analytics</h1>
             <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.7)", margin: 0 }}>Track your cart recovery performance</p>
           </div>
           <div style={{ display: "flex", gap: "24px" }}>
