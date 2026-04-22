@@ -1,0 +1,49 @@
+name: Deploy to Production
+
+# Manual trigger only — will NOT run on git push
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "deploy" to confirm production deployment'
+        required: true
+        default: 'deploy'
+
+jobs:
+  deploy:
+    name: Deploy CartPulse App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "deploy" ]; then
+            echo "❌ Deployment not confirmed. Type 'deploy' to proceed."
+            exit 1
+          fi
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            git config --global --add safe.directory /home/cartpulse.kaswebtechsolutions.com/public_html
+            cd /home/cartpulse.kaswebtechsolutions.com/public_html
+            echo "📥 Pulling latest code..."
+            git fetch origin main
+            git reset --hard origin/main
+            echo "📦 Installing dependencies..."
+            npm install
+            echo "🔨 Building app..."
+            npm run build
+            echo "🚀 Restarting PM2..."
+            pm2 restart cartpulse --update-env
+            pm2 save
+            echo "✅ Deployment complete!"
