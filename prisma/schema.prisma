@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:dev.sqlite"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model Session {
@@ -34,7 +34,7 @@ model AbandonedCart {
   customerEmail   String?
   customerPhone   String?
   customerName    String?
-  cartData        String
+  cartData        String   @db.LongText
   totalPrice      String
   currency        String   @default("INR")
   recoveredAt     DateTime?
@@ -75,8 +75,17 @@ model MerchantSettings {
 model PushSubscription {
   id        String   @id @default(cuid())
   shop      String
-  endpoint  String   @unique
+  endpoint  String   @unique @db.VarChar(500)
   p256dh    String
   auth      String
   createdAt DateTime @default(now())
+}
+
+model JobQueue {
+  id          String   @id @default(cuid())
+  jobName     String
+  payload     String   @db.LongText
+  scheduledAt DateTime
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
 }

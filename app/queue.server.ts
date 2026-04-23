@@ -1,22 +1,5 @@
-import { Queue, Worker } from "bullmq";
-import { Redis } from "ioredis";
-import nodemailer from "nodemailer";
 import db from "./db.server";
-
-const connection = new Redis(process.env.UPSTASH_REDIS_URL!, {
-    maxRetriesPerRequest: null,
-    tls: {},
-});
-
-connection.on("connect", () => {
-    console.log("✅ Redis connected successfully");
-});
-
-connection.on("error", (err) => {
-    console.error("❌ Redis connection error:", err.message);
-});
-
-export const cartQueue = new Queue("cart-recovery", { connection });
+import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -38,154 +21,148 @@ export async function scheduleCartNotifications(cart: {
     const items = JSON.parse(cart.cartData);
     const productNames = items.map((i: any) => i.title).join(", ");
 
-    // Job 1 — Push notification after 1 hour
-    await cartQueue.add(
-        "push-notification",
-        {
-            cartId: cart.id,
-            customerEmail: cart.customerEmail,
-            totalPrice: cart.totalPrice,
-            productNames,
-            shop: cart.shop,
-        },
-        { delay: 5000 }
-    );
+    const payload = JSON.stringify({
+        cartId: cart.id,
+        customerEmail: cart.customerEmail,
+        totalPrice: cart.totalPrice,
+        productNames,
+        shop: cart.shop,
+    });
 
-    // Job 2 — Email with discount after 3 hours
-    await cartQueue.add(
-        "email-notification",
-        {
-            cartId: cart.id,
-            customerEmail: cart.customerEmail,
-            totalPrice: cart.totalPrice,
-            productNames,
-            shop: cart.shop,
-            discount: "10",
-        },
-        { delay: 10000 } // 3 hours
-    );
+    const now = new Date();
 
-    // Job 3 — Final email reminder after 24 hours
-    await cartQueue.add(
-        "email-final",
-        {
-            cartId: cart.id,
-            customerEmail: cart.customerEmail,
-            totalPrice: cart.totalPrice,
-            productNames,
-            shop: cart.shop,
+    // Job 1 — Push after 1 hour
+    await db.jobQueue.create({
+        data: {
+            jobName: "push-notification",
+            payload,
+            scheduledAt: new Date(now.getTime() + 5000), // 5 seconds for testing
         },
-        { delay: 15000 } // 24 hours
-    );
+    });
+
+    // Job 2 — Email after 24 hours
+    await db.jobQueue.create({
+        data: {
+            jobName: "email-notification",
+            payload,
+            scheduledAt: new Date(now.getTime() + 10000), // 10 seconds for testing
+        },
+    });
+
+    // Job 3 — Final email after 1 week
+    await db.jobQueue.create({
+        data: {
+            jobName: "email-final",
+            payload,
+            scheduledAt: new Date(now.getTime() + 15000), // 15 seconds for testing
+        },
+    });
 
     console.log(`✅ Notifications scheduled for cart: ${cart.id}`);
 }
 
-export const cartWorker = new Worker(
-    "cart-recovery",
-    async (job) => {
-        console.log(`Processing job: ${job.name}`);
-        const { cartId, customerEmail, totalPrice, productNames, shop, discount } = job.data;
+export async function processJobQueue() {
+    const now = new Date();
 
-        if (job.name === "push-notification") {
-            console.log(`🔔 Sending push notification to ${customerEmail}`);
+    const dueJobs = await db.jobQueue.findMany({
+        where: {
+            status: "pending",
+            scheduledAt: { lte: now },
+        },
+        take: 10,
+    });
 
-            await db.cartNotification.create({
-                data: {
-                    cartId,
-                    type: "push",
-                    channel: "push",
-                    status: "pending",
-                },
+    for (const job of dueJobs) {
+        try {
+            // Mark as processing first
+            await db.jobQueue.update({
+                where: { id: job.id },
+                data: { status: "processing" },
             });
 
-            console.log(`✅ Push notification queued for cart: ${cartId}`);
+            const data = JSON.parse(job.payload);
+            const { cartId, customerEmail, totalPrice, productNames, shop } = data;
+
+            if (job.jobName === "push-notification") {
+                console.log(`🔔 Push notification for ${customerEmail}`);
+                await db.cartNotification.create({
+                    data: {
+                        cartId,
+                        type: "push",
+                        channel: "push",
+                        status: "pending",
+                    },
+                });
+            }
+
+            if (job.jobName === "email-notification") {
+                console.log(`📧 Sending first email to ${customerEmail}`);
+                await transporter.sendMail({
+                    from: `"CartPulse" <${process.env.GMAIL_USER}>`,
+                    to: customerEmail,
+                    subject: "You left something behind!",
+                    html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2>Hey, you forgot something!</h2>
+              <p>You left these items in your cart:</p>
+              <p><strong>${productNames}</strong></p>
+              <p>Total: <strong>$${totalPrice}</strong></p>
+              <a href="https://${shop}" style="background:#1D9E75; color:white; padding:12px 24px; text-decoration:none; border-radius:6px; display:inline-block;">
+                Complete My Purchase
+              </a>
+              <p style="color:#999; font-size:12px; margin-top:20px;">You received this because you abandoned your cart.</p>
+            </div>
+          `,
+                });
+
+                await db.cartNotification.create({
+                    data: { cartId, type: "email", channel: "email", status: "sent", sentAt: new Date() },
+                });
+
+                console.log(`✅ First email sent to ${customerEmail}`);
+            }
+
+            if (job.jobName === "email-final") {
+                console.log(`📧 Sending final email to ${customerEmail}`);
+                await transporter.sendMail({
+                    from: `"CartPulse" <${process.env.GMAIL_USER}>`,
+                    to: customerEmail,
+                    subject: "Last chance! Your cart is about to expire",
+                    html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2>Last chance!</h2>
+              <p>Your cart is about to expire. Don't miss out on:</p>
+              <p><strong>${productNames}</strong></p>
+              <p>Total: <strong>$${totalPrice}</strong></p>
+              <a href="https://${shop}" style="background:#D85A30; color:white; padding:12px 24px; text-decoration:none; border-radius:6px; display:inline-block;">
+                Complete My Purchase Now
+              </a>
+              <p style="color:#999; font-size:12px; margin-top:20px;">You received this because you abandoned your cart.</p>
+            </div>
+          `,
+                });
+
+                await db.cartNotification.create({
+                    data: { cartId, type: "email", channel: "email", status: "sent", sentAt: new Date() },
+                });
+
+                console.log(`✅ Final email sent to ${customerEmail}`);
+            }
+
+            // Mark as done
+            await db.jobQueue.update({
+                where: { id: job.id },
+                data: { status: "completed" },
+            });
+
+            console.log(`✅ Job ${job.id} completed`);
+
+        } catch (error: any) {
+            console.error(`❌ Job ${job.id} failed:`, error.message);
+            await db.jobQueue.update({
+                where: { id: job.id },
+                data: { status: "failed" },
+            });
         }
-
-        if (job.name === "email-notification") {
-            console.log(`📧 Sending first email to ${customerEmail}`);
-
-            await transporter.sendMail({
-                from: `"CartPulse" <${process.env.GMAIL_USER}>`,
-                to: customerEmail,
-                subject: "You left something behind! Here's 10% off",
-                html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>Hey, you forgot something!</h2>
-            <p>You left these items in your cart:</p>
-            <p><strong>${productNames}</strong></p>
-            <p>Total: <strong>$${totalPrice}</strong></p>
-            <p>Come back and get <strong>${discount}% off</strong> your order!</p>
-            <a href="https://${shop}" 
-               style="background:#1D9E75; color:white; padding:12px 24px; 
-                      text-decoration:none; border-radius:6px; display:inline-block;">
-              Claim My ${discount}% Discount
-            </a>
-            <p style="color:#999; font-size:12px; margin-top:20px;">
-              You received this because you abandoned your cart.
-            </p>
-          </div>
-        `,
-            });
-
-            await db.cartNotification.create({
-                data: {
-                    cartId,
-                    type: "email",
-                    channel: "email",
-                    status: "sent",
-                    sentAt: new Date(),
-                },
-            });
-
-            console.log(`✅ First email sent to ${customerEmail}`);
-        }
-
-        if (job.name === "email-final") {
-            console.log(`📧 Sending final email to ${customerEmail}`);
-
-            await transporter.sendMail({
-                from: `"CartPulse" <${process.env.GMAIL_USER}>`,
-                to: customerEmail,
-                subject: "Last chance! Your cart is about to expire",
-                html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>Last chance!</h2>
-            <p>Your cart is about to expire. Don't miss out on:</p>
-            <p><strong>${productNames}</strong></p>
-            <p>Total: <strong>$${totalPrice}</strong></p>
-            <a href="https://${shop}" 
-               style="background:#D85A30; color:white; padding:12px 24px; 
-                      text-decoration:none; border-radius:6px; display:inline-block;">
-              Complete My Purchase Now
-            </a>
-            <p style="color:#999; font-size:12px; margin-top:20px;">
-              You received this because you abandoned your cart.
-            </p>
-          </div>
-        `,
-            });
-
-            await db.cartNotification.create({
-                data: {
-                    cartId,
-                    type: "email",
-                    channel: "email",
-                    status: "sent",
-                    sentAt: new Date(),
-                },
-            });
-
-            console.log(`✅ Final email sent to ${customerEmail}`);
-        }
-    },
-    { connection }
-);
-
-cartWorker.on("completed", (job) => {
-    console.log(`✅ Job ${job.id} completed`);
-});
-
-cartWorker.on("failed", (job, err) => {
-    console.error(`❌ Job ${job?.id} failed:`, err.message);
-});
+    }
+}
