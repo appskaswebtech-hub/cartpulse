@@ -1,30 +1,13 @@
-import { Queue, Worker } from "bullmq";
-import { Redis } from "ioredis";
-import nodemailer from "nodemailer";
 import db from "./db.server";
+import { getShopPlanFromDB } from "./utils/planUtils";
 
-const connection = new Redis(process.env.UPSTASH_REDIS_URL!, {
-    maxRetriesPerRequest: null,
-    tls: {},
-});
+const DEV_NOTIFICATION_LIMIT = 5;
 
-connection.on("connect", () => {
-    console.log("✅ Redis connected successfully");
-});
-
-connection.on("error", (err) => {
-    console.error("❌ Redis connection error:", err.message);
-});
-
-export const cartQueue = new Queue("cart-recovery", { connection });
-
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-    },
-});
+const EMAIL_LIMITS: Record<string, number> = {
+    basic: 100,
+    pro: 200,
+    advanced: 500,
+};
 
 export async function scheduleCartNotifications(cart: {
     id: string;
@@ -35,157 +18,140 @@ export async function scheduleCartNotifications(cart: {
 }) {
     if (!cart.customerEmail) return;
 
+    const shopPlan = await getShopPlanFromDB(cart.shop);
+    const isDevShop = await checkIsDevShop(cart.shop);
+    const hasPlan = ["basic", "pro", "advanced"].includes(shopPlan.plan);
+
+    console.log(`🔍 isDevShop: ${isDevShop}, plan: ${shopPlan.plan}, hasPlan: ${hasPlan}`);
+
+    // Live store with no plan → block all
+    if (!isDevShop && !hasPlan) {
+        console.log(`🚫 No active plan for shop: ${cart.shop}. Notifications blocked.`);
+        return;
+    }
+
+    // Dev store → cap at 5 notifications per cart
+    if (isDevShop) {
+        const existingCount = await db.cartNotification.count({
+            where: { cartId: cart.id },
+        });
+
+        if (existingCount >= DEV_NOTIFICATION_LIMIT) {
+            console.log(`🚫 Dev store limit reached (${DEV_NOTIFICATION_LIMIT}) for cart: ${cart.id}`);
+            return;
+        }
+    }
+
+    // Live store → check monthly email limit
+    if (!isDevShop && hasPlan) {
+        const emailLimit = EMAIL_LIMITS[shopPlan.plan] ?? 0;
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        const emailsSentThisMonth = await db.cartNotification.count({
+            where: {
+                cart: { shop: cart.shop },
+                channel: "email",
+                status: "sent",
+                sentAt: { gte: startOfMonth },
+            },
+        });
+
+        if (emailsSentThisMonth >= emailLimit) {
+            console.log(`🚫 Email limit reached (${emailLimit}) for shop: ${cart.shop}. Skipping email jobs.`);
+
+            const items = JSON.parse(cart.cartData);
+            const productNames = items.map((i: any) => i.title).join(", ");
+            const payload = JSON.stringify({
+                cartId: cart.id,
+                customerEmail: cart.customerEmail,
+                totalPrice: cart.totalPrice,
+                productNames,
+                shop: cart.shop,
+            });
+
+            const now = new Date();
+            await db.jobQueue.create({
+                data: {
+                    jobName: "push-notification",
+                    payload,
+                    scheduledAt: new Date(now.getTime() + 60 * 60 * 1000),
+                },
+            });
+
+            console.log(`✅ Push-only notification scheduled for cart: ${cart.id}`);
+            return;
+        }
+    }
+
     const items = JSON.parse(cart.cartData);
     const productNames = items.map((i: any) => i.title).join(", ");
+    const payload = JSON.stringify({
+        cartId: cart.id,
+        customerEmail: cart.customerEmail,
+        totalPrice: cart.totalPrice,
+        productNames,
+        shop: cart.shop,
+    });
 
-    // Job 1 — Push notification after 1 hour
-    await cartQueue.add(
-        "push-notification",
-        {
-            cartId: cart.id,
-            customerEmail: cart.customerEmail,
-            totalPrice: cart.totalPrice,
-            productNames,
-            shop: cart.shop,
-        },
-        { delay: 5000 }
-    );
+    const now = new Date();
 
-    // Job 2 — Email with discount after 3 hours
-    await cartQueue.add(
-        "email-notification",
-        {
-            cartId: cart.id,
-            customerEmail: cart.customerEmail,
-            totalPrice: cart.totalPrice,
-            productNames,
-            shop: cart.shop,
-            discount: "10",
+    // Push after 1 hour
+    await db.jobQueue.create({
+        data: {
+            jobName: "push-notification",
+            payload,
+            scheduledAt: new Date(now.getTime() + 60 * 60 * 1000),
         },
-        { delay: 10000 } // 3 hours
-    );
+    });
 
-    // Job 3 — Final email reminder after 24 hours
-    await cartQueue.add(
-        "email-final",
-        {
-            cartId: cart.id,
-            customerEmail: cart.customerEmail,
-            totalPrice: cart.totalPrice,
-            productNames,
-            shop: cart.shop,
+    // Email after 24 hours
+    await db.jobQueue.create({
+        data: {
+            jobName: "email-notification",
+            payload,
+            scheduledAt: new Date(now.getTime() + 24 * 60 * 60 * 1000),
         },
-        { delay: 15000 } // 24 hours
-    );
+    });
+
+    // Final email after 30 days
+    await db.jobQueue.create({
+        data: {
+            jobName: "email-final",
+            payload,
+            scheduledAt: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000),
+        },
+    });
 
     console.log(`✅ Notifications scheduled for cart: ${cart.id}`);
 }
 
-export const cartWorker = new Worker(
-    "cart-recovery",
-    async (job) => {
-        console.log(`Processing job: ${job.name}`);
-        const { cartId, customerEmail, totalPrice, productNames, shop, discount } = job.data;
+async function checkIsDevShop(shop: string): Promise<boolean> {
+    try {
+        const session = await db.session.findFirst({
+            where: { shop, isOnline: false },
+            orderBy: { expires: "desc" },
+        });
 
-        if (job.name === "push-notification") {
-            console.log(`🔔 Sending push notification to ${customerEmail}`);
+        if (!session?.accessToken) return false;
 
-            await db.cartNotification.create({
-                data: {
-                    cartId,
-                    type: "push",
-                    channel: "push",
-                    status: "pending",
+        const res = await fetch(
+            `https://${shop}/admin/api/2025-10/shop.json`,
+            {
+                headers: {
+                    "X-Shopify-Access-Token": session.accessToken,
+                    "Content-Type": "application/json",
                 },
-            });
+            }
+        );
 
-            console.log(`✅ Push notification queued for cart: ${cartId}`);
-        }
+        const data = await res.json();
+        const planName = data?.shop?.plan_name ?? "";
+        return planName === "developer" || planName === "developer_preview" || planName === "partner_test";
 
-        if (job.name === "email-notification") {
-            console.log(`📧 Sending first email to ${customerEmail}`);
-
-            await transporter.sendMail({
-                from: `"CartPulse" <${process.env.GMAIL_USER}>`,
-                to: customerEmail,
-                subject: "You left something behind! Here's 10% off",
-                html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>Hey, you forgot something!</h2>
-            <p>You left these items in your cart:</p>
-            <p><strong>${productNames}</strong></p>
-            <p>Total: <strong>$${totalPrice}</strong></p>
-            <p>Come back and get <strong>${discount}% off</strong> your order!</p>
-            <a href="https://${shop}" 
-               style="background:#1D9E75; color:white; padding:12px 24px; 
-                      text-decoration:none; border-radius:6px; display:inline-block;">
-              Claim My ${discount}% Discount
-            </a>
-            <p style="color:#999; font-size:12px; margin-top:20px;">
-              You received this because you abandoned your cart.
-            </p>
-          </div>
-        `,
-            });
-
-            await db.cartNotification.create({
-                data: {
-                    cartId,
-                    type: "email",
-                    channel: "email",
-                    status: "sent",
-                    sentAt: new Date(),
-                },
-            });
-
-            console.log(`✅ First email sent to ${customerEmail}`);
-        }
-
-        if (job.name === "email-final") {
-            console.log(`📧 Sending final email to ${customerEmail}`);
-
-            await transporter.sendMail({
-                from: `"CartPulse" <${process.env.GMAIL_USER}>`,
-                to: customerEmail,
-                subject: "Last chance! Your cart is about to expire",
-                html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>Last chance!</h2>
-            <p>Your cart is about to expire. Don't miss out on:</p>
-            <p><strong>${productNames}</strong></p>
-            <p>Total: <strong>$${totalPrice}</strong></p>
-            <a href="https://${shop}" 
-               style="background:#D85A30; color:white; padding:12px 24px; 
-                      text-decoration:none; border-radius:6px; display:inline-block;">
-              Complete My Purchase Now
-            </a>
-            <p style="color:#999; font-size:12px; margin-top:20px;">
-              You received this because you abandoned your cart.
-            </p>
-          </div>
-        `,
-            });
-
-            await db.cartNotification.create({
-                data: {
-                    cartId,
-                    type: "email",
-                    channel: "email",
-                    status: "sent",
-                    sentAt: new Date(),
-                },
-            });
-
-            console.log(`✅ Final email sent to ${customerEmail}`);
-        }
-    },
-    { connection }
-);
-
-cartWorker.on("completed", (job) => {
-    console.log(`✅ Job ${job.id} completed`);
-});
-
-cartWorker.on("failed", (job, err) => {
-    console.error(`❌ Job ${job?.id} failed:`, err.message);
-});
+    } catch (err) {
+        console.error("[checkIsDevShop] error:", err);
+        return false;
+    }
+}

@@ -47,7 +47,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   `, {
     variables: {
       input: {
-        src: "https://unreproducible-chemiluminescent-jacquiline.ngrok-free.dev/cart-pulse.js",
+        src: "https://cartpulse.kaswebtechsolutions.com/api/pending-notification?shop=${shop}",
         displayScope: "ALL",
       },
     },

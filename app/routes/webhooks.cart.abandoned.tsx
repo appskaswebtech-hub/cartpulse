@@ -20,6 +20,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         const savedCart = await db.abandonedCart.upsert({
             where: { cartToken: cart.token },
             update: {
+                customerEmail: cart.email || null,
+                customerPhone: cart.phone || null,
+                customerName: cart.billing_address?.name || null,
                 cartData: JSON.stringify(cart.line_items),
                 totalPrice: cart.total_price || "0",
                 updatedAt: new Date(),
@@ -36,13 +39,20 @@ export const action = async ({ request }: ActionFunctionArgs) => {
             },
         });
 
-        // Schedule notifications only on CHECKOUTS_CREATE and only once
-        if (topic === "CHECKOUTS_CREATE" && cart.email) {
+        // Schedule if email exists and no jobs scheduled yet
+        if (cart.email) {
             const existingNotifications = await db.cartNotification.findFirst({
                 where: { cartId: savedCart.id },
             });
 
-            if (!existingNotifications) {
+            const existingJobs = await db.jobQueue.findFirst({
+                where: {
+                    payload: { contains: savedCart.id },
+                    status: { in: ["pending", "processing", "completed"] },
+                },
+            });
+
+            if (!existingNotifications && !existingJobs) {
                 await scheduleCartNotifications({
                     id: savedCart.id,
                     customerEmail: savedCart.customerEmail,
