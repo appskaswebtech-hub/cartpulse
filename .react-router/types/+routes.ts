@@ -17,9 +17,6 @@ type Pages = {
   "/webhooks/app/scopes_update": {
     params: {};
   };
-  "/api/pending-notification": {
-    params: {};
-  };
   "/webhooks/app/uninstalled": {
     params: {};
   };
@@ -29,7 +26,7 @@ type Pages = {
   "/webhooks/orders/create": {
     params: {};
   };
-  "/api/push-subscribe": {
+  "/unsubscribe": {
     params: {};
   };
   "/auth/login": {
@@ -49,7 +46,13 @@ type Pages = {
   "/app/billing-return": {
     params: {};
   };
+  "/app/email-settings": {
+    params: {};
+  };
   "/app/inject-script": {
+    params: {};
+  };
+  "/app/outreach": {
     params: {};
   };
   "/app/billing": {
@@ -63,15 +66,11 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/webhooks/app/scopes_update" | "/api/pending-notification" | "/webhooks/app/uninstalled" | "/webhooks/cart/abandoned" | "/webhooks/orders/create" | "/api/push-subscribe" | "/auth/login" | "/auth/*" | "/app" | "/app/register-webhooks" | "/app/billing-return" | "/app/inject-script" | "/app/billing" | "/app/carts";
+    page: "/" | "/webhooks/app/scopes_update" | "/webhooks/app/uninstalled" | "/webhooks/cart/abandoned" | "/webhooks/orders/create" | "/unsubscribe" | "/auth/login" | "/auth/*" | "/app" | "/app/register-webhooks" | "/app/billing-return" | "/app/email-settings" | "/app/inject-script" | "/app/outreach" | "/app/billing" | "/app/carts";
   };
   "routes/webhooks.app.scopes_update.tsx": {
     id: "routes/webhooks.app.scopes_update";
     page: "/webhooks/app/scopes_update";
-  };
-  "routes/api.pending-notification.tsx": {
-    id: "routes/api.pending-notification";
-    page: "/api/pending-notification";
   };
   "routes/webhooks.app.uninstalled.tsx": {
     id: "routes/webhooks.app.uninstalled";
@@ -85,9 +84,9 @@ type RouteFiles = {
     id: "routes/webhooks.orders.create";
     page: "/webhooks/orders/create";
   };
-  "routes/api.push-subscribe.tsx": {
-    id: "routes/api.push-subscribe";
-    page: "/api/push-subscribe";
+  "routes/unsubscribe.tsx": {
+    id: "routes/unsubscribe";
+    page: "/unsubscribe";
   };
   "routes/auth.login/route.tsx": {
     id: "routes/auth.login";
@@ -103,7 +102,7 @@ type RouteFiles = {
   };
   "routes/app.tsx": {
     id: "routes/app";
-    page: "/app" | "/app/register-webhooks" | "/app/billing-return" | "/app/inject-script" | "/app/billing" | "/app/carts";
+    page: "/app" | "/app/register-webhooks" | "/app/billing-return" | "/app/email-settings" | "/app/inject-script" | "/app/outreach" | "/app/billing" | "/app/carts";
   };
   "routes/app.register-webhooks.tsx": {
     id: "routes/app.register-webhooks";
@@ -113,9 +112,17 @@ type RouteFiles = {
     id: "routes/app.billing-return";
     page: "/app/billing-return";
   };
+  "routes/app.email-settings.tsx": {
+    id: "routes/app.email-settings";
+    page: "/app/email-settings";
+  };
   "routes/app.inject-script.tsx": {
     id: "routes/app.inject-script";
     page: "/app/inject-script";
+  };
+  "routes/app.outreach.tsx": {
+    id: "routes/app.outreach";
+    page: "/app/outreach";
   };
   "routes/app.billing.tsx": {
     id: "routes/app.billing";
@@ -134,18 +141,19 @@ type RouteFiles = {
 type RouteModules = {
   "root": typeof import("./app/root.tsx");
   "routes/webhooks.app.scopes_update": typeof import("./app/routes/webhooks.app.scopes_update.tsx");
-  "routes/api.pending-notification": typeof import("./app/routes/api.pending-notification.tsx");
   "routes/webhooks.app.uninstalled": typeof import("./app/routes/webhooks.app.uninstalled.tsx");
   "routes/webhooks.cart.abandoned": typeof import("./app/routes/webhooks.cart.abandoned.tsx");
   "routes/webhooks.orders.create": typeof import("./app/routes/webhooks.orders.create.tsx");
-  "routes/api.push-subscribe": typeof import("./app/routes/api.push-subscribe.tsx");
+  "routes/unsubscribe": typeof import("./app/routes/unsubscribe.tsx");
   "routes/auth.login": typeof import("./app/routes/auth.login/route.tsx");
   "routes/auth.$": typeof import("./app/routes/auth.$.tsx");
   "routes/_index": typeof import("./app/routes/_index/route.tsx");
   "routes/app": typeof import("./app/routes/app.tsx");
   "routes/app.register-webhooks": typeof import("./app/routes/app.register-webhooks.tsx");
   "routes/app.billing-return": typeof import("./app/routes/app.billing-return.tsx");
+  "routes/app.email-settings": typeof import("./app/routes/app.email-settings.tsx");
   "routes/app.inject-script": typeof import("./app/routes/app.inject-script.tsx");
+  "routes/app.outreach": typeof import("./app/routes/app.outreach.tsx");
   "routes/app.billing": typeof import("./app/routes/app.billing.tsx");
   "routes/app._index": typeof import("./app/routes/app._index.tsx");
   "routes/app.carts": typeof import("./app/routes/app.carts.tsx");

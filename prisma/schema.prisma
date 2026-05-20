@@ -66,8 +66,9 @@ model MerchantSettings {
   whatsappEnabled  Boolean  @default(false)
   emailEnabled     Boolean  @default(true)
   whatsappApiKey   String?
-  emailFromName    String?
-  emailFromAddress String?
+  emailFromName     String?
+  emailFromAddress  String?
+  emailAppPassword  String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
@@ -88,6 +89,15 @@ model JobQueue {
   scheduledAt DateTime
   status      String   @default("pending")
   createdAt   DateTime @default(now())
+}
+
+model EmailUnsubscribe {
+  id        String   @id @default(cuid())
+  shop      String
+  email     String
+  createdAt DateTime @default(now())
+
+  @@unique([shop, email])
 }
 
 model ShopPlan {

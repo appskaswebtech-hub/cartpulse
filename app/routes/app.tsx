@@ -26,8 +26,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const record = await getShopPlanFromDB(shop);
   const hasPlan = ["basic", "pro", "advanced"].includes(record.plan);
-  const showGate = !isDevShop && !hasPlan;
-  // const showGate = true; // force gate for testing
+  const showGate = !hasPlan;
 
   return {
     apiKey: process.env.SHOPIFY_API_KEY || "",
@@ -47,6 +46,8 @@ export default function App() {
     <AppProvider embedded apiKey={apiKey}>
       <s-app-nav>
         <s-link href="/app/carts">Abandoned Carts</s-link>
+        <s-link href="/app/outreach">Email Outreach</s-link>
+        <s-link href="/app/email-settings">Email Settings</s-link>
         <s-link href="/app/billing">Billing</s-link>
       </s-app-nav>
       <BillingGate show={showGate && !isBillingPage} />

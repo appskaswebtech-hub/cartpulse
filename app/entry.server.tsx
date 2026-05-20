@@ -5,9 +5,6 @@ import { createReadableStreamFromReadable } from "@react-router/node";
 import { type EntryContext } from "react-router";
 import { isbot } from "isbot";
 import { addDocumentResponseHeaders } from "./shopify.server";
-import { startWorker } from "./worker.server";
-
-startWorker();
 
 export const streamTimeout = 5000;
 

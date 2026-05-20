@@ -31,7 +31,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
             variables: {
                 topic,
                 webhookSubscription: {
-                    callbackUrl: `https://computing-tongue-warned-labeled.trycloudflare.com${uri}`,
+                    callbackUrl: `${process.env.APP_URL}${uri}`,
                     format: "JSON",
                 },
             },

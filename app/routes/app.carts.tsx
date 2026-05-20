@@ -7,8 +7,10 @@ import { Page } from "@shopify/polaris";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     const { session } = await authenticate.admin(request);
 
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+
     const carts = await db.abandonedCart.findMany({
-        where: { shop: session.shop },
+        where: { shop: session.shop, createdAt: { lte: tenMinutesAgo } },
         orderBy: { createdAt: "desc" },
         take: 20,
         include: { notifications: true },

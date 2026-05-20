@@ -12,26 +12,32 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const order = payload as any;
 
     try {
-        // Find the cart using customer email
+        // Match by checkout_token first (most reliable), fallback to email
         const cart = await db.abandonedCart.findFirst({
             where: {
                 shop,
-                customerEmail: order.email,
                 isRecovered: false,
+                OR: [
+                    { cartToken: order.checkout_token },
+                    { customerEmail: order.email },
+                ],
             },
+            orderBy: { createdAt: "desc" },
         });
 
         if (cart) {
-            // Mark cart as recovered
-            await db.abandonedCart.update({
-                where: { id: cart.id },
-                data: {
-                    isRecovered: true,
-                    recoveredAt: new Date(),
-                },
-            });
+            const ageSeconds = (Date.now() - new Date(cart.createdAt).getTime()) / 1000;
 
-            console.log(`Cart recovered for shop: ${shop}`);
+            if (ageSeconds < 600) {
+                await db.abandonedCart.delete({ where: { id: cart.id } });
+                console.log(`Cart deleted (purchased immediately) for shop: ${shop}`);
+            } else {
+                await db.abandonedCart.update({
+                    where: { id: cart.id },
+                    data: { isRecovered: true, recoveredAt: new Date() },
+                });
+                console.log(`Cart recovered for shop: ${shop}`);
+            }
         }
     } catch (error) {
         console.error("Error updating cart:", error);

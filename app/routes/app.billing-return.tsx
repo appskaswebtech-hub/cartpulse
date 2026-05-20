@@ -71,7 +71,7 @@ export default function BillingReturnPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const timer = setTimeout(() => navigate("/app/billing"), 5000);
+        const timer = setTimeout(() => navigate("/app"), 3000);
         return () => clearTimeout(timer);
     }, [navigate]);
 
@@ -90,7 +90,7 @@ export default function BillingReturnPage() {
                         </Banner>
                     )}
                     <Spinner size="large" />
-                    <Text tone="subdued" variant="bodySm" as="p">Redirecting in 5 seconds…</Text>
+                    <Text tone="subdued" variant="bodySm" as="p">Redirecting to dashboard in 3 seconds…</Text>
                 </BlockStack>
             </div>
         </Page>

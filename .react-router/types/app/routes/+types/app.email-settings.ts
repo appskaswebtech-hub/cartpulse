@@ -2,10 +2,10 @@
 
 import type { GetInfo, GetAnnotations } from "react-router/internal";
 
-type Module = typeof import("../api.pending-notification.js")
+type Module = typeof import("../app.email-settings.js")
 
 type Info = GetInfo<{
-  file: "routes/api.pending-notification.tsx",
+  file: "routes/app.email-settings.tsx",
   module: Module
 }>
 
@@ -13,8 +13,11 @@ type Matches = [{
   id: "root";
   module: typeof import("../../root.js");
 }, {
-  id: "routes/api.pending-notification";
-  module: typeof import("../api.pending-notification.js");
+  id: "routes/app";
+  module: typeof import("../app.js");
+}, {
+  id: "routes/app.email-settings";
+  module: typeof import("../app.email-settings.js");
 }];
 
 type Annotations = GetAnnotations<Info & { module: Module, matches: Matches }>;

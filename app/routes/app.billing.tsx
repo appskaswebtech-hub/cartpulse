@@ -9,10 +9,10 @@ import {
 import { TitleBar } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 import { PLANS, PLAN_KEYS } from "../config/plans";
-import { getShopPlanFromDB } from "../utils/planUtils";
+import { getShopPlanFromDB, cancelShopPlan } from "../utils/planUtils";
 
 interface LoaderData { currentPlan: string; }
-interface ActionData { confirmationUrl?: string; error?: string; }
+interface ActionData { confirmationUrl?: string; error?: string; cancelled?: boolean; }
 interface UserError { field: string; message: string; }
 interface AppSubscriptionCreateResponse {
     data?: {
@@ -38,6 +38,37 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const { admin, session } = await authenticate.admin(request);
     const shop = session.shop;
     const formData = await request.formData();
+    const intent = formData.get("intent") as string;
+
+    if (intent === "cancel") {
+        try {
+            // Find and cancel the active Shopify subscription
+            const subResponse = await admin.graphql(`#graphql
+                query { currentAppInstallation { activeSubscriptions { id name status } } }
+            `);
+            const subJson = await subResponse.json() as any;
+            const activeSubs = subJson?.data?.currentAppInstallation?.activeSubscriptions ?? [];
+
+            for (const sub of activeSubs) {
+                await admin.graphql(
+                    `#graphql
+                    mutation CancelSub($id: ID!) {
+                        appSubscriptionCancel(id: $id) {
+                            userErrors { field message }
+                        }
+                    }`,
+                    { variables: { id: sub.id } }
+                );
+            }
+
+            await cancelShopPlan(shop);
+            return { cancelled: true } satisfies ActionData;
+        } catch (err) {
+            console.error("[app.billing] cancel error:", err);
+            return { error: "Failed to cancel plan. Please try again." } satisfies ActionData;
+        }
+    }
+
     const planKey = formData.get("plan") as string;
 
     if (!PLAN_KEYS.includes(planKey)) {
@@ -73,7 +104,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
                     name: planKey,
                     returnUrl: `https://${shop}/admin/apps/${process.env.SHOPIFY_API_KEY}/app/billing-return`,
 
-                    test: false,
+                    test: true,
                     lineItems: [
                         {
                             plan: {
@@ -113,6 +144,7 @@ export default function BillingPage() {
     const navigate = useNavigate();
     const navigation = useNavigation();
     const [submittingPlan, setSubmittingPlan] = useState<string | null>(null);
+    const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
     const isSubmitting = navigation.state === "submitting";
     const currentPlanMeta = PLANS[currentPlan];
@@ -122,6 +154,9 @@ export default function BillingPage() {
     useEffect(() => {
         if (actionData?.confirmationUrl) {
             open(actionData.confirmationUrl, "_top");
+        }
+        if (actionData?.cancelled) {
+            navigate("/app");
         }
     }, [actionData]);
 
@@ -212,11 +247,35 @@ export default function BillingPage() {
                     })}
                 </InlineGrid>
 
-                <Box paddingBlockEnd="400">
-                    {/* <Text alignment="center" tone="subdued" variant="bodySm" as="p">
-                        All plans include a 7-day free trial. Cancel anytime. Billed in USD.
-                    </Text> */}
-                </Box>
+                {currentPlan !== "none" && (
+                    <div style={{ borderRadius: "12px", border: "1px solid #FECACA", background: "#FFF5F5", padding: "20px 24px" }}>
+                        <InlineStack align="space-between" blockAlign="center">
+                            <div>
+                                <Text variant="headingSm" fontWeight="semibold" as="p">Cancel Subscription</Text>
+                                <Text variant="bodySm" tone="subdued" as="p">
+                                    You'll lose access to {currentPlanLabel} features immediately.
+                                </Text>
+                            </div>
+                            {!showCancelConfirm ? (
+                                <Button tone="critical" onClick={() => setShowCancelConfirm(true)}>
+                                    Cancel Plan
+                                </Button>
+                            ) : (
+                                <InlineStack gap="200">
+                                    <Button onClick={() => setShowCancelConfirm(false)}>Keep Plan</Button>
+                                    <Form method="post">
+                                        <input type="hidden" name="intent" value="cancel" />
+                                        <Button tone="critical" variant="primary" submit loading={isSubmitting}>
+                                            Yes, Cancel
+                                        </Button>
+                                    </Form>
+                                </InlineStack>
+                            )}
+                        </InlineStack>
+                    </div>
+                )}
+
+                <Box paddingBlockEnd="400" />
 
             </BlockStack>
         </Page>
