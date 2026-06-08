@@ -49,6 +49,9 @@ type Pages = {
   "/app/inject-script": {
     params: {};
   };
+  "/app/reports": {
+    params: {};
+  };
   "/app/carts": {
     params: {};
   };
@@ -57,7 +60,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/webhooks/app/scopes_update" | "/api/pending-notification" | "/webhooks/app/uninstalled" | "/webhooks/cart/abandoned" | "/webhooks/orders/create" | "/api/push-subscribe" | "/auth/login" | "/auth/*" | "/app" | "/app/register-webhooks" | "/app/inject-script" | "/app/carts";
+    page: "/" | "/webhooks/app/scopes_update" | "/api/pending-notification" | "/webhooks/app/uninstalled" | "/webhooks/cart/abandoned" | "/webhooks/orders/create" | "/api/push-subscribe" | "/auth/login" | "/auth/*" | "/app" | "/app/register-webhooks" | "/app/inject-script" | "/app/reports" | "/app/carts";
   };
   "routes/webhooks.app.scopes_update.tsx": {
     id: "routes/webhooks.app.scopes_update";
@@ -97,7 +100,7 @@ type RouteFiles = {
   };
   "routes/app.tsx": {
     id: "routes/app";
-    page: "/app" | "/app/register-webhooks" | "/app/inject-script" | "/app/carts";
+    page: "/app" | "/app/register-webhooks" | "/app/inject-script" | "/app/reports" | "/app/carts";
   };
   "routes/app.register-webhooks.tsx": {
     id: "routes/app.register-webhooks";
@@ -106,6 +109,10 @@ type RouteFiles = {
   "routes/app.inject-script.tsx": {
     id: "routes/app.inject-script";
     page: "/app/inject-script";
+  };
+  "routes/app.reports.tsx": {
+    id: "routes/app.reports";
+    page: "/app/reports";
   };
   "routes/app._index.tsx": {
     id: "routes/app._index";
@@ -131,6 +138,7 @@ type RouteModules = {
   "routes/app": typeof import("./app/routes/app.tsx");
   "routes/app.register-webhooks": typeof import("./app/routes/app.register-webhooks.tsx");
   "routes/app.inject-script": typeof import("./app/routes/app.inject-script.tsx");
+  "routes/app.reports": typeof import("./app/routes/app.reports.tsx");
   "routes/app._index": typeof import("./app/routes/app._index.tsx");
   "routes/app.carts": typeof import("./app/routes/app.carts.tsx");
 };
