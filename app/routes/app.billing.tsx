@@ -107,7 +107,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
                     test: false,
                     lineItems: [
                         {
-                            plan: {
+                            plan: {     
                                 appRecurringPricingDetails: {
                                     price: { amount: selectedPlan.price, currencyCode: "USD" },
                                     interval: "EVERY_30_DAYS",
