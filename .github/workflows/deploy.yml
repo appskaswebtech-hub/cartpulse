@@ -1,10 +1,6 @@
-name:  Deploy to Production
+name: Deploy to Production
 
 on:
-  push:
-    branches:
-      - production
-
   workflow_dispatch:
     inputs:
       confirm:
@@ -17,15 +13,13 @@ jobs:
     name: Deploy to cPanel Server
     runs-on: ubuntu-latest
 
-    if: >
-      github.event_name == 'push' ||
-      (github.event_name == 'workflow_dispatch' && github.event.inputs.confirm == 'DEPLOY')
+    if: github.event.inputs.confirm == 'DEPLOY'
 
     steps:
-      - name: 📥 Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 📁 Upload files to server
+      - name: Upload files to server
         uses: burnett01/rsync-deployments@7.0.1
         with:
           switches: -avzr --delete
@@ -42,7 +36,7 @@ jobs:
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
           remote_port: ${{ secrets.SSH_PORT }}
 
-      - name: ⚙️ Build & Restart on server
+      - name: Build and restart on server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -53,20 +47,8 @@ jobs:
             set -e
             cd /home/cartpulse.kaswebtechsolutions.com/public_html
 
-            echo "📦 Installing dependencies..."
             npm install
-
-            echo "⚙️ Generating Prisma client..."
             npx prisma generate
-
-            echo "🗄️ Running database migrations..."
             npx prisma migrate deploy
-
-            echo "🔨 Building app..."
             npm run build
-
-            echo "🔄 Restarting server..."
-            pm2 restart cartpulse \
-              || echo "⚠️ Restart manually if needed"
-
-            echo "✅ Deployment complete!"
+            pm2 restart cartpulse || echo "Restart manually if needed"
