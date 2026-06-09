@@ -24,9 +24,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 <script>
   window.addEventListener('load', function() {
     if (window.shopify && window.shopify.navigate) {
-      window.shopify.navigate('/app/carts');
+      window.shopify.navigate('/app');
     } else {
-      window.location.href = '/app/carts';
+      window.location.href = '/app';
     }
   });
 </script>
