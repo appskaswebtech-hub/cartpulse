@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+extensions/*/node_modules/
+
+# Build output
+build/
+.react-router/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Shopify CLI
+.shopify/
+
+# Logs
+*.log
+npm-debug.log*
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Prisma generated (regenerated on deploy)
+node_modules/.prisma/
+
+# Editor
+.vscode/
+.idea/

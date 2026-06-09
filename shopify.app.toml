@@ -1,0 +1,38 @@
+client_id = "203e48d916d039c8496ab10f7e87c778"
+name = "CartPulse"
+application_url = "https://cartpulse.kaswebtechsolutions.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = false
+
+[webhooks]
+api_version = "2026-04"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks/app/uninstalled"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/scopes_update" ]
+  uri = "/webhooks/app/scopes_update"
+
+  [[webhooks.subscriptions]]
+  topics = [ "checkouts/create" ]
+  uri = "/webhooks/cart/abandoned"
+
+  [[webhooks.subscriptions]]
+  topics = [ "checkouts/update" ]
+  uri = "/webhooks/cart/abandoned"
+
+  [[webhooks.subscriptions]]
+  topics = [ "orders/create" ]
+  uri = "/webhooks/orders/create"
+
+[access_scopes]
+scopes = "read_orders,write_products,read_checkouts,write_script_tags"
+
+[auth]
+redirect_urls = [
+  "https://cartpulse.kaswebtechsolutions.com/auth/callback"
+]

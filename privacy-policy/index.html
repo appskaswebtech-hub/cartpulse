@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — CartPulse</title>
+  <meta name="description" content="CartPulse Privacy Policy — how we collect, use, and protect your data." />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-  ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #1a1a1a;
+      background: #fff;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; }
+
+    /* ── Navbar ── */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 68px;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .nav-logo-text { font-weight: 800; font-size: 20px; color: #085041; letter-spacing: -0.5px; }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { color: #6b7280; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: #085041; }
+    .btn-install {
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      color: #fff !important;
+      padding: 9px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      background: linear-gradient(135deg, #063d31 0%, #085041 40%, #1D9E75 100%);
+      padding: 64px 48px;
+      text-align: center;
+    }
+    .page-header h1 { color: #fff; font-size: 44px; font-weight: 900; letter-spacing: -1px; margin-bottom: 12px; }
+    .page-header p { color: rgba(255,255,255,0.75); font-size: 15px; }
+
+    /* ── Content ── */
+    .content-wrap { max-width: 800px; margin: 0 auto; padding: 64px 48px 80px; }
+
+    .toc {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 48px;
+    }
+    .toc h2 { font-size: 15px; font-weight: 700; color: #374151; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .toc ol { padding-left: 20px; }
+    .toc li { margin-bottom: 8px; }
+    .toc a { color: #085041; font-size: 14px; font-weight: 500; }
+    .toc a:hover { text-decoration: underline; }
+
+    .policy-section { margin-bottom: 48px; }
+    .policy-section h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f0fdf4;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .policy-section h2 span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      border-radius: 50%;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .policy-section p { font-size: 15px; color: #374151; line-height: 1.75; margin-bottom: 14px; }
+    .policy-section p:last-child { margin-bottom: 0; }
+    .policy-section ul, .policy-section ol { padding-left: 24px; margin-bottom: 14px; }
+    .policy-section li { font-size: 15px; color: #374151; line-height: 1.75; margin-bottom: 6px; }
+    .policy-section strong { color: #0f172a; font-weight: 600; }
+    .policy-section a { color: #085041; font-weight: 500; }
+    .policy-section a:hover { text-decoration: underline; }
+
+    .info-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 20px;
+    }
+    .info-box p { font-size: 14px; color: #166534; margin: 0; }
+    .info-box strong { color: #064e3b; }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    .data-table th {
+      background: #f9fafb;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 700;
+      color: #374151;
+      border: 1px solid #e5e7eb;
+    }
+    .data-table td {
+      padding: 10px 14px;
+      color: #374151;
+      border: 1px solid #e5e7eb;
+      vertical-align: top;
+    }
+    .data-table tr:nth-child(even) td { background: #f9fafb; }
+
+    .contact-card {
+      background: linear-gradient(135deg, #063d31 0%, #085041 100%);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      margin-top: 48px;
+    }
+    .contact-card h3 { color: #fff; font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+    .contact-card p { color: rgba(255,255,255,0.82); font-size: 15px; margin-bottom: 20px; }
+    .contact-card a {
+      display: inline-block;
+      background: #fff;
+      color: #085041;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      background: #0f1923;
+      color: #9ca3af;
+      padding: 40px 48px;
+    }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+    .footer-brand { display: flex; align-items: center; gap: 10px; }
+    .footer-logo-icon {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center; font-size: 15px;
+    }
+    .footer-logo-text { font-weight: 800; color: #fff; font-size: 16px; }
+    .footer-links-row { display: flex; gap: 24px; }
+    .footer-links-row a { color: #9ca3af; font-size: 13px; }
+    .footer-links-row a:hover { color: #fff; }
+    .footer-copy { font-size: 13px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .nav { padding: 0 20px; }
+      .page-header { padding: 48px 20px; }
+      .page-header h1 { font-size: 32px; }
+      .content-wrap { padding: 40px 20px 60px; }
+      .footer { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ Navbar ══ -->
+<nav class="nav">
+  <a href="https://cartpulse.kaswebtechsolutions.com/home/" class="nav-logo">
+    <div class="nav-logo-icon">🛒</div>
+    <span class="nav-logo-text">CartPulse</span>
+  </a>
+  <div class="nav-links">
+    <a href="https://cartpulse.kaswebtechsolutions.com/home/">Home</a>
+    <a href="https://apps.shopify.com/vault-wallet?search_id=85534f35-d887-46f5-b3cb-07a7d1bf943a&surface_detail=vaultwallet&surface_inter_position=1&surface_intra_position=1&surface_type=search" class="btn-install">Add to Shopify →</a>
+  </div>
+</nav>
+
+<!-- ══ Page Header ══ -->
+<div class="page-header">
+  <h1>Privacy Policy</h1>
+  <p>Last updated: June 4, 2026 &nbsp;|&nbsp; Effective date: June 4, 2026</p>
+</div>
+
+<!-- ══ Content ══ -->
+<div class="content-wrap">
+
+  <div class="info-box">
+    <p>
+      <strong>Summary:</strong> CartPulse is a Shopify app that helps merchants recover abandoned shopping carts.
+      We only collect data necessary to provide this service. We do not sell personal data.
+      We delete merchant and customer data when you uninstall the app.
+    </p>
+  </div>
+
+  <!-- Table of Contents -->
+  <div class="toc">
+    <h2>Table of Contents</h2>
+    <ol>
+      <li><a href="#s1">Who We Are</a></li>
+      <li><a href="#s2">Information We Collect</a></li>
+      <li><a href="#s3">How We Use Your Information</a></li>
+      <li><a href="#s4">Information Sharing & Third Parties</a></li>
+      <li><a href="#s5">Data Retention</a></li>
+      <li><a href="#s6">Security</a></li>
+      <li><a href="#s7">Your Rights & Choices</a></li>
+      <li><a href="#s8">Shopify Merchants</a></li>
+      <li><a href="#s9">End Customers of Merchants</a></li>
+      <li><a href="#s10">Children's Privacy</a></li>
+      <li><a href="#s11">Changes to This Policy</a></li>
+      <li><a href="#s12">Contact Us</a></li>
+    </ol>
+  </div>
+
+  <!-- Section 1 -->
+  <div class="policy-section" id="s1">
+    <h2><span>1</span> Who We Are</h2>
+    <p>
+      CartPulse ("we", "us", "our") is a Shopify application that helps e-commerce merchants
+      recover abandoned shopping carts through automated multi-channel notifications, including
+      browser push notifications and email reminders.
+    </p>
+    <p>
+      This Privacy Policy explains how CartPulse collects, uses, shares, and protects information
+      when you install and use the CartPulse app on your Shopify store, and when your customers
+      interact with CartPulse's notification features.
+    </p>
+    <p>
+      For questions about this policy, contact us at
+      <a href="mailto:apps.kaswebtech@gmail.com">apps.kaswebtech@gmail.com</a>.
+    </p>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="policy-section" id="s2">
+    <h2><span>2</span> Information We Collect</h2>
+    <p>We collect different types of information depending on whether you are a <strong>merchant</strong> (Shopify store owner) or an <strong>end customer</strong> (shopper at a merchant's store).</p>
+
+    <p><strong>Information from Merchants:</strong></p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Data Type</th>
+          <th>What It Is</th>
+          <th>Why We Collect It</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Shop domain</td>
+          <td>Your myshopify.com store URL</td>
+          <td>To identify your store and deliver services</td>
+        </tr>
+        <tr>
+          <td>OAuth access tokens</td>
+          <td>Shopify API authentication tokens</td>
+          <td>To read checkout/order data from your store</td>
+        </tr>
+        <tr>
+          <td>App configuration</td>
+          <td>Notification settings, email preferences</td>
+          <td>To customise notifications per your preferences</td>
+        </tr>
+        <tr>
+          <td>Usage analytics</td>
+          <td>Recovery rates, notification counts</td>
+          <td>To display your dashboard analytics</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Information from End Customers (via merchant's store):</strong></p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Data Type</th>
+          <th>What It Is</th>
+          <th>Why We Collect It</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Email address</td>
+          <td>Customer's email from checkout</td>
+          <td>To send cart recovery email reminders</td>
+        </tr>
+        <tr>
+          <td>Name</td>
+          <td>Customer's first/last name if provided</td>
+          <td>To personalise notification messages</td>
+        </tr>
+        <tr>
+          <td>Cart contents</td>
+          <td>Product names, quantities, prices</td>
+          <td>To show cart items in recovery emails</td>
+        </tr>
+        <tr>
+          <td>Cart total</td>
+          <td>Value of abandoned cart</td>
+          <td>To display in reminders and track recovery revenue</td>
+        </tr>
+        <tr>
+          <td>Checkout URL</td>
+          <td>Link to customer's saved checkout</td>
+          <td>To direct customers back to complete purchase</td>
+        </tr>
+        <tr>
+          <td>Push subscription</td>
+          <td>Browser endpoint URL and encryption keys</td>
+          <td>To deliver browser push notifications</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      We collect customer data <strong>only through Shopify's checkout webhooks</strong> and only
+      for customers who have entered their email address during checkout at a merchant's store.
+      We do not use cookies, trackers, or third-party pixel technologies for ad targeting.
+    </p>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="policy-section" id="s3">
+    <h2><span>3</span> How We Use Your Information</h2>
+    <p>We use the information we collect for the following purposes:</p>
+    <ul>
+      <li><strong>Abandoned cart detection</strong> — Identifying when a customer starts but does not complete checkout</li>
+      <li><strong>Sending recovery notifications</strong> — Delivering push notifications and emails at scheduled intervals (1 hour, 24 hours, 1 week)</li>
+      <li><strong>Tracking recovery</strong> — Marking a cart as recovered when the corresponding order is placed</li>
+      <li><strong>Analytics dashboard</strong> — Aggregating recovery rates and revenue data for the merchant's dashboard</li>
+      <li><strong>App functionality</strong> — Authenticating merchant sessions, storing preferences, and scheduling jobs</li>
+      <li><strong>Service improvement</strong> — Understanding how the app is used to improve features</li>
+    </ul>
+    <p>We do <strong>not</strong> use customer data for advertising, profiling, or any purpose other than cart recovery for the specific merchant whose store triggered the event.</p>
+  </div>
+
+  <!-- Section 4 -->
+  <div class="policy-section" id="s4">
+    <h2><span>4</span> Information Sharing &amp; Third Parties</h2>
+    <p>We do not sell, rent, or trade personal data. We share data only with the following service providers who help us operate CartPulse:</p>
+    <ul>
+      <li>
+        <strong>Shopify Inc.</strong> — Our app runs within the Shopify platform. Shopify processes payment and store data under their own
+        <a href="https://www.shopify.com/legal/privacy" target="_blank" rel="noopener">Privacy Policy</a>.
+      </li>
+      <li>
+        <strong>Email service provider (Gmail / SMTP)</strong> — Used to send cart recovery emails on behalf of merchants.
+        Emails contain only the customer's own cart data.
+      </li>
+      <li>
+        <strong>Redis / Upstash</strong> — A job queue service used to schedule and deliver notifications at the correct times.
+        Cart data is temporarily stored in the queue during scheduling.
+      </li>
+      <li>
+        <strong>Hosting infrastructure</strong> — Our servers are hosted on a managed hosting provider.
+        All data at rest is stored within our controlled database environment.
+      </li>
+    </ul>
+    <p>
+      We may also disclose information if required by law, court order, or to protect our legal rights,
+      property, or the safety of our users.
+    </p>
+  </div>
+
+  <!-- Section 5 -->
+  <div class="policy-section" id="s5">
+    <h2><span>5</span> Data Retention</h2>
+    <p>We retain data only as long as necessary to provide the CartPulse service:</p>
+    <ul>
+      <li><strong>Abandoned cart records</strong> — Retained while your store has CartPulse installed. Deleted upon app uninstall.</li>
+      <li><strong>Notification logs</strong> — Retained for analytics purposes while the app is installed.</li>
+      <li><strong>Push subscriptions</strong> — Retained until the customer's browser unsubscribes or the app is uninstalled.</li>
+      <li><strong>Merchant OAuth sessions</strong> — Deleted immediately when the app is uninstalled via Shopify's uninstall webhook.</li>
+      <li><strong>Job queue data</strong> — Temporary; jobs are removed from the queue once processed.</li>
+    </ul>
+    <p>
+      When a merchant uninstalls CartPulse, we receive a webhook notification from Shopify and automatically
+      delete all associated session and store data from our systems within 48 hours.
+    </p>
+  </div>
+
+  <!-- Section 6 -->
+  <div class="policy-section" id="s6">
+    <h2><span>6</span> Security</h2>
+    <p>
+      We take reasonable technical and organisational measures to protect the data we hold, including:
+    </p>
+    <ul>
+      <li>HTTPS encryption for all data in transit</li>
+      <li>Shopify HMAC signature verification for all incoming webhooks</li>
+      <li>Access tokens stored securely in our database, not in client-side code</li>
+      <li>Push notification encryption keys handled per the Web Push Protocol specification</li>
+      <li>Access to production data limited to authorised personnel only</li>
+    </ul>
+    <p>
+      While we strive to protect your information, no method of transmission over the internet or
+      electronic storage is 100% secure. We cannot guarantee absolute security.
+    </p>
+  </div>
+
+  <!-- Section 7 -->
+  <div class="policy-section" id="s7">
+    <h2><span>7</span> Your Rights &amp; Choices</h2>
+    <p>Depending on your location, you may have the following rights regarding your personal data:</p>
+    <ul>
+      <li><strong>Access</strong> — Request a copy of the personal data we hold about you</li>
+      <li><strong>Correction</strong> — Request that we correct inaccurate data</li>
+      <li><strong>Deletion</strong> — Request that we delete your personal data</li>
+      <li><strong>Portability</strong> — Request a portable copy of your data</li>
+      <li><strong>Objection</strong> — Object to processing of your data in certain circumstances</li>
+      <li><strong>Opt-out of push notifications</strong> — End customers can unsubscribe from push notifications at any time through their browser settings</li>
+    </ul>
+    <p>
+      To exercise any of these rights, contact us at
+      <a href="mailto:apps.kaswebtech@gmail.com">apps.kaswebtech@gmail.com</a>.
+      We will respond within 30 days.
+    </p>
+    <p>
+      <strong>Merchants:</strong> You can delete all your data and disconnect CartPulse by uninstalling
+      the app from your Shopify admin. This triggers automatic deletion of all associated data.
+    </p>
+  </div>
+
+  <!-- Section 8 -->
+  <div class="policy-section" id="s8">
+    <h2><span>8</span> Shopify Merchants</h2>
+    <p>
+      By installing CartPulse, you grant us the Shopify API scopes listed in our app listing
+      (<code>read_orders</code>, <code>read_checkouts</code>, <code>write_script_tags</code>).
+      We access your store's data only to the extent necessary to provide the cart recovery service.
+    </p>
+    <p>
+      You are responsible for ensuring that your use of CartPulse complies with applicable privacy
+      laws in your jurisdiction and with Shopify's Partner Programme Agreement.
+      If your store has customers in the EU or UK, you must ensure your store's privacy policy
+      discloses that you use a third-party cart recovery service (CartPulse) that may process
+      customer checkout data.
+    </p>
+  </div>
+
+  <!-- Section 9 -->
+  <div class="policy-section" id="s9">
+    <h2><span>9</span> End Customers of Merchants</h2>
+    <p>
+      If you are a shopper at a Shopify store that uses CartPulse and you have received a
+      cart recovery notification, your data was processed because you began a checkout
+      on that merchant's store.
+    </p>
+    <p>
+      <strong>To opt out of push notifications:</strong> You can disable push notifications for
+      any website through your browser settings (Settings → Notifications → Site Permissions).
+    </p>
+    <p>
+      <strong>To opt out of email reminders:</strong> Contact the merchant whose store you were
+      shopping at, or reply to the recovery email requesting removal.
+    </p>
+    <p>
+      <strong>To request deletion of your data:</strong> Contact us at
+      <a href="mailto:apps.kaswebtech@gmail.com">apps.kaswebtech@gmail.com</a> with the store domain
+      and your email address. We will delete your cart records within 30 days.
+    </p>
+  </div>
+
+  <!-- Section 10 -->
+  <div class="policy-section" id="s10">
+    <h2><span>10</span> Children's Privacy</h2>
+    <p>
+      CartPulse is intended for use by Shopify merchants operating legitimate e-commerce businesses.
+      We do not knowingly collect personal information from children under the age of 13.
+      If you believe a child has provided us with personal information, please contact us and
+      we will delete it promptly.
+    </p>
+  </div>
+
+  <!-- Section 11 -->
+  <div class="policy-section" id="s11">
+    <h2><span>11</span> Changes to This Policy</h2>
+    <p>
+      We may update this Privacy Policy from time to time to reflect changes in our practices
+      or for legal, operational, or regulatory reasons. When we make material changes, we will
+      update the "Last updated" date at the top of this page.
+    </p>
+    <p>
+      Continued use of CartPulse after the effective date of a revised policy constitutes
+      acceptance of the updated terms. If you disagree with the changes, you may uninstall
+      the app from your Shopify admin.
+    </p>
+  </div>
+
+  <!-- Section 12 -->
+  <div class="policy-section" id="s12">
+    <h2><span>12</span> Contact Us</h2>
+    <p>
+      If you have questions, concerns, or requests regarding this Privacy Policy or your
+      personal data, please contact us:
+    </p>
+    <ul>
+      <li><strong>Email:</strong> <a href="mailto:apps.kaswebtech@gmail.com">apps.kaswebtech@gmail.com</a></li>
+      <li><strong>App:</strong> CartPulse (Shopify App)</li>
+      <li><strong>Response time:</strong> We aim to respond within 30 days</li>
+    </ul>
+  </div>
+
+  <!-- Contact CTA -->
+  <div class="contact-card">
+    <h3>Have a Privacy Question?</h3>
+    <p>For any questions, concerns, or requests regarding your privacy or personal data, you can reach us at apps.kaswebtech@gmail.com — we aim to respond within 30 days.</p>
+  </div>
+
+</div>
+
+<!-- ══ Footer ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo-icon">🛒</div>
+      <span class="footer-logo-text">CartPulse</span>
+    </div>
+    <div class="footer-links-row">
+      <a href="https://cartpulse.kaswebtechsolutions.com/home/">Home</a>
+      <a href="/privacy-policy/">Privacy Policy</a>
+      <a href="mailto:apps.kaswebtech@gmail.com">Contact</a>
+    </div>
+    <span class="footer-copy">
+      © <script>document.write(new Date().getFullYear())</script> CartPulse. All rights reserved.
+    </span>
+  </div>
+</footer>
+
+</body>
+</html>
+

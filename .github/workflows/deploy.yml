@@ -1,0 +1,74 @@
+name: 🚀 Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type DEPLOY to confirm manual deployment'
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    name: Deploy to cPanel Server
+    runs-on: ubuntu-latest
+
+    if: >
+      github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.confirm == 'DEPLOY')
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📁 Upload files to server
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --delete
+            --exclude='node_modules/'
+            --exclude='.env'
+            --exclude='build/'
+            --exclude='.git/'
+            --exclude='.shopify/'
+            --exclude='.react-router/'
+          path: ./
+          remote_path: /home/cartpulse.kaswebtechsolutions.com/public_html/
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_port: ${{ secrets.SSH_PORT }}
+
+      - name: ⚙️ Build & Restart on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            cd /home/cartpulse.kaswebtechsolutions.com/public_html
+
+            echo "📦 Installing dependencies..."
+            npm install
+
+            echo "⚙️ Generating Prisma client..."
+            npx prisma generate
+
+            echo "🗄️ Running database migrations..."
+            npx prisma migrate deploy
+
+            echo "🔨 Building app..."
+            npm run build
+
+            echo "🔄 Restarting server..."
+            pm2 restart cartpulse 2>/dev/null \
+              || pm2 restart all 2>/dev/null \
+              || touch tmp/restart.txt \
+              || echo "⚠️ Restart manually if needed"
+
+            echo "✅ Deployment complete!"

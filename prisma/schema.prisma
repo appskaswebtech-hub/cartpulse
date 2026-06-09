@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id                  String    @id
+  shop                String
+  state               String
+  isOnline            Boolean   @default(false)
+  scope               String?
+  expires             DateTime?
+  accessToken         String
+  userId              BigInt?
+  firstName           String?
+  lastName            String?
+  email               String?
+  accountOwner        Boolean   @default(false)
+  locale              String?
+  collaborator        Boolean?  @default(false)
+  emailVerified       Boolean?  @default(false)
+  refreshToken        String?
+  refreshTokenExpires DateTime?
+}
+
+model AbandonedCart {
+  id            String             @id @default(cuid())
+  shop          String
+  cartToken     String             @unique
+  customerEmail String?
+  customerPhone String?
+  customerName  String?
+  cartData      String             @db.LongText
+  totalPrice    String
+  currency      String             @default("INR")
+  recoveredAt   DateTime?
+  isRecovered   Boolean            @default(false)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  notifications CartNotification[]
+}
+
+model CartNotification {
+  id        String        @id @default(cuid())
+  cartId    String
+  type      String
+  channel   String
+  status    String        @default("pending")
+  sentAt    DateTime?
+  createdAt DateTime      @default(now())
+
+  cart      AbandonedCart @relation(fields: [cartId], references: [id])
+}
+
+model MerchantSettings {
+  id               String   @id @default(cuid())
+  shop             String   @unique
+  discountPercent  Int      @default(10)
+  discountExpiry   Int      @default(24)
+  pushEnabled      Boolean  @default(true)
+  whatsappEnabled  Boolean  @default(false)
+  emailEnabled     Boolean  @default(true)
+  whatsappApiKey   String?
+  emailFromName    String?
+  emailFromAddress String?
+  emailAppPassword String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  shop      String
+  endpoint  String   @unique @db.VarChar(500)
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+}
+
+model JobQueue {
+  id          String   @id @default(cuid())
+  jobName     String
+  payload     String   @db.LongText
+  scheduledAt DateTime
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+}
+
+model EmailUnsubscribe {
+  id        String   @id @default(cuid())
+  shop      String
+  email     String
+  createdAt DateTime @default(now())
+
+  @@unique([shop, email])
+}
+
+model ShopPlan {
+  id               Int       @id @default(autoincrement())
+  shop             String    @unique
+  plan             String    @default("free")
+  subscriptionId   String?
+  status           String    @default("active")
+  trialEndsAt      DateTime?
+  billingStartedAt DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([shop])
+}

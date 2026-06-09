@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CartPulse — Abandoned Cart Recovery for Shopify</title>
+  <meta name="description" content="CartPulse automatically detects abandoned carts and sends smart multi-channel reminders — turning lost shoppers into completed sales." />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #1a1a1a;
+      background: #fff;
+      line-height: 1.5;
+    }
+    a { text-decoration: none; }
+    img { max-width: 100%; }
+
+    /* ── Navbar ── */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 68px;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .nav-logo-text {
+      font-weight: 800;
+      font-size: 20px;
+      color: #085041;
+      letter-spacing: -0.5px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+    .nav-links a {
+      color: #6b7280;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #085041; }
+    .btn-install {
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      color: #fff !important;
+      padding: 9px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .btn-install:hover { opacity: 0.9; }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #063d31 0%, #085041 40%, #1D9E75 100%);
+      padding: 80px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 64px;
+      flex-wrap: wrap;
+    }
+    .hero-text { max-width: 500px; }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      color: #fff;
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: #6ee7b7; }
+    .hero p {
+      color: rgba(255,255,255,0.82);
+      font-size: 18px;
+      line-height: 1.65;
+      margin-bottom: 36px;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: #fff;
+      color: #085041;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      transition: transform 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-secondary {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    /* ── Dashboard Mockup ── */
+    .mockup {
+      background: #fff;
+      border-radius: 20px;
+      padding: 24px;
+      width: 380px;
+      max-width: 100%;
+      box-shadow: 0 32px 64px rgba(0,0,0,0.3);
+      flex-shrink: 0;
+    }
+    .mockup-chrome {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+    .mockup-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .mockup-title { font-size: 12px; color: #9ca3af; font-weight: 500; margin-left: 8px; }
+    .mockup-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .mockup-stat {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+    .mockup-stat-val { font-size: 20px; font-weight: 800; line-height: 1; }
+    .mockup-stat-label { font-size: 10px; color: #9ca3af; margin-top: 4px; font-weight: 500; }
+    .mockup-section-title { font-size: 10px; color: #9ca3af; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+      height: 52px;
+      margin-bottom: 18px;
+    }
+    .chart-bar { flex: 1; border-radius: 4px 4px 0 0; }
+    .cart-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 12px;
+    }
+    .cart-row:last-child { border-bottom: none; }
+    .cart-email { color: #374151; font-weight: 500; }
+    .cart-amount { color: #6b7280; }
+    .badge {
+      padding: 3px 9px;
+      border-radius: 100px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .badge-recovered { background: #dcfce7; color: #166534; }
+    .badge-pending   { background: #fef3c7; color: #92400e; }
+
+    /* ── Stats Bar ── */
+    .stats-bar {
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: center;
+      gap: 64px;
+      padding: 36px 48px;
+      flex-wrap: wrap;
+    }
+    .stat-item { text-align: center; }
+    .stat-val { font-size: 36px; font-weight: 900; color: #085041; letter-spacing: -1px; }
+    .stat-label { font-size: 14px; color: #6b7280; margin-top: 4px; max-width: 200px; }
+
+    /* ── Sections ── */
+    .section { padding: 96px 48px; }
+    .section-inner { max-width: 1140px; margin: 0 auto; }
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-header h2 {
+      font-size: 40px;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -1px;
+      margin-bottom: 14px;
+    }
+    .section-header p { font-size: 18px; color: #6b7280; max-width: 580px; margin: 0 auto; line-height: 1.6; }
+    .section-gray { background: #f9fafb; }
+
+    /* ── Feature Cards ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .feature-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 32px;
+    }
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 18px;
+    }
+    .feature-card h3 { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 10px; }
+    .feature-card p { font-size: 15px; color: #6b7280; line-height: 1.65; }
+
+    /* ── Steps ── */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 40px;
+    }
+    .step { text-align: center; }
+    .step-num {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 16px;
+      margin: 0 auto 18px;
+      box-shadow: 0 8px 20px rgba(8,80,65,0.3);
+    }
+    .step h3 { font-size: 17px; font-weight: 700; color: #0f172a; margin-bottom: 10px; }
+    .step p { font-size: 14px; color: #6b7280; line-height: 1.65; }
+
+    /* ── Touchpoints ── */
+    .touchpoints-wrap {
+      display: flex;
+      align-items: center;
+      gap: 64px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .touchpoints-text { max-width: 460px; }
+    .touchpoints-text h2 { font-size: 40px; font-weight: 900; color: #0f172a; letter-spacing: -1px; margin-bottom: 16px; }
+    .touchpoints-text > p { font-size: 17px; color: #6b7280; line-height: 1.7; margin-bottom: 28px; }
+    .touchpoint-list { display: flex; flex-direction: column; gap: 16px; }
+    .touchpoint {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 18px;
+      background: #f9fafb;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+    }
+    .touchpoint-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+    .touchpoint-time { font-size: 12px; color: #9ca3af; font-weight: 600; margin-bottom: 4px; }
+    .touchpoint-channel { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+    .touchpoint-desc { font-size: 14px; color: #6b7280; line-height: 1.5; }
+
+    /* ── Notification Mockups ── */
+    .notif-cards { display: flex; flex-direction: column; gap: 16px; width: 340px; max-width: 100%; }
+    .push-notif {
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 18px 20px;
+      color: #fff;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    .push-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .push-app-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .push-app-name { font-size: 12px; font-weight: 700; color: #e2e8f0; }
+    .push-time { font-size: 11px; color: #94a3b8; }
+    .push-notif h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .push-notif p { font-size: 13px; color: #94a3b8; }
+    .email-mockup {
+      background: #fff;
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      border: 1px solid #e5e7eb;
+    }
+    .email-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #f3f4f6; }
+    .email-header span { font-size: 20px; }
+    .email-from { font-size: 12px; color: #9ca3af; }
+    .email-subject { font-size: 13px; font-weight: 600; color: #374151; }
+    .email-body { font-size: 13px; color: #6b7280; line-height: 1.6; margin-bottom: 14px; }
+    .email-btn {
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* ── CTA Banner ── */
+    .cta-banner {
+      background: linear-gradient(135deg, #063d31 0%, #085041 40%, #1D9E75 100%);
+      padding: 80px 48px;
+      text-align: center;
+    }
+    .cta-banner h2 { color: #fff; font-size: 42px; font-weight: 900; letter-spacing: -1px; margin-bottom: 14px; }
+    .cta-banner p { color: rgba(255,255,255,0.82); font-size: 18px; margin-bottom: 36px; line-height: 1.6; }
+    .btn-cta {
+      display: inline-block;
+      background: #fff;
+      color: #085041;
+      padding: 18px 40px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 18px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+    .btn-cta:hover { transform: translateY(-2px); }
+    .cta-note { color: rgba(255,255,255,0.6); font-size: 13px; margin-top: 16px; }
+
+    /* ── Footer ── */
+    .footer {
+      background: #0f1923;
+      color: #9ca3af;
+      padding: 48px;
+    }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 32px;
+      margin-bottom: 40px;
+    }
+    .footer-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .footer-logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    }
+    .footer-logo-text { font-weight: 800; color: #fff; font-size: 18px; }
+    .footer-tagline { font-size: 14px; line-height: 1.6; max-width: 260px; }
+    .footer-links { display: flex; gap: 48px; flex-wrap: wrap; }
+    .footer-col-title { color: #fff; font-weight: 600; font-size: 13px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .footer-col a { display: block; color: #9ca3af; font-size: 14px; margin-bottom: 8px; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid #1f2937;
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .nav { padding: 0 20px; }
+      .nav-links .nav-link-hide { display: none; }
+      .hero { padding: 60px 20px; gap: 40px; }
+      .hero h1 { font-size: 36px; }
+      .stats-bar { padding: 28px 20px; gap: 32px; }
+      .section { padding: 64px 20px; }
+      .cta-banner { padding: 60px 20px; }
+      .cta-banner h2 { font-size: 30px; }
+      .footer { padding: 40px 20px; }
+      .touchpoints-text h2 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ Navbar ══ -->
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-icon">🛒</div>
+    <span class="nav-logo-text">CartPulse</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features" class="nav-link-hide">Features</a>
+    <a href="#how-it-works" class="nav-link-hide">How It Works</a>
+    <a href="/privacy-policy.html">Privacy Policy</a>
+    <a href="https://cartpulse.kaswebtechsolutions.com/auth/login" class="btn-install">Add to Shopify →</a>
+  </div>
+</nav>
+
+<!-- ══ Hero ══ -->
+<section class="hero">
+  <div class="hero-text">
+    <span class="hero-badge">🚀 Shopify Abandoned Cart Recovery</span>
+    <h1>Recover Lost Revenue.<br><span>Automatically.</span></h1>
+    <p>
+      CartPulse detects abandoned carts the instant they happen and sends smart,
+      multi-channel reminders — turning lost shoppers into completed sales.
+    </p>
+    <div class="hero-ctas">
+      <a href="https://cartpulse.kaswebtechsolutions.com/auth/login" class="btn-primary">Add to Shopify — Free</a>
+      <a href="#how-it-works" class="btn-secondary">See How It Works</a>
+    </div>
+  </div>
+
+  <!-- Dashboard Mockup -->
+  <div class="mockup">
+    <div class="mockup-chrome">
+      <div class="mockup-dot" style="background:#ff5f57"></div>
+      <div class="mockup-dot" style="background:#febc2e"></div>
+      <div class="mockup-dot" style="background:#28c840"></div>
+      <span class="mockup-title">CartPulse Dashboard</span>
+    </div>
+
+    <div class="mockup-stats">
+      <div class="mockup-stat">
+        <div class="mockup-stat-val" style="color:#ef4444">142</div>
+        <div class="mockup-stat-label">Abandoned</div>
+      </div>
+      <div class="mockup-stat">
+        <div class="mockup-stat-val" style="color:#1D9E75">68%</div>
+        <div class="mockup-stat-label">Recovery</div>
+      </div>
+      <div class="mockup-stat">
+        <div class="mockup-stat-val" style="color:#534AB7">427</div>
+        <div class="mockup-stat-label">Sent</div>
+      </div>
+    </div>
+
+    <div class="mockup-section-title">7-DAY ACTIVITY</div>
+    <div class="chart">
+      <div class="chart-bar" style="height:35%;background:#e5e7eb"></div>
+      <div class="chart-bar" style="height:60%;background:#e5e7eb"></div>
+      <div class="chart-bar" style="height:42%;background:#e5e7eb"></div>
+      <div class="chart-bar" style="height:78%;background:#e5e7eb"></div>
+      <div class="chart-bar" style="height:50%;background:#e5e7eb"></div>
+      <div class="chart-bar" style="height:90%;background:linear-gradient(to top,#085041,#1D9E75)"></div>
+      <div class="chart-bar" style="height:65%;background:#e5e7eb"></div>
+    </div>
+
+    <div class="mockup-section-title">RECENT CARTS</div>
+    <div class="cart-row">
+      <span class="cart-email">john@gmail.com</span>
+      <span class="cart-amount">$89.99</span>
+      <span class="badge badge-recovered">✓ Recovered</span>
+    </div>
+    <div class="cart-row">
+      <span class="cart-email">sarah@email.com</span>
+      <span class="cart-amount">$145.00</span>
+      <span class="badge badge-pending">⏱ Pending</span>
+    </div>
+    <div class="cart-row">
+      <span class="cart-email">mike@shop.com</span>
+      <span class="cart-amount">$67.50</span>
+      <span class="badge badge-recovered">✓ Recovered</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Stats Bar ══ -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-val">70%</div>
+    <div class="stat-label">Average cart abandonment rate industry-wide</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-val">15%</div>
+    <div class="stat-label">Revenue recovered with timely reminders</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-val">3×</div>
+    <div class="stat-label">More sales vs stores with no recovery system</div>
+  </div>
+</div>
+
+<!-- ══ Features ══ -->
+<section class="section" id="features">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>Everything You Need to Recover Sales</h2>
+      <p>CartPulse gives your Shopify store a powerful abandoned cart recovery system with zero coding required.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card" style="background:#f0fdf4">
+        <div class="feature-icon" style="background:#1D9E75">🎯</div>
+        <h3>Instant Cart Detection</h3>
+        <p>Powered by Shopify webhooks, CartPulse detects abandonment the moment it happens — no polling, no delays, no missed carts.</p>
+      </div>
+      <div class="feature-card" style="background:#f5f3ff">
+        <div class="feature-icon" style="background:#534AB7">📨</div>
+        <h3>Multi-Channel Notifications</h3>
+        <p>Reach customers where they are — browser push notifications and personalized email reminders, all automated.</p>
+      </div>
+      <div class="feature-card" style="background:#fffbeb">
+        <div class="feature-icon" style="background:#d97706">⏱</div>
+        <h3>Smart Timing Sequences</h3>
+        <p>Automated 3-step reminder sequence at 1 hour, 24 hours, and 1 week — maximizing recovery without over-messaging customers.</p>
+      </div>
+      <div class="feature-card" style="background:#f0fdf4">
+        <div class="feature-icon" style="background:#1D9E75">📊</div>
+        <h3>Real-Time Analytics</h3>
+        <p>Track recovery rates, revenue recovered, and notification performance on a live dashboard. Know exactly what's working.</p>
+      </div>
+      <div class="feature-card" style="background:#f5f3ff">
+        <div class="feature-icon" style="background:#534AB7">🛍</div>
+        <h3>One-Click Shopify Install</h3>
+        <p>Built specifically for Shopify. Install in seconds with no coding or configuration — it starts working immediately.</p>
+      </div>
+      <div class="feature-card" style="background:#fffbeb">
+        <div class="feature-icon" style="background:#d97706">🔒</div>
+        <h3>Privacy First</h3>
+        <p>Customer data is handled securely, stored only as long as needed for cart recovery, and fully compliant with privacy regulations.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ How It Works ══ -->
+<section class="section section-gray" id="how-it-works">
+  <div class="section-inner">
+    <div class="section-header">
+      <h2>How CartPulse Works</h2>
+      <p>Set up in minutes. Recover revenue automatically.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Install CartPulse</h3>
+        <p>Add CartPulse to your Shopify store in one click. No coding, no complex configuration — it activates immediately.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Carts Are Detected</h3>
+        <p>When a shopper adds items but doesn't complete checkout, CartPulse captures the cart details in real time.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Reminders Are Sent</h3>
+        <p>Automated push and email reminders go out at 1 hour, 24 hours, and 1 week — each a gentle nudge to return.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>Revenue Recovered</h3>
+        <p>Shoppers return and complete their purchase. CartPulse tracks it and shows the revenue you've recovered.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Notification Preview ══ -->
+<section class="section">
+  <div class="section-inner">
+    <div class="touchpoints-wrap">
+      <div class="touchpoints-text">
+        <h2>3 Touchpoints.<br>Maximum Recovery.</h2>
+        <p>
+          Our automated sequence reaches customers at exactly the right moments —
+          striking the balance between persistent and respectful.
+        </p>
+        <div class="touchpoint-list">
+          <div class="touchpoint">
+            <div class="touchpoint-dot" style="background:#1D9E75"></div>
+            <div>
+              <div class="touchpoint-time">1 Hour Later</div>
+              <div class="touchpoint-channel">🔔 Push Notification</div>
+              <div class="touchpoint-desc">Instant browser push — catches shoppers while the intent is still fresh.</div>
+            </div>
+          </div>
+          <div class="touchpoint">
+            <div class="touchpoint-dot" style="background:#534AB7"></div>
+            <div>
+              <div class="touchpoint-time">24 Hours Later</div>
+              <div class="touchpoint-channel">📧 Email Reminder</div>
+              <div class="touchpoint-desc">A friendly email with their cart contents and a direct link to complete checkout.</div>
+            </div>
+          </div>
+          <div class="touchpoint">
+            <div class="touchpoint-dot" style="background:#d97706"></div>
+            <div>
+              <div class="touchpoint-time">1 Week Later</div>
+              <div class="touchpoint-channel">📧 Final Email</div>
+              <div class="touchpoint-desc">One last nudge — often effective for high-value carts or indecisive shoppers.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notif-cards">
+        <!-- Push notification mockup -->
+        <div class="push-notif">
+          <div class="push-header">
+            <div class="push-app-icon">🛒</div>
+            <div>
+              <div class="push-app-name">CartPulse</div>
+              <div class="push-time">1 hour ago</div>
+            </div>
+          </div>
+          <h4>You left something behind! 🛍</h4>
+          <p>Your cart ($89.99) is waiting. Complete your purchase before it's gone.</p>
+        </div>
+
+        <!-- Email mockup -->
+        <div class="email-mockup">
+          <div class="email-header">
+            <span>📧</span>
+            <div>
+              <div class="email-from">From: CartPulse Recovery</div>
+              <div class="email-subject">Did you forget something?</div>
+            </div>
+          </div>
+          <div class="email-body">
+            Hi there! You left <strong>2 items</strong> in your cart worth <strong>$89.99</strong>.
+            Your items are still reserved — complete your order today.
+          </div>
+          <div class="email-btn">Complete My Order →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA Banner ══ -->
+<section class="cta-banner">
+  <h2>Start Recovering Lost Sales Today</h2>
+  <p>Join Shopify merchants already using CartPulse to recover abandoned carts automatically.</p>
+  <a href="https://cartpulse.kaswebtechsolutions.com/auth/login" class="btn-cta">Add CartPulse to Your Store →</a>
+  <p class="cta-note">Free to install. Works with all Shopify plans.</p>
+</section>
+
+<!-- ══ Footer ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">
+          <div class="footer-logo-icon">🛒</div>
+          <span class="footer-logo-text">CartPulse</span>
+        </div>
+        <p class="footer-tagline">Abandoned cart recovery for Shopify merchants. Recover lost revenue automatically.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <div class="footer-col-title">Product</div>
+          <a href="#features">Features</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="https://cartpulse.kaswebtechsolutions.com/auth/login">Install</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Legal</div>
+          <a href="/privacy-policy.html">Privacy Policy</a>
+          <a href="mailto:apps.kaswebtech@gmail.com">Contact Us</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <script>document.write(new Date().getFullYear())</script> CartPulse. All rights reserved.</span>
+      <span>Built for Shopify merchants worldwide.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
+
