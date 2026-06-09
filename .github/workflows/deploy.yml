@@ -66,9 +66,7 @@ jobs:
             npm run build
 
             echo "🔄 Restarting server..."
-            pm2 restart cartpulse 2>/dev/null \
-              || pm2 restart all 2>/dev/null \
-              || touch tmp/restart.txt \
+            pm2 restart cartpulse \
               || echo "⚠️ Restart manually if needed"
 
             echo "✅ Deployment complete!"
