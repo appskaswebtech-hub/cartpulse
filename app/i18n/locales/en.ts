@@ -12,6 +12,7 @@ export const en: Dictionary = {
     },
   },
   nav: {
+    dashboard: "Dashboard",
     abandonedCarts: "Abandoned Carts",
     reports: "Reports",
     emailOutreach: "Email Outreach",

@@ -12,6 +12,7 @@ export const nl: Dictionary = {
     },
   },
   nav: {
+    dashboard: "Dashboard",
     abandonedCarts: "Verlaten winkelwagens",
     reports: "Rapporten",
     emailOutreach: "E-mailcampagne",

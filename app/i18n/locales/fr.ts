@@ -12,6 +12,7 @@ export const fr: Dictionary = {
     },
   },
   nav: {
+    dashboard: "Tableau de bord",
     abandonedCarts: "Paniers abandonnés",
     reports: "Rapports",
     emailOutreach: "Campagne e-mail",

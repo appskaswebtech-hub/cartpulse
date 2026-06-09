@@ -9,6 +9,7 @@ export interface Dictionary {
     languageNames: Record<Locale, string>;
   };
   nav: {
+    dashboard: string;
     abandonedCarts: string;
     reports: string;
     emailOutreach: string;

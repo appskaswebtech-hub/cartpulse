@@ -51,6 +51,7 @@
     return (
       <>
         <s-app-nav>
+          <s-link href="/app">{t.nav.dashboard}</s-link>
           <s-link href="/app/carts">{t.nav.abandonedCarts}</s-link>
           <s-link href="/app/outreach">{t.nav.emailOutreach}</s-link>
           <s-link href="/app/email-settings">{t.nav.emailSettings}</s-link>
