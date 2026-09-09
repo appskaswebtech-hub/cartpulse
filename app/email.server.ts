@@ -81,3 +81,100 @@ export async function sendCartEmail({
 
   console.log(`✅ Email sent to ${to}`);
 }
+
+export async function sendCartActivityEmail({
+  to,
+  subject,
+  html,
+  unsubscribeUrl,
+  fromName,
+  fromAddress,
+  appPassword,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+  unsubscribeUrl: string;
+  fromName?: string | null;
+  fromAddress?: string | null;
+  appPassword?: string | null;
+}) {
+  const masthead = (fromName || "").trim();
+
+  const fullHtml = `
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="color-scheme" content="light"/>
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
+</head>
+<body style="margin:0;padding:0;background-color:#eeece7;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your selection is being held for you.</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#eeece7;">
+    <tr>
+      <td align="center" style="padding:56px 16px;">
+        <table role="presentation" width="580" cellpadding="0" cellspacing="0" border="0" style="max-width:580px;width:100%;">
+
+          ${masthead ? `
+          <tr>
+            <td align="center" style="padding:0 0 28px;">
+              <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:13px;letter-spacing:4px;color:#3a3a35;text-transform:uppercase;">${masthead}</p>
+            </td>
+          </tr>` : ""}
+
+          <tr>
+            <td style="border-top:1px solid #d8d5cd;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;">
+                <tr>
+                  <td align="center" style="padding:44px 48px 0;">
+                    <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:10px;letter-spacing:3px;color:#a3a19a;text-transform:uppercase;">A gentle reminder</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding:14px 48px 8px;">
+                    <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:22px;color:#2a2a26;">Your selection is still here</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:20px 48px 4px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.8;color:#5a5a53;">
+                    ${html}
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:36px 48px 40px;border-top:1px solid #f0efeb;font-family:Arial,Helvetica,sans-serif;" align="center">
+                    <p style="margin:0;font-size:11px;color:#b3b1a9;line-height:1.8;letter-spacing:0.2px;">
+                      You're receiving this because items remain in your cart.<br/>
+                      <a href="${unsubscribeUrl}" style="color:#9a988f;text-decoration:underline;">Unsubscribe</a> from future emails.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  const user = fromAddress || process.env.GMAIL_USER!;
+  const pass = appPassword || process.env.GMAIL_APP_PASSWORD!;
+  const senderName = fromName || "CartPulse";
+
+  const transporter = makeTransporter(user, pass);
+
+  await transporter.sendMail({
+    from: `"${senderName}" <${user}>`,
+    to,
+    subject,
+    html: fullHtml,
+  });
+
+  console.log(`✅ Cart activity email sent to ${to}`);
+}

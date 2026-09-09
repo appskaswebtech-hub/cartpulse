@@ -15,9 +15,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     include: { notifications: true },
   });
 
-  const total = carts.length;
   const recovered = carts.filter((c) => c.isRecovered).length;
-  const recoveryRate = total > 0 ? Math.round((recovered / total) * 100) : 0;
+  const total = carts.length - recovered;
+  const recoveryRate = carts.length > 0 ? Math.round((recovered / carts.length) * 100) : 0;
   const totalNotifications = carts.reduce(
     (sum, c) => sum + c.notifications.length, 0
   );
@@ -161,7 +161,7 @@ export default function Index() {
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <p style={{ fontSize: "12px", color: "#6b7280", margin: 0 }}>{stats.recovered} recovered</p>
-              <p style={{ fontSize: "12px", color: "#6b7280", margin: 0 }}>{stats.total - stats.recovered} still abandoned</p>
+              <p style={{ fontSize: "12px", color: "#6b7280", margin: 0 }}>{stats.total} still abandoned</p>
             </div>
           </div>
           <div style={{ background: "#EEEDFE", borderRadius: "12px", padding: "20px", minWidth: "220px" }}>

@@ -100,6 +100,44 @@ model EmailUnsubscribe {
   @@unique([shop, email])
 }
 
+model CartActivity {
+  id               String    @id @default(cuid())
+  shop             String
+  cartToken        String
+  variantId        String
+  productId        String?
+  title            String
+  quantity         Int       @default(1)
+  price            String    @default("0")
+  imageUrl         String?   @db.Text
+  customerEmail    String?
+  customerName     String?
+  currency         String    @default("INR")
+  addedAt          DateTime  @default(now())
+  status           String    @default("pending") // pending | awaiting_manual | scheduled | reminded | converted
+  remindedAt       DateTime?
+  sentVia          String? // "auto" | "manual"
+  scheduledSendAt  DateTime?
+  scheduledSubject String?
+  scheduledBody    String?   @db.LongText
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@unique([shop, cartToken, variantId])
+}
+
+model CartActivitySettings {
+  id               String   @id @default(cuid())
+  shop             String   @unique
+  sendMode         String   @default("manual") // "auto" | "manual"
+  delayMinutes     Int      @default(60)
+  subject          String   @default("Still thinking it over?")
+  body             String   @db.LongText
+  trackerInstalled Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
 model ShopPlan {
   id               Int       @id @default(autoincrement())
   shop             String    @unique

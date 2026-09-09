@@ -16,9 +16,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         include: { notifications: true },
     });
 
-    const total = carts.length;
     const recovered = carts.filter((c) => c.isRecovered).length;
-    const recoveryRate = total > 0 ? Math.round((recovered / total) * 100) : 0;
+    const total = carts.length - recovered;
+    const recoveryRate = carts.length > 0 ? Math.round((recovered / carts.length) * 100) : 0;
     const revenue = carts
         .filter((c) => c.isRecovered)
         .reduce((sum, c) => sum + parseFloat(c.totalPrice), 0)

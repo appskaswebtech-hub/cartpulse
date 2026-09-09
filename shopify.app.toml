@@ -29,6 +29,22 @@ api_version = "2026-04"
   topics = [ "orders/create" ]
   uri = "/webhooks/orders/create"
 
+  [[webhooks.subscriptions]]
+  topics = [ "carts/update" ]
+  uri = "/webhooks/cart-activity/added"
+
+  [[webhooks.subscriptions]]
+  topics = [ "checkouts/create" ]
+  uri = "/webhooks/cart-activity/checkout-sync"
+
+  [[webhooks.subscriptions]]
+  topics = [ "checkouts/update" ]
+  uri = "/webhooks/cart-activity/checkout-sync"
+
+  [[webhooks.subscriptions]]
+  topics = [ "orders/create" ]
+  uri = "/webhooks/cart-activity/order-sync"
+
 [access_scopes]
 scopes = "read_orders,write_products,read_checkouts,write_script_tags"
 

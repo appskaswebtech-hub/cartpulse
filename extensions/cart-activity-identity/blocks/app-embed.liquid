@@ -1,0 +1,15 @@
+{% if customer %}
+<script>
+  window.__cartPulseCustomer = {
+    email: {{ customer.email | json }},
+    name: {{ customer.name | json }}
+  };
+</script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "CartPulse Identity",
+  "target": "head"
+}
+{% endschema %}
