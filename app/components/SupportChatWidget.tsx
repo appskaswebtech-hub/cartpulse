@@ -275,9 +275,15 @@ export default function SupportChatWidget() {
                       {isBot && <span style={{ fontSize: 11, opacity: 0.7, display: "block", marginBottom: 2 }}>Bot</span>}
                       {m.body && <span>{m.body}</span>}
                       {m.attachmentUrl && (
-                        <a href={m.attachmentUrl} target="_blank" rel="noreferrer" className="cpsc-attach">
-                          📎 {m.attachmentName ?? "Attachment"}
-                        </a>
+                        m.attachmentType?.startsWith("image/") ? (
+                          <a href={m.attachmentUrl} target="_blank" rel="noreferrer">
+                            <img src={m.attachmentUrl} alt={m.attachmentName ?? "Image"} style={{ maxWidth: "100%", borderRadius: 8, marginTop: m.body ? 6 : 0, display: "block" }} />
+                          </a>
+                        ) : (
+                          <a href={m.attachmentUrl} target="_blank" rel="noreferrer" className="cpsc-attach">
+                            📎 {m.attachmentName ?? "Attachment"}
+                          </a>
+                        )
                       )}
                     </div>
                     <div className="cpsc-time">{formatTime(m.createdAt)}</div>

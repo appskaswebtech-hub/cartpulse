@@ -68,8 +68,9 @@ async function saveAttachment(file: File, threadId: string) {
   const safeName = crypto.randomUUID() + ext;
   const buffer = Buffer.from(await file.arrayBuffer());
   await fs.writeFile(path.join(dir, safeName), buffer);
+  const baseUrl = (process.env.SHOPIFY_APP_URL || "").replace(/\/$/, "");
   return {
-    url: `/uploads/support/${threadId}/${safeName}`,
+    url: `${baseUrl}/uploads/support/${threadId}/${safeName}`,
     name: file.name,
     type: file.type || "application/octet-stream",
     size: file.size,

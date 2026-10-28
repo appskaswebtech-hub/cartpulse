@@ -54,6 +54,9 @@ export default defineConfig({
   ],
   build: {
     assetsInlineLimit: 0,
+    rollupOptions: {
+      external: ["@prisma/support-client"],
+    },
   },
   optimizeDeps: {
     include: ["@shopify/app-bridge-react"],
