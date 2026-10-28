@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Use CartPulse &mdash; Setup &amp; Instructions</title>
+  <meta name="description" content="Step-by-step instructions for setting up CartPulse on your Shopify store. No technical knowledge needed." />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #1a1a1a;
+      background: #fff;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; }
+    img { max-width: 100%; }
+
+    /* ── Navbar ── */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 68px;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; }
+    .nav-logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-logo-text { font-weight: 800; font-size: 20px; color: #085041; letter-spacing: -0.5px; }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { color: #6b7280; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: #085041; }
+    .nav-links a.active { color: #085041; font-weight: 700; }
+    .btn-install {
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      color: #fff !important;
+      padding: 9px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .btn-install:hover { opacity: 0.9; }
+
+    /* ── Page Header ── */
+    .page-header {
+      background: linear-gradient(135deg, #063d31 0%, #085041 40%, #1D9E75 100%);
+      padding: 72px 48px;
+      text-align: center;
+    }
+    .page-header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .page-header h1 {
+      color: #fff;
+      font-size: 46px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      margin-bottom: 14px;
+      line-height: 1.1;
+    }
+    .page-header h1 span { color: #6ee7b7; }
+    .page-header p { color: rgba(255,255,255,0.80); font-size: 18px; max-width: 580px; margin: 0 auto; line-height: 1.65; }
+
+    /* ── Content Wrap ── */
+    .content-wrap { max-width: 860px; margin: 0 auto; padding: 64px 48px 80px; }
+
+    /* ── Summary Box ── */
+    .summary-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 56px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .summary-box-icon {
+      width: 52px; height: 52px;
+      background: rgba(29,158,117,0.12);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .summary-box h3 { font-size: 17px; font-weight: 700; color: #064e3b; margin-bottom: 8px; }
+    .summary-box p { font-size: 15px; color: #166534; line-height: 1.7; margin-bottom: 0; }
+    .summary-box ul { padding-left: 20px; }
+    .summary-box li { font-size: 15px; color: #166534; line-height: 1.75; margin-bottom: 4px; }
+
+    /* ── Section Titles ── */
+    .section-label {
+      display: inline-block;
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: 30px;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -0.8px;
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+    .section-subtitle {
+      font-size: 16px;
+      color: #6b7280;
+      line-height: 1.65;
+      margin-bottom: 40px;
+      max-width: 600px;
+    }
+
+    /* ── Setup Steps ── */
+    .setup-steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 64px; }
+    .setup-step { display: flex; gap: 24px; position: relative; }
+    .setup-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 27px;
+      top: 56px;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #1D9E75, #e5e7eb);
+    }
+    .step-left { display: flex; flex-direction: column; align-items: center; padding-bottom: 32px; }
+    .step-num {
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 900; font-size: 18px;
+      flex-shrink: 0;
+      box-shadow: 0 8px 20px rgba(8,80,65,0.25);
+      position: relative; z-index: 1;
+    }
+    .step-content {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 28px 32px;
+      flex: 1;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s;
+    }
+    .step-content:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .step-tag {
+      display: inline-block;
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 3px 10px; border-radius: 100px; margin-bottom: 10px;
+    }
+    .tag-auto { background: #dcfce7; color: #166534; }
+    .tag-you  { background: #dbeafe; color: #1e40af; }
+    .tag-result { background: #fef3c7; color: #92400e; }
+    .step-content h3 { font-size: 19px; font-weight: 800; color: #0f172a; margin-bottom: 10px; }
+    .step-content p { font-size: 15px; color: #374151; line-height: 1.75; margin-bottom: 12px; }
+    .step-content p:last-child { margin-bottom: 0; }
+    .step-content ul { padding-left: 22px; margin-bottom: 12px; }
+    .step-content li { font-size: 15px; color: #374151; line-height: 1.75; margin-bottom: 5px; }
+    .step-content strong { color: #0f172a; font-weight: 600; }
+    .step-content .tip {
+      background: #f9fafb;
+      border-left: 3px solid #1D9E75;
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin-top: 14px;
+      font-size: 14px; color: #374151;
+    }
+    .step-content .tip strong { color: #085041; }
+
+    /* ── App Sections ── */
+    .app-sections { display: flex; flex-direction: column; gap: 24px; margin-bottom: 64px; }
+    .app-section-card { border: 1px solid #e5e7eb; border-radius: 18px; overflow: hidden; }
+    .app-section-header {
+      padding: 22px 28px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .app-section-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .app-section-header h3 { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 3px; }
+    .app-section-header p { font-size: 14px; color: #6b7280; margin: 0; }
+    .app-section-body { padding: 0 28px 28px; border-top: 1px solid #f3f4f6; }
+    .app-section-body p { font-size: 15px; color: #374151; line-height: 1.75; margin-top: 20px; margin-bottom: 12px; }
+    .app-section-body ul { padding-left: 22px; }
+    .app-section-body li { font-size: 15px; color: #374151; line-height: 1.75; margin-bottom: 6px; }
+    .app-section-body strong { color: #0f172a; font-weight: 600; }
+
+    /* ── Feature Rows ── */
+    .feature-row {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 0; border-bottom: 1px solid #f3f4f6;
+    }
+    .feature-row:last-child { border-bottom: none; }
+    .feature-row-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .feature-row-text h4 { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 3px; }
+    .feature-row-text p { font-size: 14px; color: #6b7280; margin: 0; line-height: 1.6; }
+
+    /* ── Notification Timeline ── */
+    .notif-section { margin-bottom: 64px; }
+    .notif-timeline { display: flex; flex-direction: column; gap: 16px; }
+    .notif-item { display: flex; gap: 20px; align-items: flex-start; }
+    .notif-time { min-width: 110px; text-align: right; padding-top: 14px; }
+    .notif-time-badge {
+      display: inline-block;
+      background: #f9fafb; border: 1px solid #e5e7eb;
+      border-radius: 8px; padding: 6px 12px;
+      font-size: 12px; font-weight: 700; color: #374151;
+    }
+    .notif-connector { display: flex; flex-direction: column; align-items: center; }
+    .notif-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-top: 16px; }
+    .notif-line { width: 2px; flex: 1; min-height: 24px; background: #e5e7eb; margin-top: 4px; }
+    .notif-card { flex: 1; border: 1px solid #e5e7eb; border-radius: 14px; padding: 18px 22px; margin-bottom: 4px; }
+    .notif-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .notif-card-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .notif-card h4 { font-size: 15px; font-weight: 700; color: #0f172a; margin: 0; }
+    .notif-card p { font-size: 14px; color: #6b7280; line-height: 1.6; margin: 0; }
+
+    /* ── FAQ ── */
+    .faq-section { margin-bottom: 64px; }
+    .faq-list { display: flex; flex-direction: column; gap: 12px; }
+    .faq-item { border: 1px solid #e5e7eb; border-radius: 14px; overflow: hidden; }
+    .faq-q {
+      padding: 18px 22px;
+      font-size: 15px; font-weight: 700; color: #0f172a;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .faq-q-icon {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 13px; font-weight: 900; flex-shrink: 0;
+    }
+    .faq-a { padding: 0 22px 18px 62px; font-size: 14px; color: #374151; line-height: 1.75; }
+    .faq-a strong { color: #0f172a; font-weight: 600; }
+
+    /* ── Tips Grid ── */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-bottom: 64px;
+    }
+    .tip-card { border: 1px solid #e5e7eb; border-radius: 16px; padding: 24px; background: #fff; }
+    .tip-card-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .tip-card h4 { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+    .tip-card p { font-size: 14px; color: #6b7280; line-height: 1.65; margin: 0; }
+
+    /* ── Contact Card ── */
+    .contact-card {
+      background: linear-gradient(135deg, #063d31 0%, #085041 100%);
+      border-radius: 20px; padding: 40px; text-align: center;
+    }
+    .contact-card h3 { color: #fff; font-size: 26px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 10px; }
+    .contact-card p { color: rgba(255,255,255,0.80); font-size: 16px; margin-bottom: 24px; line-height: 1.6; }
+    .contact-card a.btn-contact {
+      display: inline-block; background: #fff; color: #085041;
+      padding: 14px 32px; border-radius: 10px; font-weight: 800; font-size: 15px; margin: 0 8px 8px;
+    }
+    .contact-card a.btn-install-footer {
+      display: inline-block; background: rgba(255,255,255,0.15); color: #fff;
+      padding: 14px 32px; border-radius: 10px; font-weight: 700; font-size: 15px;
+      border: 1px solid rgba(255,255,255,0.3); margin: 0 8px 8px;
+    }
+
+    /* ── Footer ── */
+    .footer { background: #0f1923; color: #9ca3af; padding: 48px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .footer-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      flex-wrap: wrap; gap: 32px; margin-bottom: 40px;
+    }
+    .footer-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .footer-logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, #085041, #1D9E75);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .footer-logo-text { font-weight: 800; color: #fff; font-size: 18px; }
+    .footer-tagline { font-size: 14px; line-height: 1.6; max-width: 260px; }
+    .footer-links { display: flex; gap: 48px; flex-wrap: wrap; }
+    .footer-col-title { color: #fff; font-weight: 600; font-size: 13px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .footer-col a { display: block; color: #9ca3af; font-size: 14px; margin-bottom: 8px; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid #1f2937; padding-top: 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px; font-size: 13px;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .nav { padding: 0 20px; }
+      .nav-links .nav-link-hide { display: none; }
+      .page-header { padding: 52px 20px; }
+      .page-header h1 { font-size: 32px; }
+      .content-wrap { padding: 40px 20px 60px; }
+      .summary-box { flex-direction: column; }
+      .setup-step { gap: 16px; }
+      .step-content { padding: 20px; }
+      .notif-time { min-width: 80px; }
+      .notif-time-badge { font-size: 11px; padding: 5px 8px; }
+      .footer { padding: 40px 20px; }
+      .contact-card { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ Navbar ══ -->
+<nav class="nav">
+  <a href="https://cartpulse.kaswebtechsolutions.com/home/" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+    </div>
+    <span class="nav-logo-text">CartPulse</span>
+  </a>
+  <div class="nav-links">
+    <a href="https://cartpulse.kaswebtechsolutions.com/home/#features" class="nav-link-hide">Features</a>
+    <a href="https://cartpulse.kaswebtechsolutions.com/home/#how-it-works" class="nav-link-hide">How It Works</a>
+    <a href="/instructions/" class="active">Instructions</a>
+    <a href="https://cartpulse.kaswebtechsolutions.com/privacy-policy/" class="nav-link-hide">Privacy Policy</a>
+    <a href="https://apps.shopify.com/vault-wallet?search_id=85534f35-d887-46f5-b3cb-07a7d1bf943a&surface_detail=vaultwallet&surface_inter_position=1&surface_intra_position=1&surface_type=search" class="btn-install">Add to Shopify &rarr;</a>
+  </div>
+</nav>
+
+<!-- ══ Page Header ══ -->
+<div class="page-header">
+  <div class="page-header-badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    Setup Guide
+  </div>
+  <h1>How to Use <span>CartPulse</span></h1>
+  <p>Everything you need to start recovering lost revenue &mdash; explained simply, step by step. No technical knowledge required.</p>
+</div>
+
+<!-- ══ Content ══ -->
+<div class="content-wrap">
+
+  <!-- Summary -->
+  <div class="summary-box">
+    <div class="summary-box-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 1 7 7c0 2.4-1.2 4.5-3 5.7V17H8v-2.3A7 7 0 0 1 5 9a7 7 0 0 1 7-7z"/></svg>
+    </div>
+    <div>
+      <h3>What CartPulse does for you &mdash; in plain English</h3>
+      <p>When a shopper visits your Shopify store, adds products to their cart, and then leaves without buying &mdash; that&rsquo;s an <strong>abandoned cart</strong>. CartPulse watches for this automatically, then sends the customer gentle reminders (a browser notification and emails) to come back and finish their purchase. You don&rsquo;t have to do anything after setup &mdash; it all runs on its own.</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 1: Setup Steps ── -->
+  <div style="margin-bottom: 16px;">
+    <div class="section-label">Getting Started</div>
+    <h2 class="section-title">Set Up CartPulse in Minutes</h2>
+    <p class="section-subtitle">Follow these steps once and CartPulse takes care of the rest automatically.</p>
+  </div>
+
+  <div class="setup-steps">
+
+    <div class="setup-step">
+      <div class="step-left"><div class="step-num">1</div></div>
+      <div class="step-content">
+        <span class="step-tag tag-you">You do this</span>
+        <h3>Install CartPulse from the Shopify App Store</h3>
+        <p>Go to the Shopify App Store and click <strong>&ldquo;Add app&rdquo;</strong> on the CartPulse listing. You&rsquo;ll be taken to your Shopify admin and asked to confirm the installation &mdash; just click <strong>&ldquo;Install&rdquo;</strong>.</p>
+        <p>That&rsquo;s the only click you need. CartPulse will immediately connect to your store.</p>
+        <div class="tip"><strong>Tip:</strong> You must be logged into your Shopify admin account when installing. If you have multiple stores, make sure you&rsquo;re on the right one.</div>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="step-left"><div class="step-num">2</div></div>
+      <div class="step-content">
+        <span class="step-tag tag-auto">Automatic</span>
+        <h3>CartPulse connects to your store</h3>
+        <p>Right after installation, CartPulse sets up a secure connection to your Shopify store. It registers itself to receive real-time signals &mdash; instant alerts that Shopify sends to CartPulse whenever something happens in your store.</p>
+        <p>CartPulse listens for three events:</p>
+        <ul>
+          <li><strong>Checkout started</strong> &mdash; a customer begins entering their details</li>
+          <li><strong>Checkout updated</strong> &mdash; a customer adds or removes products</li>
+          <li><strong>Order placed</strong> &mdash; a customer completes their purchase (so CartPulse knows the cart was recovered)</li>
+        </ul>
+        <div class="tip"><strong>Note:</strong> No action is needed from you. This step happens automatically in seconds.</div>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="step-left"><div class="step-num">3</div></div>
+      <div class="step-content">
+        <span class="step-tag tag-you">You do this</span>
+        <h3>Your customers shop as normal</h3>
+        <p>You don&rsquo;t need to change anything about your store. CartPulse works silently in the background as your customers browse and shop.</p>
+        <p>The only requirement is that a customer must <strong>enter their email address</strong> at the checkout page before leaving. CartPulse can only send reminders if it has their email.</p>
+        <div class="tip"><strong>Good to know:</strong> CartPulse captures the customer&rsquo;s name, email, the products they had in their cart, and the total value &mdash; everything needed for a personalised reminder.</div>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="step-left"><div class="step-num">4</div></div>
+      <div class="step-content">
+        <span class="step-tag tag-auto">Automatic</span>
+        <h3>Abandoned carts are detected instantly</h3>
+        <p>The moment a customer starts a checkout but doesn&rsquo;t complete it, CartPulse captures the cart. It saves the customer&rsquo;s email, the products they chose, and the total price.</p>
+        <p>You can see every captured cart in your <strong>Abandoned Carts</strong> page inside the CartPulse app &mdash; no refreshing needed, it updates in real time.</p>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="step-left"><div class="step-num">5</div></div>
+      <div class="step-content">
+        <span class="step-tag tag-auto">Automatic</span>
+        <h3>Reminders are sent automatically</h3>
+        <p>CartPulse sends a sequence of recovery messages to the customer &mdash; no action needed from you:</p>
+        <ul>
+          <li><strong>Browser push notification</strong> &mdash; a short pop-up on the customer&rsquo;s device</li>
+          <li><strong>First email reminder</strong> &mdash; a personalised email with the products they left behind and a direct link back</li>
+          <li><strong>Final follow-up email</strong> &mdash; a &ldquo;last chance&rdquo; email to give one more nudge</li>
+        </ul>
+        <div class="tip"><strong>Privacy:</strong> Customers can opt out of push notifications through their browser settings at any time.</div>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="step-left"><div class="step-num">6</div></div>
+      <div class="step-content">
+        <span class="step-tag tag-result">Result</span>
+        <h3>Revenue is recovered &mdash; you watch it happen</h3>
+        <p>When a customer clicks a link in the reminder and completes their purchase, CartPulse automatically detects the new order and marks that cart as <strong>Recovered</strong>.</p>
+        <p>Your <strong>Dashboard</strong> updates with the latest stats &mdash; how many carts were abandoned, how many were recovered, your recovery rate, and total revenue regained. Everything is tracked for you.</p>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ── SECTION 2: Inside the App ── -->
+  <div style="margin-bottom: 16px;">
+    <div class="section-label">Inside the App</div>
+    <h2 class="section-title">Understanding Each Section</h2>
+    <p class="section-subtitle">Here&rsquo;s what you&rsquo;ll find when you open CartPulse from your Shopify admin.</p>
+  </div>
+
+  <div class="app-sections">
+
+    <!-- Dashboard -->
+    <div class="app-section-card">
+      <div class="app-section-header" style="background:#f0fdf4;">
+        <div class="app-section-icon" style="background:#1D9E75;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <div>
+          <h3>Dashboard &mdash; Your Recovery Overview</h3>
+          <p>The first screen you see when you open CartPulse</p>
+        </div>
+      </div>
+      <div class="app-section-body">
+        <p>The Dashboard gives you a quick summary of how your store is performing at recovering lost sales.</p>
+        <div class="feature-row">
+          <div class="feature-row-icon" style="background:#E1F5EE;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          </div>
+          <div class="feature-row-text">
+            <h4>Total Abandoned Carts</h4>
+            <p>How many customers started a checkout but didn&rsquo;t finish. The bar chart shows this across the last 7 days.</p>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-row-icon" style="background:#EEEDFE;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </div>
+          <div class="feature-row-text">
+            <h4>Notifications Sent</h4>
+            <p>Total number of push notifications and emails CartPulse has sent to bring customers back.</p>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-row-icon" style="background:#FAEEDA;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#BA7517" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
+          <div class="feature-row-text">
+            <h4>Recovery Rate</h4>
+            <p>The percentage of abandoned carts successfully recovered. For example, 30% means 3 out of 10 customers came back to complete their purchase.</p>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-row-icon" style="background:#f0fdf4;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 1 7 7c0 2.4-1.2 4.5-3 5.7V17H8v-2.3A7 7 0 0 1 5 9a7 7 0 0 1 7-7z"/></svg>
+          </div>
+          <div class="feature-row-text">
+            <h4>Smart Insight</h4>
+            <p>A personalised tip based on your store&rsquo;s data &mdash; how many carts were recovered and what you could do to improve further.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Abandoned Carts -->
+    <div class="app-section-card">
+      <div class="app-section-header" style="background:#f5f3ff;">
+        <div class="app-section-icon" style="background:#534AB7;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        </div>
+        <div>
+          <h3>Abandoned Carts &mdash; The Full Cart List</h3>
+          <p>A detailed table of every customer who left without buying</p>
+        </div>
+      </div>
+      <div class="app-section-body">
+        <p>Each row is one customer. Here&rsquo;s what each column means:</p>
+        <div class="feature-row">
+          <div class="feature-row-icon" style="background:#EEEDFE;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="feature-row-text">
+            <h4>Customer</h4>
+            <p>The email address of the shopper. If they didn&rsquo;t enter an email, it shows as &ldquo;Guest&rdquo;.</p>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-row-icon" style="background:#E1F5EE;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          </div>
+          <div class="feature-row-text">
+            <h4>Products</h4>
+            <p>The names of the items they had in their cart when they left.</p>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-row-icon" style="background:#FEF9C3;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="feature-row-text">
+            <h4>Total</h4>
+            <p>The value of everything in their cart &mdash; the potential revenue you could recover from this customer.</p>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-row-icon" style="background:#EEEDFE;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </div>
+          <div class="feature-row-text">
+            <h4>Notifications</h4>
+            <p>How many reminders have been sent to this customer so far (push + emails combined).</p>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-row-icon" style="background:#DCFCE7;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="feature-row-text">
+            <h4>Status &mdash; Abandoned or Recovered</h4>
+            <p><strong>Abandoned</strong> (yellow) means the customer hasn&rsquo;t completed their purchase yet. <strong>Recovered</strong> (green) means they came back and bought &mdash; success!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports -->
+    <div class="app-section-card">
+      <div class="app-section-header" style="background:#fffbeb;">
+        <div class="app-section-icon" style="background:#d97706;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div>
+          <h3>Reports &mdash; Product Abandonment Analysis</h3>
+          <p>Understand which products are being left behind most often</p>
+        </div>
+      </div>
+      <div class="app-section-body">
+        <p>The Reports page shows you which specific products appear most often in abandoned carts &mdash; useful for understanding pricing, photos, or description issues.</p>
+        <div class="feature-row">
+          <div class="feature-row-icon" style="background:#FEF9C3;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          </div>
+          <div class="feature-row-text">
+            <h4>Top Abandoned Products</h4>
+            <p>A ranked list of your products, from most to least frequently abandoned. The #1 product is left behind most often &mdash; worth reviewing why.</p>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-row-icon" style="background:#EEEDFE;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="feature-row-text">
+            <h4>Date Range Filter</h4>
+            <p>Switch between <strong>Last 7 days</strong>, <strong>Last 30 days</strong>, or <strong>All time</strong> to see how abandonment trends change.</p>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-row-icon" style="background:#E1F5EE;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <div class="feature-row-text">
+            <h4>Export to CSV</h4>
+            <p>Download your full abandonment report as a spreadsheet. Great for sharing with your team or deeper analysis in Excel or Google Sheets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- ── SECTION 3: Notifications Timeline ── -->
+  <div class="notif-section">
+    <div class="section-label">Automatic Reminders</div>
+    <h2 class="section-title">When Customers Get Notified</h2>
+    <p class="section-subtitle">CartPulse sends a sequence of reminders after a cart is abandoned. Here&rsquo;s the exact timeline.</p>
+
+    <div class="notif-timeline">
+
+      <div class="notif-item">
+        <div class="notif-time"><span class="notif-time-badge">Moment of abandonment</span></div>
+        <div class="notif-connector">
+          <div class="notif-dot" style="background:#534AB7;"></div>
+          <div class="notif-line"></div>
+        </div>
+        <div class="notif-card" style="border-color:#e0e7ff; background:#f5f3ff;">
+          <div class="notif-card-header">
+            <div class="notif-card-icon" style="background:#EEEDFE;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            </div>
+            <h4>Cart Captured</h4>
+          </div>
+          <p>CartPulse detects the abandoned checkout and saves the customer&rsquo;s details and cart contents instantly.</p>
+        </div>
+      </div>
+
+      <div class="notif-item">
+        <div class="notif-time"><span class="notif-time-badge">Shortly after</span></div>
+        <div class="notif-connector">
+          <div class="notif-dot" style="background:#534AB7;"></div>
+          <div class="notif-line"></div>
+        </div>
+        <div class="notif-card" style="border-color:#e0e7ff; background:#f5f3ff;">
+          <div class="notif-card-header">
+            <div class="notif-card-icon" style="background:#EEEDFE;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+            <h4>Browser Push Notification</h4>
+          </div>
+          <p>A push notification appears on the customer&rsquo;s phone or desktop &mdash; a quick, gentle nudge while the purchase is still fresh in their mind.</p>
+        </div>
+      </div>
+
+      <div class="notif-item">
+        <div class="notif-time"><span class="notif-time-badge">1st reminder</span></div>
+        <div class="notif-connector">
+          <div class="notif-dot" style="background:#1D9E75;"></div>
+          <div class="notif-line"></div>
+        </div>
+        <div class="notif-card" style="border-color:#bbf7d0; background:#f0fdf4;">
+          <div class="notif-card-header">
+            <div class="notif-card-icon" style="background:#E1F5EE;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <h4>First Recovery Email &mdash; &ldquo;Did you forget something?&rdquo;</h4>
+          </div>
+          <p>A personalised email showing the customer exactly which products they left behind, the total value, and a direct button to return to their cart.</p>
+        </div>
+      </div>
+
+      <div class="notif-item">
+        <div class="notif-time"><span class="notif-time-badge">Final reminder</span></div>
+        <div class="notif-connector">
+          <div class="notif-dot" style="background:#d97706;"></div>
+        </div>
+        <div class="notif-card" style="border-color:#fde68a; background:#fffbeb;">
+          <div class="notif-card-header">
+            <div class="notif-card-icon" style="background:#FEF3C7;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <h4>Final Email &mdash; &ldquo;Last chance! Your cart is about to expire&rdquo;</h4>
+          </div>
+          <p>A final follow-up email creates urgency, reminding the customer that their saved cart won&rsquo;t last forever &mdash; one last opportunity to complete the purchase.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="summary-box" style="margin-top: 28px; margin-bottom: 0;">
+      <div class="summary-box-icon" style="background:rgba(29,158,117,0.12);">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div>
+        <h3>What happens when the customer buys?</h3>
+        <p>If the customer completes their order at any point after receiving reminders, CartPulse automatically detects the new order and marks their cart as <strong>Recovered</strong>. The recovery is counted in your dashboard stats and any unsent reminders are cancelled.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── SECTION 4: Tips ── -->
+  <div style="margin-bottom: 16px;">
+    <div class="section-label">Pro Tips</div>
+    <h2 class="section-title">Get the Most from CartPulse</h2>
+    <p class="section-subtitle">Simple things you can do to maximise your recovery rate.</p>
+  </div>
+
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-card-icon" style="background:#E1F5EE;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      </div>
+      <h4>Make sure your checkout asks for email first</h4>
+      <p>CartPulse can only send reminders if it has the customer&rsquo;s email. Shopify&rsquo;s default checkout collects email at the start &mdash; don&rsquo;t change that order.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-card-icon" style="background:#EEEDFE;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <h4>Check your Reports weekly</h4>
+      <p>If the same product keeps appearing at the top of abandoned carts, that&rsquo;s a signal. Review that product&rsquo;s price, photos, and description.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-card-icon" style="background:#FAEEDA;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#BA7517" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      </div>
+      <h4>Track your recovery rate trend</h4>
+      <p>A healthy recovery rate is usually between 5% and 20%. If yours is lower, the most common cause is customers not entering their email before leaving.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-card-icon" style="background:#EEEDFE;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </div>
+      <h4>Push notifications need opt-in</h4>
+      <p>Customers must allow push notifications in their browser. If a customer declines, only email reminders will be sent &mdash; which is still effective.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-card-icon" style="background:#E1F5EE;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <h4>Use the date filter in Reports</h4>
+      <p>After running a sale or promotion, switch the Reports filter to &ldquo;Last 7 days&rdquo; to see which products had the most abandoned carts during that period.</p>
+    </div>
+    <div class="tip-card">
+      <div class="tip-card-icon" style="background:#f0fdf4;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#085041" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <h4>Switch the app language if needed</h4>
+      <p>CartPulse supports English, Spanish, French, Italian, and Dutch. Use the language switcher in the top right of the app.</p>
+    </div>
+  </div>
+
+
+  <!-- ── SECTION 5: FAQ ── -->
+  <div class="faq-section">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">Common Questions</h2>
+    <p class="section-subtitle">Answers to the questions merchants ask most often.</p>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q"><div class="faq-q-icon">?</div>Do I need to do anything after installing CartPulse?</div>
+        <div class="faq-a">No. After installation, CartPulse sets itself up and starts monitoring your store automatically. The only thing you need to do is check your Dashboard occasionally to review performance.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><div class="faq-q-icon">?</div>Will CartPulse slow down my Shopify store?</div>
+        <div class="faq-a">No. CartPulse works entirely in the background on our own servers. It receives data from Shopify after events happen, so it has zero impact on your store&rsquo;s loading speed or customer experience.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><div class="faq-q-icon">?</div>What if a customer placed an order but still shows as &ldquo;Abandoned&rdquo;?</div>
+        <div class="faq-a">This can occasionally happen if the order webhook arrives with a slight delay. Wait a few minutes and refresh the Abandoned Carts page &mdash; it should update. If it doesn&rsquo;t change after 10 minutes, contact us at <strong>apps.kaswebtech@gmail.com</strong>.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><div class="faq-q-icon">?</div>Can customers unsubscribe from the emails?</div>
+        <div class="faq-a">Yes. Customers can reply to any recovery email asking to be removed, or contact you directly as the merchant. For push notifications, customers can disable them any time through their browser settings.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><div class="faq-q-icon">?</div>Is my customer data safe?</div>
+        <div class="faq-a">Yes. CartPulse only stores the data needed to send recovery reminders (email, name, cart contents). All data is transmitted over HTTPS. When you uninstall CartPulse, all your store&rsquo;s data is automatically deleted within 48 hours. See our <a href="https://cartpulse.kaswebtechsolutions.com/privacy-policy/" style="color:#085041; font-weight:600;">Privacy Policy</a> for full details.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><div class="faq-q-icon">?</div>What happens when I uninstall CartPulse?</div>
+        <div class="faq-a">All your store&rsquo;s data &mdash; abandoned cart records, customer emails, notification logs, and access tokens &mdash; is automatically deleted from our systems within 48 hours of uninstallation.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><div class="faq-q-icon">?</div>How do I export my abandonment data?</div>
+        <div class="faq-a">Go to the <strong>Reports</strong> page inside the CartPulse app and click the <strong>Export CSV</strong> button in the top right. This downloads a spreadsheet with all abandoned product data for the selected time period.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><div class="faq-q-icon">?</div>My cart count is 0 &mdash; is something wrong?</div>
+        <div class="faq-a">Not necessarily. If you just installed CartPulse, it will start capturing carts as soon as the next customer starts a checkout. CartPulse cannot see carts that were abandoned before it was installed. Give it a few hours of normal store traffic and you should start seeing data appear.</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Contact CTA -->
+  <div class="contact-card">
+    <h3>Still Have Questions?</h3>
+    <p>We&rsquo;re happy to help &mdash; whether it&rsquo;s a setup question, a technical issue, or anything else about CartPulse.</p>
+    <a href="mailto:apps.kaswebtech@gmail.com" class="btn-contact">Email Us &rarr;</a>
+    <a href="https://apps.shopify.com/vault-wallet?search_id=85534f35-d887-46f5-b3cb-07a7d1bf943a&surface_detail=vaultwallet&surface_inter_position=1&surface_intra_position=1&surface_type=search" class="btn-install-footer">Add to Shopify &rarr;</a>
+  </div>
+
+</div>
+
+<!-- ══ Footer ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">
+          <div class="footer-logo-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          </div>
+          <span class="footer-logo-text">CartPulse</span>
+        </div>
+        <p class="footer-tagline">Abandoned cart recovery for Shopify merchants. Recover lost revenue automatically.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <div class="footer-col-title">Product</div>
+          <a href="https://cartpulse.kaswebtechsolutions.com/home/#features">Features</a>
+          <a href="https://cartpulse.kaswebtechsolutions.com/home/#how-it-works">How It Works</a>
+          <a href="https://apps.shopify.com/vault-wallet?search_id=85534f35-d887-46f5-b3cb-07a7d1bf943a&surface_detail=vaultwallet&surface_inter_position=1&surface_intra_position=1&surface_type=search">Install</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Help</div>
+          <a href="/instructions/">Instructions</a>
+          <a href="https://cartpulse.kaswebtechsolutions.com/privacy-policy/">Privacy Policy</a>
+          <a href="mailto:apps.kaswebtech@gmail.com">Contact Us</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <script>document.write(new Date().getFullYear())</script> CartPulse. All rights reserved.</span>
+      <span>Built for Shopify merchants worldwide.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

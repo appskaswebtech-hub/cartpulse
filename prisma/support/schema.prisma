@@ -1,0 +1,41 @@
+generator supportClient {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@prisma/support-client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("SUPPORT_DATABASE_URL")
+}
+
+model SupportThread {
+  id               String           @id @default(uuid())
+  shop             String           @unique
+  shopUnreadCount  Int              @default(0)
+  adminUnreadCount Int              @default(0)
+  shopLastReadAt   DateTime?
+  adminLastReadAt  DateTime?
+  closedAt         DateTime?
+  adminTypingAt    DateTime?
+  lastResetAt      DateTime?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  messages         SupportMessage[]
+
+  @@index([shop])
+}
+
+model SupportMessage {
+  id             String        @id @default(uuid())
+  threadId       String
+  thread         SupportThread @relation(fields: [threadId], references: [id])
+  sender         String
+  body           String?       @db.Text
+  attachmentUrl  String?
+  attachmentName String?
+  attachmentType String?
+  attachmentSize Int?
+  createdAt      DateTime      @default(now())
+
+  @@index([threadId])
+}

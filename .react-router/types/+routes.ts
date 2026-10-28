@@ -14,6 +14,21 @@ type Pages = {
   "/": {
     params: {};
   };
+  "/cart-activity-tracker.js": {
+    params: {};
+  };
+  "/api/cart-activity-capture": {
+    params: {};
+  };
+  "/unsubscribe": {
+    params: {};
+  };
+  "/auth/login": {
+    params: {};
+  };
+  "/webhooks": {
+    params: {};
+  };
   "/webhooks/cart-activity/checkout-sync": {
     params: {};
   };
@@ -23,13 +38,7 @@ type Pages = {
   "/webhooks/cart-activity/added": {
     params: {};
   };
-  "/cart-activity-tracker.js": {
-    params: {};
-  };
   "/webhooks/app/scopes_update": {
-    params: {};
-  };
-  "/api/cart-activity-capture": {
     params: {};
   };
   "/webhooks/app/uninstalled": {
@@ -39,12 +48,6 @@ type Pages = {
     params: {};
   };
   "/webhooks/orders/create": {
-    params: {};
-  };
-  "/unsubscribe": {
-    params: {};
-  };
-  "/auth/login": {
     params: {};
   };
   "/auth/*": {
@@ -61,16 +64,28 @@ type Pages = {
   "/app/register-webhooks": {
     params: {};
   };
+  "/app/support/messages": {
+    params: {};
+  };
   "/app/billing-return": {
     params: {};
   };
   "/app/email-settings": {
     params: {};
   };
+  "/app/support/reopen": {
+    params: {};
+  };
+  "/app/support/typing": {
+    params: {};
+  };
   "/app/cart-activity": {
     params: {};
   };
   "/app/inject-script": {
+    params: {};
+  };
+  "/app/support/close": {
     params: {};
   };
   "/app/outreach": {
@@ -90,7 +105,27 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/webhooks/cart-activity/checkout-sync" | "/webhooks/cart-activity/order-sync" | "/webhooks/cart-activity/added" | "/cart-activity-tracker.js" | "/webhooks/app/scopes_update" | "/api/cart-activity-capture" | "/webhooks/app/uninstalled" | "/webhooks/cart/abandoned" | "/webhooks/orders/create" | "/unsubscribe" | "/auth/login" | "/auth/*" | "/app" | "/app/cart-activity-script" | "/app/register-webhooks" | "/app/billing-return" | "/app/email-settings" | "/app/cart-activity" | "/app/inject-script" | "/app/outreach" | "/app/billing" | "/app/reports" | "/app/carts";
+    page: "/" | "/cart-activity-tracker.js" | "/api/cart-activity-capture" | "/unsubscribe" | "/auth/login" | "/webhooks" | "/webhooks/cart-activity/checkout-sync" | "/webhooks/cart-activity/order-sync" | "/webhooks/cart-activity/added" | "/webhooks/app/scopes_update" | "/webhooks/app/uninstalled" | "/webhooks/cart/abandoned" | "/webhooks/orders/create" | "/auth/*" | "/app" | "/app/cart-activity-script" | "/app/register-webhooks" | "/app/support/messages" | "/app/billing-return" | "/app/email-settings" | "/app/support/reopen" | "/app/support/typing" | "/app/cart-activity" | "/app/inject-script" | "/app/support/close" | "/app/outreach" | "/app/billing" | "/app/reports" | "/app/carts";
+  };
+  "routes/cart-activity-tracker[.]js.tsx": {
+    id: "routes/cart-activity-tracker[.]js";
+    page: "/cart-activity-tracker.js";
+  };
+  "routes/api.cart-activity-capture.tsx": {
+    id: "routes/api.cart-activity-capture";
+    page: "/api/cart-activity-capture";
+  };
+  "routes/unsubscribe.tsx": {
+    id: "routes/unsubscribe";
+    page: "/unsubscribe";
+  };
+  "routes/auth.login/route.tsx": {
+    id: "routes/auth.login";
+    page: "/auth/login";
+  };
+  "routes/webhooks.tsx": {
+    id: "routes/webhooks";
+    page: "/webhooks" | "/webhooks/cart-activity/checkout-sync" | "/webhooks/cart-activity/order-sync" | "/webhooks/cart-activity/added" | "/webhooks/app/scopes_update" | "/webhooks/app/uninstalled" | "/webhooks/cart/abandoned" | "/webhooks/orders/create";
   };
   "routes/webhooks.cart-activity.checkout-sync.tsx": {
     id: "routes/webhooks.cart-activity.checkout-sync";
@@ -104,17 +139,9 @@ type RouteFiles = {
     id: "routes/webhooks.cart-activity.added";
     page: "/webhooks/cart-activity/added";
   };
-  "routes/cart-activity-tracker[.]js.tsx": {
-    id: "routes/cart-activity-tracker[.]js";
-    page: "/cart-activity-tracker.js";
-  };
   "routes/webhooks.app.scopes_update.tsx": {
     id: "routes/webhooks.app.scopes_update";
     page: "/webhooks/app/scopes_update";
-  };
-  "routes/api.cart-activity-capture.tsx": {
-    id: "routes/api.cart-activity-capture";
-    page: "/api/cart-activity-capture";
   };
   "routes/webhooks.app.uninstalled.tsx": {
     id: "routes/webhooks.app.uninstalled";
@@ -128,14 +155,6 @@ type RouteFiles = {
     id: "routes/webhooks.orders.create";
     page: "/webhooks/orders/create";
   };
-  "routes/unsubscribe.tsx": {
-    id: "routes/unsubscribe";
-    page: "/unsubscribe";
-  };
-  "routes/auth.login/route.tsx": {
-    id: "routes/auth.login";
-    page: "/auth/login";
-  };
   "routes/auth.$.tsx": {
     id: "routes/auth.$";
     page: "/auth/*";
@@ -146,7 +165,7 @@ type RouteFiles = {
   };
   "routes/app.tsx": {
     id: "routes/app";
-    page: "/app" | "/app/cart-activity-script" | "/app/register-webhooks" | "/app/billing-return" | "/app/email-settings" | "/app/cart-activity" | "/app/inject-script" | "/app/outreach" | "/app/billing" | "/app/reports" | "/app/carts";
+    page: "/app" | "/app/cart-activity-script" | "/app/register-webhooks" | "/app/support/messages" | "/app/billing-return" | "/app/email-settings" | "/app/support/reopen" | "/app/support/typing" | "/app/cart-activity" | "/app/inject-script" | "/app/support/close" | "/app/outreach" | "/app/billing" | "/app/reports" | "/app/carts";
   };
   "routes/app.cart-activity-script.tsx": {
     id: "routes/app.cart-activity-script";
@@ -156,6 +175,10 @@ type RouteFiles = {
     id: "routes/app.register-webhooks";
     page: "/app/register-webhooks";
   };
+  "routes/app.support.messages.tsx": {
+    id: "routes/app.support.messages";
+    page: "/app/support/messages";
+  };
   "routes/app.billing-return.tsx": {
     id: "routes/app.billing-return";
     page: "/app/billing-return";
@@ -164,6 +187,14 @@ type RouteFiles = {
     id: "routes/app.email-settings";
     page: "/app/email-settings";
   };
+  "routes/app.support.reopen.tsx": {
+    id: "routes/app.support.reopen";
+    page: "/app/support/reopen";
+  };
+  "routes/app.support.typing.tsx": {
+    id: "routes/app.support.typing";
+    page: "/app/support/typing";
+  };
   "routes/app.cart-activity.tsx": {
     id: "routes/app.cart-activity";
     page: "/app/cart-activity";
@@ -171,6 +202,10 @@ type RouteFiles = {
   "routes/app.inject-script.tsx": {
     id: "routes/app.inject-script";
     page: "/app/inject-script";
+  };
+  "routes/app.support.close.tsx": {
+    id: "routes/app.support.close";
+    page: "/app/support/close";
   };
   "routes/app.outreach.tsx": {
     id: "routes/app.outreach";
@@ -196,26 +231,31 @@ type RouteFiles = {
 
 type RouteModules = {
   "root": typeof import("./app/root.tsx");
+  "routes/cart-activity-tracker[.]js": typeof import("./app/routes/cart-activity-tracker[.]js.tsx");
+  "routes/api.cart-activity-capture": typeof import("./app/routes/api.cart-activity-capture.tsx");
+  "routes/unsubscribe": typeof import("./app/routes/unsubscribe.tsx");
+  "routes/auth.login": typeof import("./app/routes/auth.login/route.tsx");
+  "routes/webhooks": typeof import("./app/routes/webhooks.tsx");
   "routes/webhooks.cart-activity.checkout-sync": typeof import("./app/routes/webhooks.cart-activity.checkout-sync.tsx");
   "routes/webhooks.cart-activity.order-sync": typeof import("./app/routes/webhooks.cart-activity.order-sync.tsx");
   "routes/webhooks.cart-activity.added": typeof import("./app/routes/webhooks.cart-activity.added.tsx");
-  "routes/cart-activity-tracker[.]js": typeof import("./app/routes/cart-activity-tracker[.]js.tsx");
   "routes/webhooks.app.scopes_update": typeof import("./app/routes/webhooks.app.scopes_update.tsx");
-  "routes/api.cart-activity-capture": typeof import("./app/routes/api.cart-activity-capture.tsx");
   "routes/webhooks.app.uninstalled": typeof import("./app/routes/webhooks.app.uninstalled.tsx");
   "routes/webhooks.cart.abandoned": typeof import("./app/routes/webhooks.cart.abandoned.tsx");
   "routes/webhooks.orders.create": typeof import("./app/routes/webhooks.orders.create.tsx");
-  "routes/unsubscribe": typeof import("./app/routes/unsubscribe.tsx");
-  "routes/auth.login": typeof import("./app/routes/auth.login/route.tsx");
   "routes/auth.$": typeof import("./app/routes/auth.$.tsx");
   "routes/_index": typeof import("./app/routes/_index/route.tsx");
   "routes/app": typeof import("./app/routes/app.tsx");
   "routes/app.cart-activity-script": typeof import("./app/routes/app.cart-activity-script.tsx");
   "routes/app.register-webhooks": typeof import("./app/routes/app.register-webhooks.tsx");
+  "routes/app.support.messages": typeof import("./app/routes/app.support.messages.tsx");
   "routes/app.billing-return": typeof import("./app/routes/app.billing-return.tsx");
   "routes/app.email-settings": typeof import("./app/routes/app.email-settings.tsx");
+  "routes/app.support.reopen": typeof import("./app/routes/app.support.reopen.tsx");
+  "routes/app.support.typing": typeof import("./app/routes/app.support.typing.tsx");
   "routes/app.cart-activity": typeof import("./app/routes/app.cart-activity.tsx");
   "routes/app.inject-script": typeof import("./app/routes/app.inject-script.tsx");
+  "routes/app.support.close": typeof import("./app/routes/app.support.close.tsx");
   "routes/app.outreach": typeof import("./app/routes/app.outreach.tsx");
   "routes/app.billing": typeof import("./app/routes/app.billing.tsx");
   "routes/app.reports": typeof import("./app/routes/app.reports.tsx");

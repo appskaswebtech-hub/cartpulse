@@ -13,6 +13,9 @@ type Matches = [{
   id: "root";
   module: typeof import("../../root.js");
 }, {
+  id: "routes/webhooks";
+  module: typeof import("../webhooks.js");
+}, {
   id: "routes/webhooks.cart-activity.added";
   module: typeof import("../webhooks.cart-activity.added.js");
 }];

@@ -3,6 +3,7 @@
     import { boundary } from "@shopify/shopify-app-react-router/server";
     import { AppProvider } from "@shopify/shopify-app-react-router/react";
     import { authenticate } from "../shopify.server";
+    import SupportChatWidget from "../components/SupportChatWidget";
     import { getShopPlanFromDB } from "../utils/planUtils";
     import { BillingGate } from "../components/BillingGate";
     import { useLocation } from "react-router";
@@ -54,6 +55,7 @@
           </s-app-nav>
           <BillingGate show={showGate && !isBillingPage} />
           <Outlet />
+          <SupportChatWidget />
         </AppProvider>
       );
     }

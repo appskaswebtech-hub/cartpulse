@@ -1,11 +1,16 @@
-import { useLoaderData } from "react-router";
+import { useLoaderData, redirect } from "react-router";
 import type { LoaderFunctionArgs } from "react-router";
 import { authenticate } from "../shopify.server";
 import db from "../db.server";
+import { getShopPlanFromDB } from "../utils/planUtils";
 import { Page } from "@shopify/polaris";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
+
+  const record = await getShopPlanFromDB(session.shop);
+  const hasPlan = ["basic", "pro", "advanced"].includes(record.plan);
+  if (hasPlan) throw redirect("/app/carts");
 
   const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 
