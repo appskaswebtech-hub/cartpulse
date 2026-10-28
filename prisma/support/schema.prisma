@@ -18,6 +18,8 @@ model SupportThread {
   closedAt         DateTime?
   adminTypingAt    DateTime?
   lastResetAt      DateTime?
+  contactName      String?
+  contactEmail     String?
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   messages         SupportMessage[]

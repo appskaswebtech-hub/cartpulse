@@ -16,6 +16,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   let body: string | null = null;
   let file: File | null = null;
+  let name: string | null = null;
+  let email: string | null = null;
 
   if (contentType.includes("multipart/form-data")) {
     const formData = await request.formData();
@@ -23,12 +25,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const f = formData.get("file");
     if (f instanceof File && f.size > 0) file = f;
   } else {
-    const d = (await request.json()) as { body?: string };
+    const d = (await request.json()) as { body?: string; name?: string; email?: string };
     body = d.body ?? null;
+    name = d.name ?? null;
+    email = d.email ?? null;
   }
 
   try {
-    const message = await sendMessage({ shop: session.shop, sender: "shop", body, file });
+    const message = await sendMessage({ shop: session.shop, sender: "shop", body, file, name, email });
     return data({ message });
   } catch (err) {
     return data({ error: (err as Error).message }, { status: 400 });

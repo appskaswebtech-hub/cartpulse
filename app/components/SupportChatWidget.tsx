@@ -94,6 +94,15 @@ const css = `
 .cpsc-file-btn{background:none;border:1px solid #d1d5db;border-radius:10px;padding:7px 9px;cursor:pointer;font-size:14px;color:#6b7280}
 .cpsc-file-btn:hover{border-color:#4f46e5;color:#4f46e5}
 @media(max-width:400px){.cpsc-panel{width:calc(100vw - 16px);right:8px;bottom:80px}}
+.cpsc-prechat{padding:16px;display:flex;flex-direction:column;gap:10px;flex:1;overflow-y:auto}
+.cpsc-prechat-title{font-weight:700;font-size:14px;color:#111827}
+.cpsc-prechat-sub{font-size:12px;color:#6b7280;margin-top:-4px}
+.cpsc-prechat input,.cpsc-prechat textarea{border:1px solid #d1d5db;border-radius:8px;padding:8px 10px;font-size:13px;outline:none;font-family:inherit;width:100%;box-sizing:border-box}
+.cpsc-prechat input:focus,.cpsc-prechat textarea:focus{border-color:#4f46e5;box-shadow:0 0 0 2px rgba(79,70,229,.15)}
+.cpsc-prechat textarea{resize:none;height:68px}
+.cpsc-prechat-btn{background:#4f46e5;color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;width:100%;margin-top:2px}
+.cpsc-prechat-btn:disabled{opacity:.5;cursor:default}
+.cpsc-prechat-btn:hover:not(:disabled){background:#4338ca}
 `;
 
 export default function SupportChatWidget() {
@@ -103,6 +112,12 @@ export default function SupportChatWidget() {
   const [input, setInput] = useState("");
   const [unread, setUnread] = useState(0);
   const [sending, setSending] = useState(false);
+  const [contactName, setContactName] = useState<string>(() => {
+    try { return localStorage.getItem("cpsc-contact-name") ?? ""; } catch { return ""; }
+  });
+  const [prechatName, setPrechatName] = useState("");
+  const [prechatEmail, setPrechatEmail] = useState("");
+  const [prechatMsg, setPrechatMsg] = useState("");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -197,8 +212,32 @@ export default function SupportChatWidget() {
   const handleReopen = async () => {
     await fetch("/app/support/reopen", { method: "POST" });
     setMessages([]);
+    setContactName("");
+    try { localStorage.removeItem("cpsc-contact-name"); } catch {}
+    setPrechatName(""); setPrechatEmail(""); setPrechatMsg("");
     setThread((t) => t ? { ...t, closedAt: null, lastResetAt: new Date().toISOString() } : t);
     fetchMessages();
+  };
+
+  const handlePrechatSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const name = prechatName.trim();
+    const email = prechatEmail.trim();
+    const body = prechatMsg.trim();
+    if (!name || !email || !body || sending) return;
+    setSending(true);
+    try {
+      await fetch("/app/support/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ body, name, email }),
+      });
+      setContactName(name);
+      try { localStorage.setItem("cpsc-contact-name", name); } catch {}
+      fetchMessages();
+    } finally {
+      setSending(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -210,6 +249,7 @@ export default function SupportChatWidget() {
 
   const isClosed = !!thread?.closedAt;
   const adminTyping = isAdminTyping(thread);
+  const showPreChat = !!thread && messages.length === 0 && !contactName && !isClosed;
 
   return (
     <>
@@ -242,7 +282,36 @@ export default function SupportChatWidget() {
             </div>
           )}
 
-          <div className="cpsc-msgs">
+          {showPreChat ? (
+            <form className="cpsc-prechat" onSubmit={handlePrechatSubmit}>
+              <div className="cpsc-prechat-title">How can we help?</div>
+              <div className="cpsc-prechat-sub">Fill in your details and we'll get back to you shortly.</div>
+              <input
+                placeholder="Your name *"
+                value={prechatName}
+                onChange={(e) => setPrechatName(e.target.value)}
+                required
+              />
+              <input
+                type="email"
+                placeholder="Email address *"
+                value={prechatEmail}
+                onChange={(e) => setPrechatEmail(e.target.value)}
+                required
+              />
+              <textarea
+                placeholder="Describe your issue *"
+                value={prechatMsg}
+                onChange={(e) => setPrechatMsg(e.target.value)}
+                required
+              />
+              <button className="cpsc-prechat-btn" type="submit" disabled={sending || !prechatName.trim() || !prechatEmail.trim() || !prechatMsg.trim()}>
+                {sending ? "Sending…" : "Start Chat"}
+              </button>
+            </form>
+          ) : (
+            <>
+            <div className="cpsc-msgs">
             {messages.map((m, i) => {
               const prevMsg = i > 0 ? messages[i - 1] : null;
               const showDateDivider =
@@ -325,6 +394,8 @@ export default function SupportChatWidget() {
                 Send
               </button>
             </div>
+          )}
+            </>
           )}
         </div>
       )}

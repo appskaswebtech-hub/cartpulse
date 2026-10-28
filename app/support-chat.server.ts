@@ -4,7 +4,7 @@ import crypto from "node:crypto";
 import supportPrisma from "./support-db.server";
 
 const AUTO_REPLY_TEXT =
-  "Thanks for reaching out! A support agent will be with you shortly -- feel free to add more detail in the meantime.";
+  "Thank you for messaging us! One of our support members will reach you soon.";
 
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "support");
 const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
@@ -16,7 +16,7 @@ const ALLOWED_TYPES = new Set([
   "text/plain",
 ]);
 
-type SupportlyNotification = { message: unknown } | { type: string };
+type SupportlyNotification = { message: unknown; name?: string; email?: string } | { type: string };
 
 let warnedAboutSupportlyConfiguration = false;
 
@@ -82,6 +82,8 @@ export async function sendMessage(opts: {
   sender: "shop" | "admin";
   body?: string | null;
   file?: File | null;
+  name?: string | null;
+  email?: string | null;
 }) {
   const thread = await getOrCreateThread(opts.shop);
   const body = (opts.body || "").trim();
@@ -112,16 +114,21 @@ export async function sendMessage(opts: {
     },
   });
 
-  await supportPrisma.supportThread.update({
-    where: { id: thread.id },
-    data:
-      opts.sender === "shop"
-        ? { adminUnreadCount: { increment: 1 } }
-        : { shopUnreadCount: { increment: 1 }, closedAt: null },
-  });
+  const updateData: Record<string, unknown> =
+    opts.sender === "shop"
+      ? { adminUnreadCount: { increment: 1 } }
+      : { shopUnreadCount: { increment: 1 }, closedAt: null };
+
+  if (isConversationStart && opts.name) updateData.contactName = opts.name.trim();
+  if (isConversationStart && opts.email) updateData.contactEmail = opts.email.trim();
+
+  await supportPrisma.supportThread.update({ where: { id: thread.id }, data: updateData });
+
+  const contactName = isConversationStart && opts.name ? opts.name.trim() : (thread as { contactName?: string | null }).contactName ?? undefined;
+  const contactEmail = isConversationStart && opts.email ? opts.email.trim() : (thread as { contactEmail?: string | null }).contactEmail ?? undefined;
 
   if (opts.sender === "shop") {
-    void notifyDashboard(opts.shop, { message }).catch((error: unknown) => {
+    void notifyDashboard(opts.shop, { message, name: contactName, email: contactEmail }).catch((error: unknown) => {
       console.error("Could not notify Supportly about a new message.", error);
     });
   }
