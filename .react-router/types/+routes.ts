@@ -32,6 +32,12 @@ type Pages = {
   "/api/push-subscribe": {
     params: {};
   };
+  "/support-chat.js": {
+    params: {};
+  };
+  "/proxy/size-chart": {
+    params: {};
+  };
   "/auth/login": {
     params: {};
   };
@@ -49,6 +55,21 @@ type Pages = {
   "/app/inject-script": {
     params: {};
   };
+  "/app/chat-widget": {
+    params: {};
+  };
+  "/app/size-charts": {
+    params: {};
+  };
+  "/app/dashboard": {
+    params: {};
+  };
+  "/app/settings": {
+    params: {};
+  };
+  "/app/billing": {
+    params: {};
+  };
   "/app/reports": {
     params: {};
   };
@@ -60,7 +81,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/webhooks/app/scopes_update" | "/api/pending-notification" | "/webhooks/app/uninstalled" | "/webhooks/cart/abandoned" | "/webhooks/orders/create" | "/api/push-subscribe" | "/auth/login" | "/auth/*" | "/app" | "/app/register-webhooks" | "/app/inject-script" | "/app/reports" | "/app/carts";
+    page: "/" | "/webhooks/app/scopes_update" | "/api/pending-notification" | "/webhooks/app/uninstalled" | "/webhooks/cart/abandoned" | "/webhooks/orders/create" | "/api/push-subscribe" | "/support-chat.js" | "/proxy/size-chart" | "/auth/login" | "/auth/*" | "/app" | "/app/register-webhooks" | "/app/inject-script" | "/app/chat-widget" | "/app/size-charts" | "/app/dashboard" | "/app/settings" | "/app/billing" | "/app/reports" | "/app/carts";
   };
   "routes/webhooks.app.scopes_update.tsx": {
     id: "routes/webhooks.app.scopes_update";
@@ -86,6 +107,14 @@ type RouteFiles = {
     id: "routes/api.push-subscribe";
     page: "/api/push-subscribe";
   };
+  "routes/support-chat[.]js.tsx": {
+    id: "routes/support-chat[.]js";
+    page: "/support-chat.js";
+  };
+  "routes/proxy.size-chart.tsx": {
+    id: "routes/proxy.size-chart";
+    page: "/proxy/size-chart";
+  };
   "routes/auth.login/route.tsx": {
     id: "routes/auth.login";
     page: "/auth/login";
@@ -100,7 +129,7 @@ type RouteFiles = {
   };
   "routes/app.tsx": {
     id: "routes/app";
-    page: "/app" | "/app/register-webhooks" | "/app/inject-script" | "/app/reports" | "/app/carts";
+    page: "/app" | "/app/register-webhooks" | "/app/inject-script" | "/app/chat-widget" | "/app/size-charts" | "/app/dashboard" | "/app/settings" | "/app/billing" | "/app/reports" | "/app/carts";
   };
   "routes/app.register-webhooks.tsx": {
     id: "routes/app.register-webhooks";
@@ -109,6 +138,26 @@ type RouteFiles = {
   "routes/app.inject-script.tsx": {
     id: "routes/app.inject-script";
     page: "/app/inject-script";
+  };
+  "routes/app.chat-widget.tsx": {
+    id: "routes/app.chat-widget";
+    page: "/app/chat-widget";
+  };
+  "routes/app.size-charts.tsx": {
+    id: "routes/app.size-charts";
+    page: "/app/size-charts";
+  };
+  "routes/app.dashboard.tsx": {
+    id: "routes/app.dashboard";
+    page: "/app/dashboard";
+  };
+  "routes/app.settings.tsx": {
+    id: "routes/app.settings";
+    page: "/app/settings";
+  };
+  "routes/app.billing.tsx": {
+    id: "routes/app.billing";
+    page: "/app/billing";
   };
   "routes/app.reports.tsx": {
     id: "routes/app.reports";
@@ -132,12 +181,19 @@ type RouteModules = {
   "routes/webhooks.cart.abandoned": typeof import("./app/routes/webhooks.cart.abandoned.tsx");
   "routes/webhooks.orders.create": typeof import("./app/routes/webhooks.orders.create.tsx");
   "routes/api.push-subscribe": typeof import("./app/routes/api.push-subscribe.tsx");
+  "routes/support-chat[.]js": typeof import("./app/routes/support-chat[.]js.tsx");
+  "routes/proxy.size-chart": typeof import("./app/routes/proxy.size-chart.tsx");
   "routes/auth.login": typeof import("./app/routes/auth.login/route.tsx");
   "routes/auth.$": typeof import("./app/routes/auth.$.tsx");
   "routes/_index": typeof import("./app/routes/_index/route.tsx");
   "routes/app": typeof import("./app/routes/app.tsx");
   "routes/app.register-webhooks": typeof import("./app/routes/app.register-webhooks.tsx");
   "routes/app.inject-script": typeof import("./app/routes/app.inject-script.tsx");
+  "routes/app.chat-widget": typeof import("./app/routes/app.chat-widget.tsx");
+  "routes/app.size-charts": typeof import("./app/routes/app.size-charts.tsx");
+  "routes/app.dashboard": typeof import("./app/routes/app.dashboard.tsx");
+  "routes/app.settings": typeof import("./app/routes/app.settings.tsx");
+  "routes/app.billing": typeof import("./app/routes/app.billing.tsx");
   "routes/app.reports": typeof import("./app/routes/app.reports.tsx");
   "routes/app._index": typeof import("./app/routes/app._index.tsx");
   "routes/app.carts": typeof import("./app/routes/app.carts.tsx");

@@ -21,6 +21,7 @@ database.sqlite
 # Environment variables (NEVER commit secrets)
 .env
 .env.*
+!.env.example
  
 # Shopify CLI local files
 .shopify/*

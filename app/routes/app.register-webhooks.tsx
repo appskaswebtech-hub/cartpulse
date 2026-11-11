@@ -31,7 +31,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       variables: {
         topic,
         webhookSubscription: {
-          callbackUrl: `https://unreproducible-chemiluminescent-jacquiline.ngrok-free.dev${uri}`,
+          callbackUrl: `${process.env.HOST || "https://cartpulse.kaswebtechsolutions.com"}${uri}`,
           format: "JSON",
         },
       },

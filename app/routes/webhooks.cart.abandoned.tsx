@@ -1,7 +1,45 @@
 import type { ActionFunctionArgs } from "react-router";
-import { authenticate } from "../shopify.server";
+import { authenticate, unauthenticated } from "../shopify.server";
 import db from "../db.server";
 import { scheduleCartNotifications } from "../queue.server";
+import { getEntitlement } from "../lib/billing.server";
+
+/**
+ * Webhooks carry no billing context, so the entitlement is resolved with the
+ * shop's offline session. Carts are always recorded; only the paid action
+ * (sending recovery notifications) is gated.
+ */
+async function shopIsEntitled(shop: string): Promise<boolean> {
+  try {
+    const { admin, session } = await unauthenticated.admin(shop);
+    const entitlement = await getEntitlement(admin, {
+      check: async ({ plans, isTest }) => {
+        const response = await admin.graphql(
+          `#graphql
+            query ActiveSubscriptions {
+              currentAppInstallation {
+                activeSubscriptions { name status test }
+              }
+            }`
+        );
+        const body = await response.json();
+        const subs = body?.data?.currentAppInstallation?.activeSubscriptions ?? [];
+        return {
+          hasActivePayment: subs.some(
+            (sub: any) =>
+              sub.status === "ACTIVE" &&
+              plans.includes(sub.name) &&
+              (isTest || sub.test === false)
+          ),
+        };
+      },
+    });
+    return Boolean(session) && entitlement.entitled;
+  } catch (error) {
+    console.error("Entitlement check failed for", shop, error);
+    return false;
+  }
+}
 
 export const action = async ({ request }: ActionFunctionArgs) => {
     const { topic, shop, payload } = await authenticate.webhook(request);
@@ -42,7 +80,19 @@ export const action = async ({ request }: ActionFunctionArgs) => {
                 where: { cartId: savedCart.id },
             });
 
-            if (!existingNotifications) {
+            // Merchant switch first — it is free to read and settles most cases.
+            const settings = await db.merchantSettings.findUnique({ where: { shop } });
+            // Off until the merchant opts in, so a shop with no settings row sends nothing.
+            const channelsOn = settings
+                ? settings.emailEnabled || settings.pushEnabled
+                : false;
+            const entitled = channelsOn && (await shopIsEntitled(shop));
+
+            if (!channelsOn) {
+                console.log(`Cart saved, notifications skipped (turned off in settings): ${shop}`);
+            } else if (!entitled) {
+                console.log(`Cart saved, notifications skipped (no active plan): ${shop}`);
+            } else if (!existingNotifications) {
                 await scheduleCartNotifications({
                     id: savedCart.id,
                     customerEmail: savedCart.customerEmail,

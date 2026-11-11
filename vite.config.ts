@@ -56,6 +56,15 @@ export default defineConfig({
     assetsInlineLimit: 0,
   },
   optimizeDeps: {
-    include: ["@shopify/app-bridge-react"],
+    // Pre-bundle these so adding an import from one of them mid-session does
+    // not trigger a re-optimize that loads a second copy of React.
+    include: [
+      "@shopify/app-bridge-react",
+      "@shopify/polaris",
+      "@shopify/polaris-icons",
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+    ],
   },
 }) satisfies UserConfig;

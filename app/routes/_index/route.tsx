@@ -8,8 +8,16 @@ import styles from "./styles.module.css";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
 
-  if (url.searchParams.get("shop")) {
-    throw redirect(`/app?${url.searchParams.toString()}`);
+  // Shopify does not always send `shop` on an embedded document request — an
+  // app opened from the admin sidebar can arrive with only `host`, `id_token`
+  // or `embedded`. Any of them means this is a real admin load, so hand off to
+  // the app (which authenticates properly) instead of showing the login form.
+  const EMBEDDED_PARAMS = ["shop", "host", "id_token", "embedded", "session", "appLoadId"];
+  const isAdminLoad = EMBEDDED_PARAMS.some((param) => url.searchParams.has(param));
+
+  if (isAdminLoad) {
+    const query = url.searchParams.toString();
+    throw redirect(query ? `/app/carts?${query}` : "/app/carts");
   }
 
   return { showForm: Boolean(login) };
