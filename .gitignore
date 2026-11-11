@@ -25,3 +25,6 @@ database.sqlite
 # Shopify CLI local files
 .shopify/*
 .shopify.lock
+
+# Generated route types
+.react-router
