@@ -11,7 +11,7 @@ import { authenticate } from "../shopify.server";
 import { PLANS, PLAN_KEYS } from "../config/plans";
 import { getShopPlanFromDB, cancelShopPlan } from "../utils/planUtils";
 
-interface LoaderData { currentPlan: string; }
+interface LoaderData { currentPlan: string; isDevShop: boolean; }
 interface ActionData { confirmationUrl?: string; error?: string; cancelled?: boolean; }
 interface UserError { field: string; message: string; }
 interface AppSubscriptionCreateResponse {
@@ -29,9 +29,17 @@ const PLANS_ORDERED = ["basic", "pro", "advanced"]
     .filter(Boolean);
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-    const { session } = await authenticate.admin(request);
+    const { admin, session } = await authenticate.admin(request);
     const record = await getShopPlanFromDB(session.shop);
-    return { currentPlan: record.plan } satisfies LoaderData;
+
+    // Development and sandbox stores run the full app for free.
+    const response = await admin.graphql(`#graphql
+      query { shop { plan { partnerDevelopment } } }
+    `);
+    const data = await response.json();
+    const isDevShop = data?.data?.shop?.plan?.partnerDevelopment === true;
+
+    return { currentPlan: record.plan, isDevShop } satisfies LoaderData;
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -139,7 +147,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function BillingPage() {
-    const { currentPlan } = useLoaderData<typeof loader>();
+    const { currentPlan, isDevShop } = useLoaderData<typeof loader>();
     const actionData = useActionData<typeof action>();
     const navigate = useNavigate();
     const navigation = useNavigation();
@@ -181,13 +189,22 @@ export default function BillingPage() {
                     </Banner>
                 )}
 
-                <Banner title={`You are currently on the ${currentPlanLabel} plan`} tone="info">
-                    <Text as="p">
-                        {currentPlan === "advanced"
-                            ? "You have access to all features."
-                            : "Upgrade anytime to unlock more features."}
-                    </Text>
-                </Banner>
+                {isDevShop ? (
+                    <Banner title="Development store — everything is unlocked" tone="success">
+                        <Text as="p">
+                            Shopify cannot create a charge on a development or sandbox store, so
+                            every feature runs free here. On a live store these plans apply.
+                        </Text>
+                    </Banner>
+                ) : (
+                    <Banner title={`You are currently on the ${currentPlanLabel} plan`} tone="info">
+                        <Text as="p">
+                            {currentPlan === "advanced"
+                                ? "You have access to all features."
+                                : "Upgrade anytime to unlock more features."}
+                        </Text>
+                    </Banner>
+                )}
 
                 <InlineGrid columns={{ xs: 1, sm: 1, md: 3 }} gap="400">
                     {PLANS_ORDERED.map((plan) => {

@@ -30,7 +30,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const record = await getShopPlanFromDB(shop);
   const hasPlan = ["basic", "pro", "advanced"].includes(record.plan);
-  const showGate = !hasPlan;
+
+  // Development and sandbox stores get every feature free — Shopify cannot
+  // charge them, so gating them would just make the app untestable.
+  const showGate = !hasPlan && !isDevShop;
 
   return {
     apiKey: process.env.SHOPIFY_API_KEY || "",
