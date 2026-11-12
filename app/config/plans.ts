@@ -8,47 +8,27 @@ export interface Plan {
     popular: boolean;
 }
 
+/**
+ * One paid plan. Development and sandbox stores run everything free — Shopify
+ * cannot charge them — so the plan only applies to live stores.
+ *
+ * The key stays "pro" so existing ShopPlan rows and subscriptions keep working.
+ */
 export const PLANS: Record<string, Plan> = {
-    basic: {
-        key: "basic",
-        label: "Basic",
-        price: 9.99,
-        emailLimit: 100,
-        color: "#F6F6F7",
-        popular: false,
-        features: [
-            "100 Emails per month",
-            "Abandoned Cart Tracking",
-            "Push Notifications",
-            "Recovery Analytics",
-        ],
-    },
     pro: {
         key: "pro",
         label: "Pro",
-        price: 19.99,
-        emailLimit: 200,
+        price: 7.99,
+        emailLimit: 500,
         color: "#F0F4FF",
         popular: true,
         features: [
-            "200 Emails per month",
-            "Abandoned Cart Tracking",
-            "Push Notifications",
-            "Recovery Analytics",
-        ],
-    },
-    advanced: {
-        key: "advanced",
-        label: "Advanced",
-        price: 29.99,
-        emailLimit: 500,
-        color: "#F3F0FF",
-        popular: false,
-        features: [
-            "500 Emails per month",
-            "Abandoned Cart Tracking",
-            "Push Notifications",
-            "Recovery Analytics",
+            "500 recovery emails per month",
+            "Abandoned cart tracking",
+            "Push notifications",
+            "Size charts and size guides",
+            "Recovery analytics and CSV export",
+            "Email outreach",
         ],
     },
 };

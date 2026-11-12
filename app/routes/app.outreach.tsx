@@ -78,6 +78,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         db.merchantSettings.findUnique({ where: { shop: session.shop } }),
     ]);
 
+    // Respect the merchant's own switch before contacting anyone.
+    if (!settings?.emailEnabled) {
+        return {
+            error:
+                "Recovery emails are switched off. Turn on \"Send recovery emails\" in Email Settings first.",
+            sent: 0,
+        };
+    }
+
     const unsubscribedEmails = new Set(unsubscribed.map((u) => u.email));
     const eligible = carts.filter((c) => c.customerEmail && !unsubscribedEmails.has(c.customerEmail));
 

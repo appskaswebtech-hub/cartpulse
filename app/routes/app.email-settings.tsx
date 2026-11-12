@@ -17,6 +17,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         fromName: settings?.emailFromName ?? "",
         fromAddress: settings?.emailFromAddress ?? "",
         hasPassword: !!(settings?.emailAppPassword),
+        emailEnabled: settings?.emailEnabled ?? false,
+        pushEnabled: settings?.pushEnabled ?? false,
     };
 };
 
@@ -28,7 +30,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const fromAddress = formData.get("fromAddress") as string;
     const appPassword = formData.get("appPassword") as string;
 
-    const data: any = { emailFromName: fromName, emailFromAddress: fromAddress };
+    const data: any = {
+        emailFromName: fromName,
+        emailFromAddress: fromAddress,
+        // Checkboxes post nothing when unticked, so absence means off.
+        emailEnabled: formData.get("emailEnabled") === "on",
+        pushEnabled: formData.get("pushEnabled") === "on",
+    };
     if (appPassword.trim()) data.emailAppPassword = appPassword.trim().replace(/\s/g, "");
 
     await db.merchantSettings.upsert({
@@ -41,7 +49,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function EmailSettings() {
-    const { defaultEmail, fromName, fromAddress, hasPassword } = useLoaderData<typeof loader>();
+    const { defaultEmail, fromName, fromAddress, hasPassword, emailEnabled, pushEnabled } =
+        useLoaderData<typeof loader>();
     const fetcher = useFetcher<typeof action>();
 
     const [provider, setProvider] = useState<string>(fromAddress ? "gmail" : "");
@@ -59,6 +68,11 @@ export default function EmailSettings() {
                 .cp-hint { font-size: 11px; color: #9ca3af; margin-top: 5px; }
                 .btn-save { background: linear-gradient(135deg,#534AB7,#7F77DD); color: #fff; border: none; border-radius: 10px; padding: 11px 28px; font-size: 14px; font-weight: 600; cursor: pointer; }
                 .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+                .cp-toggle { display: flex; align-items: flex-start; gap: 11px; padding: 11px 0; cursor: pointer; border-top: 1px solid #f5f5f5; }
+                .cp-toggle:first-of-type { border-top: none; }
+                .cp-toggle input { width: 17px; height: 17px; margin-top: 2px; accent-color: #534AB7; cursor: pointer; flex-shrink: 0; }
+                .cp-toggle strong { display: block; font-size: 13.5px; font-weight: 600; color: #111; }
+                .cp-toggle em { display: block; font-size: 12px; color: #9ca3af; font-style: normal; margin-top: 2px; }
             `}</style>
 
             <div>
@@ -88,6 +102,34 @@ export default function EmailSettings() {
 
                 {/* Form */}
                 <fetcher.Form method="POST">
+
+                    {/* Sending switches */}
+                    <div className="cp-card" style={{ marginBottom: "20px" }}>
+                        <p style={{ fontSize: "15px", fontWeight: 600, color: "#111", margin: "0 0 4px" }}>
+                            What CartPulse sends
+                        </p>
+                        <p style={{ fontSize: "12px", color: "#9ca3af", margin: "0 0 16px" }}>
+                            Abandoned carts are always recorded in your reports. These switches only
+                            control whether shoppers are contacted.
+                        </p>
+
+                        <label className="cp-toggle">
+                            <input type="checkbox" name="emailEnabled" defaultChecked={emailEnabled} />
+                            <span>
+                                <strong>Send recovery emails</strong>
+                                <em>A first reminder and a final notice to shoppers who leave a cart.</em>
+                            </span>
+                        </label>
+
+                        <label className="cp-toggle">
+                            <input type="checkbox" name="pushEnabled" defaultChecked={pushEnabled} />
+                            <span>
+                                <strong>Send browser push notifications</strong>
+                                <em>Only reaches shoppers who allowed notifications on your storefront.</em>
+                            </span>
+                        </label>
+                    </div>
+
                     <div className="cp-card">
                         <h3 style={{ margin: "0 0 20px", fontSize: "15px", fontWeight: "600", color: "#111" }}>Custom Sender Email</h3>
 

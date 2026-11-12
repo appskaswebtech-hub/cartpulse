@@ -24,9 +24,7 @@ interface AppSubscriptionCreateResponse {
     };
 }
 
-const PLANS_ORDERED = ["basic", "pro", "advanced"]
-    .map((key) => PLANS[key])
-    .filter(Boolean);
+const PLANS_ORDERED = PLAN_KEYS.map((key) => PLANS[key]).filter(Boolean);
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
     const { admin, session } = await authenticate.admin(request);
@@ -206,7 +204,7 @@ export default function BillingPage() {
                     </Banner>
                 )}
 
-                <InlineGrid columns={{ xs: 1, sm: 1, md: 3 }} gap="400">
+                <InlineGrid columns={{ xs: 1, sm: 1, md: PLANS_ORDERED.length > 1 ? 3 : 1 }} gap="400">
                     {PLANS_ORDERED.map((plan) => {
                         const isCurrent = currentPlan === plan.key;
                         return (
