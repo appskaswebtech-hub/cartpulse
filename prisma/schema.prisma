@@ -62,9 +62,9 @@ model MerchantSettings {
   shop             String   @unique
   discountPercent  Int      @default(10)
   discountExpiry   Int      @default(24)
-  pushEnabled      Boolean  @default(true)
+  pushEnabled      Boolean  @default(false)
   whatsappEnabled  Boolean  @default(false)
-  emailEnabled     Boolean  @default(true)
+  emailEnabled     Boolean  @default(false)
   whatsappApiKey   String?
   emailFromName     String?
   emailFromAddress  String?
@@ -148,6 +148,23 @@ model ShopPlan {
   billingStartedAt DateTime?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
+
+  @@index([shop])
+}
+model SizeChart {
+  id          String   @id @default(cuid())
+  shop        String
+  name        String
+  status      String   @default("draft")
+  unitSystem  String   @default("cm")
+  template    String   @default("custom")
+  columns     String   @db.LongText
+  rows        String   @db.LongText
+  description String?  @db.Text
+  assignType  String   @default("all")
+  assignValue String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([shop])
 }

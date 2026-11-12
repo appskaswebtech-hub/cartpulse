@@ -1,0 +1,56 @@
+{% comment %}
+  CartPulse — Size guide app embed block.
+
+  Product pages only. The schema gates placement with enabled_on, and the
+  conditional below is the runtime guard: on any other template nothing
+  renders and neither the JS nor the CSS is ever downloaded.
+{% endcomment %}
+
+{% if template.name == 'product' and product %}
+  {{ 'size-guide.css' | asset_url | stylesheet_tag }}
+
+  <script type="application/json" data-size-guide-config>
+    {
+      "handle": {{ product.handle | json }},
+      "productId": {{ product.id | json }},
+      "tags": {{ product.tags | json }},
+      "collections": {{ product.collections | map: 'handle' | json }},
+      "proxyUrl": "/apps/cartpulse/size-chart",
+      "buttonLabel": {{ block.settings.button_label | default: 'Size guide' | json }},
+      "anchorSelector": {{ block.settings.anchor_selector | default: '' | json }},
+      "accentColor": {{ block.settings.accent_color | default: '#1D9E75' | json }}
+    }
+  </script>
+
+  <script src="{{ 'size-guide.js' | asset_url }}" defer></script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Size guide",
+  "target": "body",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Size guide"
+    },
+    {
+      "type": "text",
+      "id": "anchor_selector",
+      "label": "Custom button position (CSS selector)",
+      "info": "Leave empty to place the button automatically next to Add to cart."
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#1D9E75"
+    }
+  ]
+}
+{% endschema %}
