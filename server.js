@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { createRequestHandler } from "@react-router/express";
 import express from "express";
 import * as build from "./build/server/index.js";
@@ -6,6 +7,7 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(express.static("build/client"));
+app.use('/uploads', express.static('public/uploads'));
 
 app.all("*", createRequestHandler({ build }));
 

@@ -29,3 +29,8 @@ database.sqlite
 
 # Generated route types
 .react-router
+
+# Server runtime artefacts (should never be committed)
+backup.zip
+tes.txt
+/public/uploads
