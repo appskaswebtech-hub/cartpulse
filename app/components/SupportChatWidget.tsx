@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { useFetcher } from "react-router";
 
 interface Message {
   id: string;
@@ -119,39 +118,59 @@ export default function SupportChatWidget() {
   const [prechatEmail, setPrechatEmail] = useState("");
   const [prechatMsg, setPrechatMsg] = useState("");
 
+  // Read inside the poll callback, which is created once and must not close
+  // over a stale `open`.
+  const openRef = useRef(false);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const lastTypingSentRef = useRef(0);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const fetcher = useFetcher<MessagesLoaderData>();
+  const mountedRef = useRef(true);
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
-  const fetchMessages = useCallback(() => {
-    fetcher.load("/app/support/messages");
-  }, [fetcher]);
+  /**
+   * Polls with plain fetch rather than a fetcher on purpose.
+   *
+   * A rejected fetcher.load propagates to the route error boundary, so a
+   * single dropped poll — a flaky network, a blocked request, a sleeping
+   * laptop — replaced the whole admin with "Application Error". A background
+   * poll must never be able to take the page down, so every failure here is
+   * swallowed and the next tick simply tries again.
+   */
+  const fetchMessages = useCallback(async () => {
+    try {
+      const response = await fetch("/app/support/messages", {
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) return;
 
-  useEffect(() => {
-    fetchMessages();
-    pollRef.current = setInterval(fetchMessages, POLL_MS);
-    return () => { if (pollRef.current) clearInterval(pollRef.current); };
+      const data = (await response.json()) as MessagesLoaderData;
+      if (!mountedRef.current || !data?.thread) return;
+
+      setMessages(data.messages);
+      setThread(data.thread);
+      setUnread(openRef.current ? 0 : data.thread.shopUnreadCount);
+    } catch {
+      // Offline or request blocked — keep the widget quiet and retry later.
+    }
   }, []);
 
   useEffect(() => {
-    if (fetcher.data) {
-      setMessages(fetcher.data.messages);
-      setThread(fetcher.data.thread);
-      if (!open) {
-        setUnread(fetcher.data.thread.shopUnreadCount);
-      } else {
-        setUnread(0);
-      }
-    }
-  }, [fetcher.data, open]);
+    mountedRef.current = true;
+    fetchMessages();
+    pollRef.current = setInterval(fetchMessages, POLL_MS);
+    return () => {
+      mountedRef.current = false;
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, [fetchMessages]);
 
   useEffect(() => {
+    openRef.current = open;
     if (open) {
       setUnread(0);
       scrollToBottom();
