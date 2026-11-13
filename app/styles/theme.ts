@@ -10,7 +10,8 @@
  */
 export const APP_CSS = `
 :root {
-  --ui-canvas: #FAF9F7;
+  --ui-canvas: #fcfdfd;
+  --p-color-bg: #fcfdfd;
   --ui-surface: #FFFFFF;
   --ui-surface-sunken: #F6F4F0;
   --ui-cream: #FDF9F1;

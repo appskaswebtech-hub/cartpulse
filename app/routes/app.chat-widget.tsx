@@ -1,3 +1,4 @@
+import { useTranslation } from "../i18n/LanguageContext";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { Form, useLoaderData, useNavigation } from "react-router";
 import { Page } from "@shopify/polaris";
@@ -21,7 +22,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     }
   `);
   const data = await response.json();
-  const tags = data.data.scriptTags.edges as Array<{ node: { id: string; src: string } }>;
+  const tags = data.data.scriptTags.edges as Array<{
+    node: { id: string; src: string };
+  }>;
   const existing = tags.find((tag) => tag.node.src.includes(SCRIPT_SRC_MATCH));
 
   return { installed: Boolean(existing), src: existing?.node.src ?? null };
@@ -43,8 +46,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     }
   `);
   const listData = await listResponse.json();
-  const tags = listData.data.scriptTags.edges as Array<{ node: { id: string; src: string } }>;
-  const existing = tags.filter((tag) => tag.node.src.includes(SCRIPT_SRC_MATCH));
+  const tags = listData.data.scriptTags.edges as Array<{
+    node: { id: string; src: string };
+  }>;
+  const existing = tags.filter((tag) =>
+    tag.node.src.includes(SCRIPT_SRC_MATCH),
+  );
 
   for (const tag of existing) {
     await admin.graphql(
@@ -53,7 +60,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
           deletedScriptTagId
         }
       }`,
-      { variables: { id: tag.node.id } }
+      { variables: { id: tag.node.id } },
     );
   }
 
@@ -78,7 +85,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
           displayScope: "ALL",
         },
       },
-    }
+    },
   );
 
   const data = await response.json();
@@ -86,20 +93,27 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function ChatWidgetSettings() {
+  const { tr, locale } = useTranslation();
+
   const { installed, src } = useLoaderData<typeof loader>();
   const navigation = useNavigation();
   const busy = navigation.state !== "idle";
 
   return (
-    <Page title="Support Chat">
+    <Page title={tr("Support Chat")}>
       <div style={{ padding: "16px" }}>
         <p>
-          Status: <strong>{installed ? "Installed" : "Not installed"}</strong>
+          {tr(" Status: ")}
+          <strong>{installed ? tr("Installed") : tr("Not installed")}</strong>
         </p>
-        {src && <p style={{ color: "#64748b", fontSize: "13px" }}>{src}</p>}
+        {src && <p style={{ color: "#64748b", fontSize: "13px" }}>{tr(src)}</p>}
         <Form method="post" style={{ marginTop: "16px" }}>
           <button type="submit" disabled={busy}>
-            {busy ? "Working..." : installed ? "Reinstall widget" : "Install widget"}
+            {busy
+              ? tr("Working...")
+              : installed
+                ? tr("Reinstall widget")
+                : tr("Install widget")}
           </button>
         </Form>
       </div>

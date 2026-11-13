@@ -1,3 +1,4 @@
+import { useTranslation } from "../i18n/LanguageContext";
 import { useEffect, useRef, useState, useCallback } from "react";
 
 interface Message {
@@ -29,18 +30,25 @@ type MessagesLoaderData = { thread: Thread; messages: Message[] };
 const POLL_MS = 4000;
 const TYPING_THROTTLE_MS = 3000;
 
-function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+function formatTime(iso: string, locale: string) {
+  return new Date(iso).toLocaleTimeString(locale, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
-function formatDateLabel(iso: string) {
+function formatDateLabel(iso: string, locale: string) {
   const d = new Date(iso);
   const today = new Date();
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   if (d.toDateString() === today.toDateString()) return "Today";
   if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
-  return d.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+  return d.toLocaleDateString(locale, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function dateKey(iso: string) {
@@ -105,6 +113,8 @@ const css = `
 `;
 
 export default function SupportChatWidget() {
+  const { tr, locale } = useTranslation();
+
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [thread, setThread] = useState<Thread | null>(null);
@@ -112,7 +122,11 @@ export default function SupportChatWidget() {
   const [unread, setUnread] = useState(0);
   const [sending, setSending] = useState(false);
   const [contactName, setContactName] = useState<string>(() => {
-    try { return localStorage.getItem("cpsc-contact-name") ?? ""; } catch { return ""; }
+    try {
+      return localStorage.getItem("cpsc-contact-name") ?? "";
+    } catch {
+      return "";
+    }
   });
   const [prechatName, setPrechatName] = useState("");
   const [prechatEmail, setPrechatEmail] = useState("");
@@ -232,9 +246,15 @@ export default function SupportChatWidget() {
     await fetch("/app/support/reopen", { method: "POST" });
     setMessages([]);
     setContactName("");
-    try { localStorage.removeItem("cpsc-contact-name"); } catch {}
-    setPrechatName(""); setPrechatEmail(""); setPrechatMsg("");
-    setThread((t) => t ? { ...t, closedAt: null, lastResetAt: new Date().toISOString() } : t);
+    try {
+      localStorage.removeItem("cpsc-contact-name");
+    } catch {}
+    setPrechatName("");
+    setPrechatEmail("");
+    setPrechatMsg("");
+    setThread((t) =>
+      t ? { ...t, closedAt: null, lastResetAt: new Date().toISOString() } : t,
+    );
     fetchMessages();
   };
 
@@ -252,7 +272,9 @@ export default function SupportChatWidget() {
         body: JSON.stringify({ body, name, email }),
       });
       setContactName(name);
-      try { localStorage.setItem("cpsc-contact-name", name); } catch {}
+      try {
+        localStorage.setItem("cpsc-contact-name", name);
+      } catch {}
       fetchMessages();
     } finally {
       setSending(false);
@@ -268,7 +290,8 @@ export default function SupportChatWidget() {
 
   const isClosed = !!thread?.closedAt;
   const adminTyping = isAdminTyping(thread);
-  const showPreChat = !!thread && messages.length === 0 && !contactName && !isClosed;
+  const showPreChat =
+    !!thread && messages.length === 0 && !contactName && !isClosed;
 
   return (
     <>
@@ -278,157 +301,259 @@ export default function SupportChatWidget() {
         <div className="cpsc-panel">
           <div className="cpsc-header">
             <div>
-              <div className="cpsc-header-title">CartPulse Support</div>
-              <div className="cpsc-header-sub">We typically reply within a few hours</div>
+              <div className="cpsc-header-title">{tr("CartPulse Support")}</div>
+              <div className="cpsc-header-sub">
+                {tr("We typically reply within a few hours")}
+              </div>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               {!isClosed && (
                 <button
                   onClick={handleClose}
-                  style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.4)", borderRadius: 6, fontSize: 11, color: "#fff", cursor: "pointer", padding: "3px 8px", whiteSpace: "nowrap" }}
+                  style={{
+                    background: "rgba(255,255,255,0.15)",
+                    border: "1px solid rgba(255,255,255,0.4)",
+                    borderRadius: 6,
+                    fontSize: 11,
+                    color: "#fff",
+                    cursor: "pointer",
+                    padding: "3px 8px",
+                    whiteSpace: "nowrap",
+                  }}
                 >
-                  End Chat
+                  {tr(" End Chat ")}
                 </button>
               )}
-              <button className="cpsc-header-close" onClick={() => setOpen(false)} aria-label="Close chat">×</button>
+              <button
+                className="cpsc-header-close"
+                onClick={() => setOpen(false)}
+                aria-label={tr("Close chat")}
+              >
+                ×
+              </button>
             </div>
           </div>
 
           {isClosed && (
             <div className="cpsc-closed-bar">
-              <span>This conversation is closed.</span>
-              <button className="cpsc-reopen-btn" onClick={handleReopen}>New Chat</button>
+              <span>{tr("This conversation is closed.")}</span>
+              <button className="cpsc-reopen-btn" onClick={handleReopen}>
+                {tr("New Chat")}
+              </button>
             </div>
           )}
 
           {showPreChat ? (
             <form className="cpsc-prechat" onSubmit={handlePrechatSubmit}>
-              <div className="cpsc-prechat-title">How can we help?</div>
-              <div className="cpsc-prechat-sub">Fill in your details and we'll get back to you shortly.</div>
+              <div className="cpsc-prechat-title">{tr("How can we help?")}</div>
+              <div className="cpsc-prechat-sub">
+                {tr("Fill in your details and we'll get back to you shortly.")}
+              </div>
               <input
-                placeholder="Your name *"
+                placeholder={tr("Your name *")}
                 value={prechatName}
                 onChange={(e) => setPrechatName(e.target.value)}
                 required
               />
               <input
                 type="email"
-                placeholder="Email address *"
+                placeholder={tr("Email address *")}
                 value={prechatEmail}
                 onChange={(e) => setPrechatEmail(e.target.value)}
                 required
               />
               <textarea
-                placeholder="Describe your issue *"
+                placeholder={tr("Describe your issue *")}
                 value={prechatMsg}
                 onChange={(e) => setPrechatMsg(e.target.value)}
                 required
               />
-              <button className="cpsc-prechat-btn" type="submit" disabled={sending || !prechatName.trim() || !prechatEmail.trim() || !prechatMsg.trim()}>
-                {sending ? "Sending…" : "Start Chat"}
+              <button
+                className="cpsc-prechat-btn"
+                type="submit"
+                disabled={
+                  sending ||
+                  !prechatName.trim() ||
+                  !prechatEmail.trim() ||
+                  !prechatMsg.trim()
+                }
+              >
+                {sending ? tr("Sending…") : tr("Start Chat")}
               </button>
             </form>
           ) : (
             <>
-            <div className="cpsc-msgs">
-            {messages.map((m, i) => {
-              const prevMsg = i > 0 ? messages[i - 1] : null;
-              const showDateDivider =
-                i === 0 ||
-                dateKey(m.createdAt) !== dateKey(prevMsg!.createdAt) ||
-                prevMsg?.sender === "system";
+              <div className="cpsc-msgs">
+                {messages.map((m, i) => {
+                  const prevMsg = i > 0 ? messages[i - 1] : null;
+                  const showDateDivider =
+                    i === 0 ||
+                    dateKey(m.createdAt) !== dateKey(prevMsg!.createdAt) ||
+                    prevMsg?.sender === "system";
 
-              if (m.sender === "system") {
-                return (
-                  <div key={m.id}>
-                    {showDateDivider && (
-                      <div className="cpsc-date-divider"><span>{formatDateLabel(m.createdAt)}</span></div>
-                    )}
-                    <div className="cpsc-system">{m.body}</div>
-                  </div>
-                );
-              }
+                  if (m.sender === "system") {
+                    return (
+                      <div key={m.id}>
+                        {showDateDivider && (
+                          <div className="cpsc-date-divider">
+                            <span>
+                              {tr(formatDateLabel(m.createdAt, locale))}
+                            </span>
+                          </div>
+                        )}
+                        <div className="cpsc-system">{m.body}</div>
+                      </div>
+                    );
+                  }
 
-              const isShop = m.sender === "shop";
-              const isBot = m.sender === "bot" || m.sender === "BOT";
-              const side = isShop ? "shop" : "admin";
+                  const isShop = m.sender === "shop";
+                  const isBot = m.sender === "bot" || m.sender === "BOT";
+                  const side = isShop ? "shop" : "admin";
 
-              return (
-                <div key={m.id}>
-                  {showDateDivider && (
-                    <div className="cpsc-date-divider"><span>{formatDateLabel(m.createdAt)}</span></div>
-                  )}
-                  <div className={`cpsc-row ${side}`}>
-                    <div className="cpsc-bubble-msg">
-                      {isBot && <span style={{ fontSize: 11, opacity: 0.7, display: "block", marginBottom: 2 }}>Bot</span>}
-                      {m.body && <span>{m.body}</span>}
-                      {m.attachmentUrl && (
-                        m.attachmentType?.startsWith("image/") ? (
-                          <a href={m.attachmentUrl} target="_blank" rel="noreferrer">
-                            <img src={m.attachmentUrl} alt={m.attachmentName ?? "Image"} style={{ maxWidth: "100%", borderRadius: 8, marginTop: m.body ? 6 : 0, display: "block" }} />
-                          </a>
-                        ) : (
-                          <a href={m.attachmentUrl} target="_blank" rel="noreferrer" className="cpsc-attach">
-                            📎 {m.attachmentName ?? "Attachment"}
-                          </a>
-                        )
+                  return (
+                    <div key={m.id}>
+                      {showDateDivider && (
+                        <div className="cpsc-date-divider">
+                          <span>
+                            {tr(formatDateLabel(m.createdAt, locale))}
+                          </span>
+                        </div>
                       )}
+                      <div className={`cpsc-row ${side}`}>
+                        <div className="cpsc-bubble-msg">
+                          {isBot && (
+                            <span
+                              style={{
+                                fontSize: 11,
+                                opacity: 0.7,
+                                display: "block",
+                                marginBottom: 2,
+                              }}
+                            >
+                              {tr("Bot")}
+                            </span>
+                          )}
+                          {m.body && <span>{m.body}</span>}
+                          {m.attachmentUrl &&
+                            (m.attachmentType?.startsWith("image/") ? (
+                              <a
+                                href={m.attachmentUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <img
+                                  src={m.attachmentUrl}
+                                  alt={tr(m.attachmentName ?? "Image")}
+                                  style={{
+                                    maxWidth: "100%",
+                                    borderRadius: 8,
+                                    marginTop: m.body ? 6 : 0,
+                                    display: "block",
+                                  }}
+                                />
+                              </a>
+                            ) : (
+                              <a
+                                href={m.attachmentUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="cpsc-attach"
+                              >
+                                📎 {tr(m.attachmentName ?? "Attachment")}
+                              </a>
+                            ))}
+                        </div>
+                        <div className="cpsc-time">
+                          {tr(formatTime(m.createdAt, locale))}
+                        </div>
+                      </div>
                     </div>
-                    <div className="cpsc-time">{formatTime(m.createdAt)}</div>
+                  );
+                })}
+
+                {adminTyping && (
+                  <div className="cpsc-row admin">
+                    <div className="cpsc-typing">
+                      <span />
+                      <span />
+                      <span />
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                )}
 
-            {adminTyping && (
-              <div className="cpsc-row admin">
-                <div className="cpsc-typing">
-                  <span /><span /><span />
-                </div>
+                <div ref={messagesEndRef} />
               </div>
-            )}
 
-            <div ref={messagesEndRef} />
-          </div>
-
-          {!isClosed && (
-            <div className="cpsc-footer">
-              <input
-                ref={fileInputRef}
-                type="file"
-                style={{ display: "none" }}
-                accept="image/*,.pdf,.doc,.docx,.txt"
-                onChange={handleFileSelect}
-              />
-              <button className="cpsc-file-btn" onClick={() => fileInputRef.current?.click()} title="Attach file">📎</button>
-              <textarea
-                className="cpsc-input"
-                placeholder="Type a message…"
-                value={input}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                rows={1}
-              />
-              <button className="cpsc-send" onClick={handleSend} disabled={sending || !input.trim()}>
-                Send
-              </button>
-            </div>
-          )}
+              {!isClosed && (
+                <div className="cpsc-footer">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    style={{ display: "none" }}
+                    accept="image/*,.pdf,.doc,.docx,.txt"
+                    onChange={handleFileSelect}
+                  />
+                  <button
+                    className="cpsc-file-btn"
+                    onClick={() => fileInputRef.current?.click()}
+                    title={tr("Attach file")}
+                  >
+                    📎
+                  </button>
+                  <textarea
+                    className="cpsc-input"
+                    placeholder={tr("Type a message…")}
+                    value={input}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    rows={1}
+                  />
+                  <button
+                    className="cpsc-send"
+                    onClick={handleSend}
+                    disabled={sending || !input.trim()}
+                  >
+                    {tr(" Send ")}
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>
       )}
 
       <div className="cpsc-bubble">
-        <button className="cpsc-toggle" onClick={() => setOpen((v) => !v)} aria-label="Open support chat">
+        <button
+          className="cpsc-toggle"
+          onClick={() => setOpen((v) => !v)}
+          aria-label={tr("Open support chat")}
+        >
           {open ? (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
           ) : (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
           )}
         </button>
         {unread > 0 && !open && (
-          <div className="cpsc-badge">{unread > 9 ? "9+" : unread}</div>
+          <div className="cpsc-badge">{unread > 9 ? tr("9+") : tr(unread)}</div>
         )}
       </div>
     </>

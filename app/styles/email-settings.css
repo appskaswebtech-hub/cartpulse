@@ -1,0 +1,626 @@
+﻿.email-settings-shell {
+  min-height: 100vh;
+  background: var(--ui-canvas, #fcfdfd);
+  padding: 24px 24px 36px;
+}
+.email-settings-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color: #0c1225;
+  --es-space-4: var(--p-space-400, 16px);
+  --es-space-6: var(--p-space-600, 24px);
+  --es-space-8: var(--p-space-800, 32px);
+}
+.email-settings-page *,
+.email-settings-page *::before,
+.email-settings-page *::after {
+  box-sizing: border-box;
+}
+.email-settings-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: var(--es-space-6);
+}
+.email-settings-title-icon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 17px;
+  background: #d2f2e3;
+  color: #005f2e;
+  flex-shrink: 0;
+}
+.email-settings-title-icon svg {
+  width: 38px;
+  height: 38px;
+}
+.email-settings-header h1 {
+  font-size: 34px;
+  line-height: 1.2;
+  font-weight: 750;
+  color: #0b1022;
+  letter-spacing: -1px;
+  margin: 0 0 3px;
+}
+.email-settings-header p {
+  color: #455574;
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+}
+.email-settings-default {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 24px;
+  margin-bottom: var(--es-space-6);
+  background: #edf9f3;
+  border: 1px solid #bae8d6;
+  border-radius: 16px;
+}
+.email-settings-default > svg {
+  color: #007c39;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+.email-settings-default p {
+  color: #0e1928;
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
+}
+.email-settings-default strong {
+  font-weight: 700;
+}
+.email-settings-default strong span {
+  color: #005d2d;
+  overflow-wrap: anywhere;
+}
+.email-settings-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 158px;
+  display: flex;
+  align-items: center;
+  padding: 24px 42px;
+  margin-bottom: var(--es-space-6);
+  border-radius: 20px;
+  border: 1px solid #009548;
+  color: #fff;
+  background: linear-gradient(110deg, #00291d, #004a2d 65%, #004327);
+  box-shadow: 0 2px 5px #00562e12;
+}
+.email-settings-hero-waves {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+.email-settings-hero-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 65%;
+}
+.email-settings-hero h2 {
+  color: #f7fff9;
+  font-size: 32px;
+  line-height: 1.25;
+  font-weight: 750;
+  letter-spacing: -0.7px;
+  margin: 0 0 10px;
+}
+.email-settings-hero h2 span {
+  color: #00e887;
+}
+.email-settings-hero p {
+  color: #f5fff9;
+  font-size: 17px;
+  line-height: 1.5;
+  margin: 0;
+}
+.email-settings-hero-art {
+  position: absolute;
+  width: 39%;
+  height: 100%;
+  right: 14px;
+  bottom: 0;
+  object-fit: contain;
+}
+.email-settings-card {
+  background: #fff;
+  border: 1px solid #e7edf1;
+  border-radius: 21px;
+  box-shadow:
+    0 2px 3px #10284705,
+    0 5px 11px #10284709;
+  margin-bottom: var(--es-space-6);
+  overflow: hidden;
+}
+.email-settings-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #eaf0f4;
+}
+.email-settings-heading-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 15px;
+  color: #006d36;
+  background: #d9f4e7;
+  flex-shrink: 0;
+}
+.email-settings-heading-icon svg {
+  width: 33px;
+  height: 33px;
+}
+.email-settings-card-heading h2 {
+  color: #0d1227;
+  font-size: 23px;
+  line-height: 1.3;
+  font-weight: 750;
+  letter-spacing: -0.6px;
+  margin: 0 0 2px;
+}
+.email-settings-card-heading p {
+  color: #465674;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+.email-settings-switch-list {
+  padding: 0 40px 6px 46px;
+}
+.email-settings-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 10px 0;
+  cursor: pointer;
+  min-height: 72px;
+}
+.email-settings-toggle + .email-settings-toggle::before {
+  content: "";
+  position: absolute;
+  left: 80px;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: #e5ebf1;
+}
+.email-settings-toggle-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+.email-settings-toggle-copy strong {
+  color: #0d1227;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.4px;
+}
+.email-settings-toggle-copy > span {
+  color: #465674;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.email-settings-toggle input {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 62px;
+  height: 34px;
+  margin: 0 0 0 16px;
+  background: #c6c9ce;
+  border: 1px solid #c6c9ce;
+  border-radius: 30px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.email-settings-toggle input::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px #11233618;
+  transition: transform 0.15s;
+}
+.email-settings-toggle input:checked {
+  background: #00743c;
+  border-color: #00743c;
+}
+.email-settings-toggle input:checked::before {
+  transform: translateX(28px);
+}
+.email-settings-toggle input:focus-visible {
+  outline: 2px solid #005bd3;
+  outline-offset: 4px;
+}
+.email-settings-sender-heading {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 65px;
+}
+.email-settings-heading-wave {
+  position: absolute;
+  width: 42%;
+  height: 100%;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+.email-settings-sender-heading h2 {
+  margin: 0;
+}
+.email-settings-sender-heading > .email-settings-heading-icon {
+  width: 48px;
+  height: 48px;
+}
+.email-settings-sender-body {
+  padding: 14px 34px 22px;
+}
+.email-settings-provider {
+  margin-bottom: 12px;
+}
+.email-settings-page .cp-label {
+  display: block;
+  color: #10162b;
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 650;
+  margin-bottom: 8px;
+}
+.email-settings-select {
+  position: relative;
+}
+.email-settings-select > svg {
+  position: absolute;
+  top: 12px;
+  left: 17px;
+  width: 23px;
+  height: 23px;
+  color: #007039;
+  pointer-events: none;
+}
+.email-settings-page .cp-input {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid #cbd7e6;
+  border-radius: 12px;
+  background: #fff;
+  color: #10182a;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  outline: none;
+  box-shadow: 0 1px 2px #10284704;
+}
+.email-settings-page select.cp-input {
+  padding-left: 60px;
+  padding-right: 34px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.email-settings-page .cp-input:focus {
+  outline: 2px solid #005bd3;
+  outline-offset: 2px;
+  border-color: #005bd3;
+}
+.email-settings-page .cp-hint {
+  color: #465674;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 7px 0 0;
+}
+.email-settings-gmail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.email-settings-password-visibility {
+  min-width: 40px;
+  min-height: 40px;
+  display: grid;
+  place-items: center;
+}
+.email-settings-save-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 8px;
+}
+.email-settings-page .btn-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 28px;
+  min-height: 48px;
+  min-width: 214px;
+  background: linear-gradient(135deg, #00964b, #005a32);
+  color: #fff;
+  border: 1px solid #007a3e;
+  border-radius: 15px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 650;
+  cursor: pointer;
+  margin-left: auto;
+  box-shadow: inset 0 1px 3px #ffffff12;
+}
+.email-settings-page .btn-save svg {
+  width: 22px;
+  height: 22px;
+}
+.email-settings-page .btn-save:hover:not(:disabled) {
+  background: #005b32;
+}
+.email-settings-page .btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.email-settings-page button:focus-visible,
+.email-settings-page a:focus-visible {
+  outline: 2px solid #005bd3;
+  outline-offset: 3px;
+}
+.email-settings-saved {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #0d733a;
+}
+.email-settings-saved svg {
+  width: 18px;
+  height: 18px;
+}
+.email-settings-privacy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #536483;
+  margin: 4px 0 0;
+  text-align: center;
+}
+.email-settings-privacy svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+@media (max-width: 1000px) {
+  .email-settings-header h1 {
+    font-size: 31px;
+  }
+  .email-settings-hero {
+    padding: 24px 32px;
+  }
+  .email-settings-hero h2 {
+    font-size: 28px;
+  }
+  .email-settings-hero p {
+    font-size: 15px;
+  }
+  .email-settings-card-heading h2 {
+    font-size: 21px;
+  }
+  .email-settings-card-heading p {
+    font-size: 13px;
+  }
+  .email-settings-switch-list {
+    padding: 0 24px 6px;
+  }
+  .email-settings-toggle {
+    gap: 18px;
+  }
+  .email-settings-toggle-copy strong {
+    font-size: 16px;
+  }
+  .email-settings-toggle-copy > span {
+    font-size: 13px;
+  }
+  .email-settings-toggle + .email-settings-toggle::before {
+    left: 70px;
+  }
+}
+@media (max-width: 650px) {
+  .email-settings-shell {
+    padding: 16px 16px 32px;
+  }
+  .email-settings-header {
+    gap: 12px;
+  }
+  .email-settings-title-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+  }
+  .email-settings-title-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+  .email-settings-header h1 {
+    font-size: 27px;
+  }
+  .email-settings-header p {
+    font-size: 13px;
+  }
+  .email-settings-default {
+    gap: 12px;
+    padding: 14px 16px;
+  }
+  .email-settings-default p {
+    font-size: 13px;
+  }
+  .email-settings-default > svg {
+    width: 22px;
+    height: 22px;
+  }
+  .email-settings-hero {
+    padding: 24px;
+    min-height: 238px;
+    align-items: flex-start;
+    border-radius: 18px;
+  }
+  .email-settings-hero-copy {
+    max-width: 100%;
+  }
+  .email-settings-hero h2 {
+    font-size: 25px;
+    max-width: 280px;
+  }
+  .email-settings-hero p {
+    font-size: 14px;
+    max-width: 290px;
+  }
+  .email-settings-desktop-break {
+    display: none;
+  }
+  .email-settings-hero-art {
+    width: 160px;
+    height: 110px;
+    right: 0;
+    bottom: -4px;
+    opacity: 0.85;
+    z-index: 0;
+  }
+  .email-settings-card {
+    border-radius: 18px;
+  }
+  .email-settings-card-heading {
+    padding: 16px;
+    gap: 12px;
+  }
+  .email-settings-heading-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+  }
+  .email-settings-heading-icon svg {
+    width: 27px;
+    height: 27px;
+  }
+  .email-settings-card-heading h2 {
+    font-size: 20px;
+  }
+  .email-settings-card-heading p {
+    font-size: 12px;
+  }
+  .email-settings-switch-list {
+    padding: 0 16px 8px;
+  }
+  .email-settings-toggle {
+    gap: 12px;
+    min-height: 88px;
+  }
+  .email-settings-toggle .email-settings-heading-icon {
+    width: 38px;
+    height: 38px;
+  }
+  .email-settings-toggle-copy strong {
+    font-size: 14px;
+  }
+  .email-settings-toggle-copy > span {
+    font-size: 12px;
+  }
+  .email-settings-toggle input {
+    width: 50px;
+    height: 30px;
+    margin-left: 4px;
+  }
+  .email-settings-toggle input::before {
+    width: 22px;
+    height: 22px;
+  }
+  .email-settings-toggle input:checked::before {
+    transform: translateX(20px);
+  }
+  .email-settings-toggle + .email-settings-toggle::before {
+    left: 50px;
+  }
+  .email-settings-sender-body {
+    padding: 16px;
+  }
+  .email-settings-sender-heading > .email-settings-heading-icon {
+    width: 42px;
+    height: 42px;
+  }
+  .email-settings-page .cp-label {
+    font-size: 14px;
+  }
+  .email-settings-page .cp-input {
+    font-size: 16px;
+  }
+  .email-settings-page .cp-hint {
+    font-size: 12px;
+  }
+  .email-settings-page select.cp-input {
+    font-size: 14px;
+    padding-left: 50px;
+  }
+  .email-settings-select > svg {
+    left: 14px;
+  }
+  .email-settings-gmail-grid {
+    grid-template-columns: 1fr;
+  }
+  .email-settings-save-row {
+    flex-wrap: wrap;
+  }
+  .email-settings-page .btn-save {
+    min-width: 0;
+    font-size: 14px;
+    min-height: 44px;
+    padding: 11px 20px;
+  }
+  .email-settings-privacy {
+    font-size: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .email-settings-page *,
+  .email-settings-page *::before {
+    transition: none !important;
+  }
+}
+@media (forced-colors: active) {
+  .email-settings-toggle input {
+    appearance: auto;
+    width: 28px;
+    height: 28px;
+  }
+  .email-settings-toggle input::before {
+    content: none;
+  }
+}

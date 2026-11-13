@@ -27,7 +27,8 @@ export const it: Dictionary = {
     sent: "Inviata",
     emailSent: "E-mail inviata",
     noCartsTitle: "Nessun carrello disponibile",
-    noCartsSubtitle: "I carrelli abbandonati con e-mail dei clienti appariranno qui",
+    noCartsSubtitle:
+      "I carrelli abbandonati con e-mail dei clienti appariranno qui",
     customer: "Cliente",
     cartValue: "Valore del carrello",
     products: "Prodotti",
@@ -47,7 +48,8 @@ export const it: Dictionary = {
     never: "Mai",
     customerOutreach: "Contatto clienti",
     noCustomersTitle: "Nessun cliente qui",
-    noCustomersSubtitle: "Prova un filtro diverso o aspetta altri carrelli abbandonati",
+    noCustomersSubtitle:
+      "Prova un filtro diverso o aspetta altri carrelli abbandonati",
     total: "Totale",
     abandonedOn: "Abbandonato il",
     emailHistory: "Cronologia e-mail",
@@ -56,7 +58,8 @@ export const it: Dictionary = {
     resend: "Reinvia",
     privacyFooter: "Tutti i dati sono criptati e la tua privacy è protetta.",
     planLimitTitle: "Limite del piano raggiunto",
-    planLimitDesc: (plan, limit) => `Il tuo piano ${plan} mostra fino a ${limit} carrelli. Esegui l'upgrade per vedere più clienti e inviare più e-mail di recupero.`,
+    planLimitDesc: (plan, limit) =>
+      `Il tuo piano ${plan} mostra fino a ${limit} carrelli. Esegui l'upgrade per vedere più clienti e inviare più e-mail di recupero.`,
     maybeLater: "Forse più tardi",
     upgradePlan: "Aggiorna piano →",
     modalTitle: "Invia e-mail di recupero",
@@ -66,9 +69,11 @@ export const it: Dictionary = {
     messageLabel: "Messaggio",
     variablesHint: "Variabili disponibili — personalizzate per cliente",
     cancelBtn: "Annulla",
-    emailsSentSuccess: (count) => `${count} e-mail inviat${count !== 1 ? "e" : "a"} con successo.`,
+    emailsSentSuccess: (count) =>
+      `${count} e-mail inviat${count !== 1 ? "e" : "a"} con successo.`,
     skippedUnsub: (count) => `${count} saltati (disiscritti).`,
-    emailError: "Impossibile inviare le e-mail. Controlla GMAIL_USER e GMAIL_APP_PASSWORD nel file .env.",
+    emailError:
+      "Impossibile inviare le e-mail. Controlla GMAIL_USER e GMAIL_APP_PASSWORD nel file .env.",
   },
   emailSettings: {
     title: "Impostazioni e-mail",
@@ -84,7 +89,8 @@ export const it: Dictionary = {
     gmailHint: "Deve essere un account Gmail",
     appPassword: "Password app",
     appPasswordSaved: "Salvata",
-    appPasswordHint: "Ottienila su myaccount.google.com/apppasswords — richiede la verifica in 2 passaggi",
+    appPasswordHint:
+      "Ottienila su myaccount.google.com/apppasswords — richiede la verifica in 2 passaggi",
     defaultSender: "Mittente predefinito",
     save: "Salva impostazioni",
     saving: "Salvataggio…",
@@ -95,10 +101,12 @@ export const it: Dictionary = {
     subtitle: "Seleziona il piano più adatto alle esigenze del tuo negozio",
     currentPlanBanner: (plan) => `Sei attualmente sul piano ${plan}`,
     allFeaturesAccess: "Hai accesso a tutte le funzionalità.",
-    upgradeAnytime: "Esegui l'upgrade in qualsiasi momento per sbloccare più funzionalità.",
+    upgradeAnytime:
+      "Esegui l'upgrade in qualsiasi momento per sbloccare più funzionalità.",
     billingError: "Errore di fatturazione",
     redirecting: "Reindirizzamento alla fatturazione Shopify…",
-    redirectingText: "Attendere prego mentre ti reindirizziamo per confermare il tuo abbonamento.",
+    redirectingText:
+      "Attendere prego mentre ti reindirizziamo per confermare il tuo abbonamento.",
     mostPopular: "Più popolare",
     current: "Attuale",
     perMonthEmails: (n) => `al mese · ${n} e-mail incluse`,
@@ -107,7 +115,8 @@ export const it: Dictionary = {
     upgradeTo: (plan) => `Passa a ${plan}`,
     downgradeTo: (plan) => `Declassa a ${plan}`,
     cancelSubscription: "Annulla abbonamento",
-    cancelSubtitle: (plan) => `Perderai immediatamente l'accesso alle funzionalità ${plan}.`,
+    cancelSubtitle: (plan) =>
+      `Perderai immediatamente l'accesso alle funzionalità ${plan}.`,
     cancelPlan: "Annulla piano",
     keepPlan: "Mantieni piano",
     yesCancel: "Sì, annulla",

@@ -12,44 +12,45 @@ automatically_update_urls_on_dev = true
 api_version = "2026-04"
 
   [[webhooks.subscriptions]]
-  topics = [ "app/uninstalled" ]
+  uri = "/webhooks/cart-activity/checkout-sync"
+  topics = [ "checkouts/create", "checkouts/update" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/cart/abandoned"
+  topics = [ "checkouts/create", "checkouts/update" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/cart-activity/added"
+  topics = [ "carts/update" ]
+
+  [[webhooks.subscriptions]]
   uri = "/webhooks/app/uninstalled"
+  topics = [ "app/uninstalled" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/app/scopes_update"
+  topics = [ "app/scopes_update" ]
 
   [[webhooks.subscriptions]]
   uri = "/webhooks"
   compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
 
   [[webhooks.subscriptions]]
-  topics = [ "checkouts/update", "checkouts/create" ]
-  uri = "/webhooks/cart/abandoned"
-
-  [[webhooks.subscriptions]]
-  topics = [ "orders/create" ]
-  uri = "/webhooks/orders/create"
-
-  [[webhooks.subscriptions]]
-  topics = [ "app/scopes_update" ]
-  uri = "/webhooks/app/scopes_update"
-
-  [[webhooks.subscriptions]]
-  topics = [ "carts/update" ]
-  uri = "/webhooks/cart-activity/added"
-
-  [[webhooks.subscriptions]]
-  topics = [ "checkouts/create" ]
-  uri = "/webhooks/cart-activity/checkout-sync"
-
-  [[webhooks.subscriptions]]
-  topics = [ "checkouts/update" ]
-  uri = "/webhooks/cart-activity/checkout-sync"
-
-  [[webhooks.subscriptions]]
-  topics = [ "orders/create" ]
   uri = "/webhooks/cart-activity/order-sync"
+  topics = [ "orders/create" ]
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/orders/create"
+  topics = [ "orders/create" ]
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_checkouts,read_orders,write_products,write_script_tags"
+scopes = "read_checkouts,read_orders,write_app_proxy,write_products,write_script_tags"
 
 [auth]
 redirect_urls = [ "https://cartpulse.kaswebtechsolutions.com/auth/callback" ]
+
+[app_proxy]
+url = "https://cartpulse.kaswebtechsolutions.com/proxy"
+subpath = "cartpulse"
+prefix = "apps"

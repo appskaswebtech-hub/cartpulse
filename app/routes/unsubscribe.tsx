@@ -42,7 +42,7 @@ function unsubscribePage(title: string, message: string) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${title}</title>
   <style>
-    body { font-family: sans-serif; background: #f9fafb; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+    body { font-family: sans-serif; background: #fcfdfd; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
     .card { background: #fff; border-radius: 16px; padding: 40px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
     .icon { width: 56px; height: 56px; background: #E1F5EE; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
     h1 { font-size: 20px; font-weight: 700; color: #111; margin: 0 0 10px; }

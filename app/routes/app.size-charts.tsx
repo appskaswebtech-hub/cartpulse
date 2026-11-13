@@ -1,3 +1,4 @@
+import { useTranslation } from "../i18n/LanguageContext";
 import { useCallback, useEffect, useState } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import {
@@ -11,7 +12,14 @@ import {
   useSearchParams,
 } from "react-router";
 import { ConfirmDialog, SaveLabel, Toast } from "../components/Feedback";
-import { Page } from "@shopify/polaris";
+import {
+  SizeChartIcon,
+  SizeChartsHero,
+  SizeChartsEmptyArt,
+} from "../components/SizeChartsVisuals";
+import pageStylesheet from "../styles/size-charts.css?url";
+
+export const links = () => [{ rel: "stylesheet", href: pageStylesheet }];
 import { authenticate } from "../shopify.server";
 import db from "../db.server";
 import {
@@ -42,7 +50,10 @@ const PAGE_PATH = "/app/size-charts";
  * embedded) on every navigation. A bare path drops them, the loader can no
  * longer resolve the shop, and the request gets bounced to login.
  */
-function buildHref(current: URLSearchParams, changes: Record<string, string | null>) {
+function buildHref(
+  current: URLSearchParams,
+  changes: Record<string, string | null>,
+) {
   const next = new URLSearchParams(current);
   for (const [key, value] of Object.entries(changes)) {
     if (value === null) next.delete(key);
@@ -98,7 +109,9 @@ interface Catalog {
 
 const EMPTY_CATALOG: Catalog = { products: [], collections: [], tags: [] };
 
-async function loadCatalog(admin: { graphql: (q: string) => Promise<Response> }): Promise<Catalog> {
+async function loadCatalog(admin: {
+  graphql: (q: string) => Promise<Response>;
+}): Promise<Catalog> {
   try {
     const response = await admin.graphql(CATALOG_QUERY);
     const body = await response.json();
@@ -111,8 +124,14 @@ async function loadCatalog(admin: { graphql: (q: string) => Promise<Response> })
     }
 
     return {
-      products: products.map((p: any) => ({ handle: p.handle, title: p.title })),
-      collections: collections.map((c: any) => ({ handle: c.handle, title: c.title })),
+      products: products.map((p: any) => ({
+        handle: p.handle,
+        title: p.title,
+      })),
+      collections: collections.map((c: any) => ({
+        handle: c.handle,
+        title: c.title,
+      })),
       tags: Array.from(tags).sort((a, b) => a.localeCompare(b)),
     };
   } catch {
@@ -186,7 +205,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     list,
     draft,
     catalog,
-    templates: SIZE_CHART_TEMPLATES.map((t) => ({ key: t.key, label: t.label })),
+    templates: SIZE_CHART_TEMPLATES.map((t) => ({
+      key: t.key,
+      label: t.label,
+    })),
   };
 };
 
@@ -203,7 +225,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
   if (intent === "toggle" && id) {
-    const existing = await db.sizeChart.findFirst({ where: { id, shop: session.shop } });
+    const existing = await db.sizeChart.findFirst({
+      where: { id, shop: session.shop },
+    });
     if (existing) {
       await db.sizeChart.update({
         where: { id },
@@ -214,7 +238,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
   if (intent === "duplicate" && id) {
-    const existing = await db.sizeChart.findFirst({ where: { id, shop: session.shop } });
+    const existing = await db.sizeChart.findFirst({
+      where: { id, shop: session.shop },
+    });
     if (existing) {
       await db.sizeChart.create({
         data: {
@@ -234,7 +260,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return redirect(withFlash(back, "duplicated"));
   }
 
-  if (intent === "save" || intent === "save-active" || intent === "save-draft") {
+  if (
+    intent === "save" ||
+    intent === "save-active" ||
+    intent === "save-draft"
+  ) {
     // The clicked button decides the status, so it can never lag React state.
     const status =
       intent === "save-active"
@@ -256,7 +286,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     };
 
     if (id) {
-      await db.sizeChart.updateMany({ where: { id, shop: session.shop }, data });
+      await db.sizeChart.updateMany({
+        where: { id, shop: session.shop },
+        data,
+      });
     } else {
       await db.sizeChart.create({ data: { ...data, shop: session.shop } });
     }
@@ -273,52 +306,30 @@ const COLORS = {
   purple: "#534AB7",
   purpleSoft: "#EEEDFE",
   border: "#f0f0f0",
-  muted: "#9ca3af",
+  muted: "#52627a",
 };
 
-const STYLES = `
-  .cp-card { background: #fff; border-radius: 16px; padding: 24px; border: 1px solid #f0f0f0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-  .cp-table { width: 100%; border-collapse: collapse; }
-  .cp-table th { font-size: 12px; color: #534AB7; font-weight: 600; padding: 10px 16px; text-align: left; border-bottom: 1px solid #f0f0f0; }
-  .cp-table td { font-size: 13px; color: #374151; padding: 12px 16px; border-bottom: 1px solid #f9f9f9; vertical-align: middle; }
-  .cp-table tr:hover td { background: #fafafa; }
-  .cp-table tr:last-child td { border-bottom: none; }
-  .badge-active { background: #DCFCE7; color: #166534; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
-  .badge-draft { background: #FEF9C3; color: #854D0E; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
-  .cp-btn { border: none; border-radius: 10px; padding: 9px 16px; font-size: 13px; font-weight: 600; cursor: pointer; background: #1D9E75; color: #fff; font-family: inherit; }
-  .cp-btn:hover { background: #178763; }
-  .cp-btn:disabled { opacity: .5; cursor: not-allowed; }
-  .cp-btn-ghost { background: #fff; color: #374151; border: 1px solid #e5e7eb; }
-  .cp-btn-ghost:hover { background: #f9fafb; }
-  .cp-btn-danger { background: #fff; color: #b42318; border: 1px solid #fecdca; }
-  .cp-btn-danger:hover { background: #fef3f2; }
-  .cp-input { border: 1px solid #e5e7eb; border-radius: 10px; padding: 9px 12px; font-size: 13px; width: 100%; box-sizing: border-box; font-family: inherit; }
-  .cp-input:focus { outline: 2px solid #1D9E75; outline-offset: -1px; }
-  .cp-label { display: block; font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 6px; }
-  .cp-grid-cell { border: 1px solid #e5e7eb; border-radius: 8px; padding: 7px 10px; font-size: 13px; width: 100%; box-sizing: border-box; font-family: inherit; }
-  .cp-grid-cell:focus { outline: 2px solid #534AB7; outline-offset: -1px; }
-  .cp-head-cell { border: 1px solid #ddd6fe; background: #EEEDFE; border-radius: 8px; padding: 7px 10px; font-size: 12px; font-weight: 600; color: #3C3489; width: 100%; box-sizing: border-box; font-family: inherit; }
-  .cp-tpl { text-align: left; background: #fff; border: 1px solid #f0f0f0; border-radius: 14px; padding: 16px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all .15s; display: block; text-decoration: none; }
-  .cp-tpl:hover { border-color: #1D9E75; box-shadow: 0 4px 16px rgba(29,158,117,0.15); }
-  .cp-x { border: none; background: transparent; color: #9ca3af; cursor: pointer; font-size: 15px; line-height: 1; padding: 4px 6px; border-radius: 6px; }
-  .cp-x:hover { background: #fef3f2; color: #b42318; }
-  .cp-picker { border: 1px solid #e5e7eb; border-radius: 10px; max-height: 220px; overflow-y: auto; background: #fff; }
-  .cp-opt { display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 13px; color: #374151; cursor: pointer; border-bottom: 1px solid #f9fafb; }
-  .cp-opt:last-child { border-bottom: none; }
-  .cp-opt:hover { background: #fafafa; }
-  .cp-opt-on { background: #E1F5EE; }
-  .cp-opt-on:hover { background: #d3efe4; }
-  .cp-opt input { accent-color: #1D9E75; }
-  .cp-opt span:first-of-type { flex: 1; }
-`;
-
-function SectionHeading({ title, hint }: { title: string; hint?: string }) {
+function SectionHeading({
+  title,
+  hint,
+  icon,
+}: {
+  title: string;
+  hint?: string;
+  icon?: string;
+}) {
+  const { tr } = useTranslation();
   return (
-    <div style={{ marginBottom: "14px" }}>
-      <p style={{ fontSize: "15px", fontWeight: 600, color: "#111", margin: 0 }}>{title}</p>
-      {hint ? (
-        <p style={{ fontSize: "12px", color: COLORS.muted, margin: "2px 0 0" }}>{hint}</p>
-      ) : null}
+    <div className="sc-editor-section-heading">
+      {icon && (
+        <span className="sc-editor-section-icon">
+          <SizeChartIcon name={icon} />
+        </span>
+      )}
+      <div>
+        <h2>{tr(title)}</h2>
+        {hint && <p>{tr(hint)}</p>}
+      </div>
     </div>
   );
 }
@@ -334,6 +345,8 @@ function AssignmentPicker({
   onToggle: (value: string) => void;
   catalog: Catalog;
 }) {
+  const { tr, locale } = useTranslation();
+
   const [filter, setFilter] = useState("");
 
   const options: CatalogEntry[] =
@@ -347,17 +360,23 @@ function AssignmentPicker({
   const visible = needle
     ? options.filter(
         (o) =>
-          o.title.toLowerCase().includes(needle) || o.handle.toLowerCase().includes(needle)
+          o.title.toLowerCase().includes(needle) ||
+          o.handle.toLowerCase().includes(needle),
       )
     : options;
 
   const noun =
-    assignType === "products" ? "products" : assignType === "collections" ? "collections" : "tags";
+    assignType === "products"
+      ? "products"
+      : assignType === "collections"
+        ? "collections"
+        : "tags";
 
   if (options.length === 0) {
     return (
       <p style={{ fontSize: "13px", color: COLORS.muted, margin: 0 }}>
-        No {noun} found in this store.
+        {tr(" No ")}
+        {tr(noun)} {tr(" found in this store. ")}
       </p>
     );
   }
@@ -367,26 +386,33 @@ function AssignmentPicker({
       <input
         className="cp-input"
         value={filter}
-        placeholder={"Search " + noun + "..."}
+        placeholder={tr("Search " + noun + "...")}
         onChange={(e) => setFilter(e.currentTarget.value)}
         style={{ marginBottom: "8px" }}
       />
       <div className="cp-picker">
         {visible.length === 0 ? (
-          <p style={{ fontSize: "13px", color: COLORS.muted, margin: "8px" }}>No matches.</p>
+          <p style={{ fontSize: "13px", color: COLORS.muted, margin: "8px" }}>
+            {tr(" No matches. ")}
+          </p>
         ) : (
           visible.map((option) => {
             const checked = selected.includes(option.handle);
             return (
-              <label key={option.handle} className={checked ? "cp-opt cp-opt-on" : "cp-opt"}>
+              <label
+                key={option.handle}
+                className={checked ? "cp-opt cp-opt-on" : "cp-opt"}
+              >
                 <input
                   type="checkbox"
                   checked={checked}
                   onChange={() => onToggle(option.handle)}
                 />
-                <span>{option.title}</span>
+                <span>{tr(option.title)}</span>
                 {assignType !== "tags" ? (
-                  <span style={{ color: COLORS.muted, fontSize: "11px" }}>{option.handle}</span>
+                  <span style={{ color: COLORS.muted, fontSize: "11px" }}>
+                    {tr(option.handle)}
+                  </span>
                 ) : null}
               </label>
             );
@@ -394,7 +420,7 @@ function AssignmentPicker({
         )}
       </div>
       <p style={{ fontSize: "12px", color: COLORS.muted, margin: "8px 0 0" }}>
-        {selected.length} selected
+        {tr(selected.length)} {tr(" selected ")}
       </p>
     </div>
   );
@@ -409,6 +435,8 @@ function ChartEditor({
   searchParams: URLSearchParams;
   catalog: Catalog;
 }) {
+  const { tr, locale } = useTranslation();
+
   const navigation = useNavigation();
   const saving = navigation.state === "submitting";
   const listHref = buildHref(searchParams, { id: null, new: null });
@@ -450,8 +478,10 @@ function ChartEditor({
   const setCell = (rowIndex: number, colIndex: number, value: string) => {
     setRows((prev) =>
       prev.map((row, r) =>
-        r === rowIndex ? row.map((cell, c) => (c === colIndex ? value : cell)) : row
-      )
+        r === rowIndex
+          ? row.map((cell, c) => (c === colIndex ? value : cell))
+          : row,
+      ),
     );
   };
 
@@ -482,38 +512,47 @@ function ChartEditor({
     if (next === unitSystem) return;
     setRows((prev) =>
       prev.map((row) =>
-        row.map((cell, c) => (c === 0 ? cell : convertCell(cell, unitSystem, next)))
-      )
+        row.map((cell, c) =>
+          c === 0 ? cell : convertCell(cell, unitSystem, next),
+        ),
+      ),
     );
     setUnitSystem(next);
   };
 
   return (
-    <div>
-      <div
-        style={{
-          marginBottom: "20px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: "16px",
-        }}
-      >
+    <div className="sc-editor">
+      <Link className="sc-editor-back" to={listHref}>
+        {tr("? All size charts")}
+      </Link>
+      <header className="sc-editor-header">
+        <svg
+          className="sc-editor-header-wave"
+          viewBox="0 0 700 120"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M0 120C170-30 210 130 420 52S620 15 700 0V120Z"
+            fill="#dff7ed"
+            opacity=".6"
+          />
+        </svg>
+        <span className="sc-editor-title-icon">
+          <SizeChartIcon name="ruler" />
+        </span>
         <div>
-          <Link
-            to={listHref}
-            style={{ fontSize: "12px", color: COLORS.purple, textDecoration: "none", fontWeight: 600 }}
-          >
-            &larr; All size charts
-          </Link>
-          <h1 style={{ fontSize: "22px", fontWeight: 700, margin: "6px 0 0", color: "#111" }}>
-            {draft.id ? "Edit size chart" : "New size chart"}
-          </h1>
+          <h1>{draft.id ? tr("Edit size chart") : tr("New size chart")}</h1>
+          <p>
+            {draft.id
+              ? tr("Update the size chart for your products.")
+              : tr("Create a new size chart for your products.")}
+          </p>
         </div>
         <span className={status === "active" ? "badge-active" : "badge-draft"}>
-          {status === "active" ? "Active" : "Draft"}
+          {status === "active" ? tr("Active") : tr("Draft")}
         </span>
-      </div>
+      </header>
 
       <Form method="post" action={listHref}>
         <input type="hidden" name="redirectTo" value={listHref} />
@@ -524,41 +563,44 @@ function ChartEditor({
         <input type="hidden" name="columns" value={JSON.stringify(columns)} />
         <input type="hidden" name="rows" value={JSON.stringify(rows)} />
 
-        <div className="cp-card" style={{ marginBottom: "16px" }}>
-          <SectionHeading title="Details" />
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "2fr 1fr",
-              gap: "16px",
-              marginBottom: "16px",
-            }}
-          >
+        <div className="cp-card sc-editor-card sc-editor-details">
+          <SectionHeading title={tr("Details")} icon="details" />
+          <div className="sc-editor-details-grid">
             <div>
               <label className="cp-label" htmlFor="sc-name">
-                Chart name
+                {tr(" Chart name ")}
+                <span className="sc-editor-required" aria-hidden="true">
+                  *
+                </span>
               </label>
               <input
                 id="sc-name"
                 className="cp-input"
                 name="name"
                 value={name}
-                placeholder="e.g. Womens t-shirts"
+                placeholder={tr("e.g. Womens t-shirts")}
                 onChange={(e) => setName(e.currentTarget.value)}
               />
             </div>
             <div>
-              <span className="cp-label">Units</span>
-              <div style={{ display: "flex", gap: "8px" }}>
+              <span className="cp-label">{tr("Units")}</span>
+              <div
+                className="sc-editor-units"
+                role="group"
+                aria-label={tr("Units")}
+              >
                 {(["cm", "in"] as UnitSystem[]).map((unit) => (
                   <button
                     key={unit}
                     type="button"
-                    className={unitSystem === unit ? "cp-btn" : "cp-btn cp-btn-ghost"}
+                    className={
+                      unitSystem === unit ? "cp-btn" : "cp-btn cp-btn-ghost"
+                    }
                     style={{ flex: 1 }}
+                    aria-pressed={unitSystem === unit}
                     onClick={() => switchUnits(unit)}
                   >
-                    {unit === "cm" ? "Centimetres" : "Inches"}
+                    {unit === "cm" ? tr("Centimetres") : tr("Inches")}
                   </button>
                 ))}
               </div>
@@ -566,7 +608,7 @@ function ChartEditor({
           </div>
           <div>
             <label className="cp-label" htmlFor="sc-description">
-              Note shown under the chart (optional)
+              {tr(" Note shown under the chart (optional) ")}
             </label>
             <textarea
               id="sc-description"
@@ -574,40 +616,60 @@ function ChartEditor({
               name="description"
               rows={2}
               value={description}
-              placeholder="e.g. Measurements are taken on the body, not the garment."
+              placeholder={tr(
+                "e.g. Measurements are taken on the body, not the garment.",
+              )}
               onChange={(e) => setDescription(e.currentTarget.value)}
               style={{ resize: "vertical" }}
             />
           </div>
         </div>
 
-        <div className="cp-card" style={{ marginBottom: "16px" }}>
+        <div className="cp-card sc-editor-card sc-editor-measurements">
           <SectionHeading
-            title="Measurements"
-            hint="The first column holds the size labels and is never unit-converted."
+            title={tr("Measurements")}
+            icon="measurements"
+            hint={tr(
+              "The first column holds the size labels and is never unit-converted.",
+            )}
           />
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "6px" }}>
+          <div className="sc-editor-table-scroll">
+            <table
+              className="sc-editor-table"
+              style={{
+                width: "100%",
+                borderCollapse: "separate",
+                borderSpacing: "6px",
+              }}
+            >
               <thead>
                 <tr>
                   <th style={{ width: "28px" }} />
                   {columns.map((col, colIndex) => (
                     <th key={colIndex} style={{ minWidth: "120px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "2px",
+                        }}
+                      >
                         <input
                           className="cp-head-cell"
                           value={col}
-                          aria-label={"Column " + (colIndex + 1) + " name"}
-                          onChange={(e) => setColumn(colIndex, e.currentTarget.value)}
+                          aria-label={tr("Column " + (colIndex + 1) + " name")}
+                          onChange={(e) =>
+                            setColumn(colIndex, e.currentTarget.value)
+                          }
                         />
                         {columns.length > 1 ? (
                           <button
                             type="button"
                             className="cp-x"
-                            title="Remove column"
+                            title={tr("Remove column")}
                             onClick={() => removeColumn(colIndex)}
                           >
-                            &times;
+                            {tr(" &times; ")}
                           </button>
                         ) : null}
                       </div>
@@ -623,10 +685,10 @@ function ChartEditor({
                         <button
                           type="button"
                           className="cp-x"
-                          title="Remove row"
+                          title={tr("Remove row")}
                           onClick={() => removeRow(rowIndex)}
                         >
-                          &times;
+                          {tr(" &times; ")}
                         </button>
                       ) : null}
                     </td>
@@ -635,8 +697,12 @@ function ChartEditor({
                         <input
                           className="cp-grid-cell"
                           value={row[colIndex] ?? ""}
-                          aria-label={"Row " + (rowIndex + 1) + " " + columns[colIndex]}
-                          onChange={(e) => setCell(rowIndex, colIndex, e.currentTarget.value)}
+                          aria-label={tr(
+                            "Row " + (rowIndex + 1) + " " + columns[colIndex],
+                          )}
+                          onChange={(e) =>
+                            setCell(rowIndex, colIndex, e.currentTarget.value)
+                          }
                         />
                       </td>
                     ))}
@@ -645,25 +711,36 @@ function ChartEditor({
               </tbody>
             </table>
           </div>
-          <div style={{ display: "flex", gap: "8px", marginTop: "14px" }}>
-            <button type="button" className="cp-btn cp-btn-ghost" onClick={addRow}>
-              + Add row
+          <div className="sc-editor-grid-actions">
+            <button
+              type="button"
+              className="cp-btn cp-btn-ghost"
+              onClick={addRow}
+            >
+              {tr(" + Add row ")}
             </button>
-            <button type="button" className="cp-btn cp-btn-ghost" onClick={addColumn}>
-              + Add column
+            <button
+              type="button"
+              className="cp-btn cp-btn-ghost"
+              onClick={addColumn}
+            >
+              {tr(" + Add column ")}
             </button>
           </div>
         </div>
 
-        <div className="cp-card" style={{ marginBottom: "16px" }}>
+        <div className="cp-card sc-editor-card sc-editor-assignment">
           <SectionHeading
-            title="Where it shows"
-            hint="Saved with the chart now; the storefront button gets wired up in the next phase."
+            title={tr("Where it shows")}
+            icon="layers"
+            hint={tr(
+              "Saved with the chart now; the storefront button gets wired up in the next phase.",
+            )}
           />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "16px" }}>
+          <div className="sc-editor-assignment-grid">
             <div>
               <label className="cp-label" htmlFor="sc-assign">
-                Applies to
+                {tr(" Applies to ")}
               </label>
               <select
                 id="sc-assign"
@@ -672,20 +749,28 @@ function ChartEditor({
                 value={assignType}
                 onChange={(e) => setAssignType(e.currentTarget.value)}
               >
-                <option value="all">All products</option>
-                <option value="tags">Products with tags</option>
-                <option value="collections">Collections</option>
-                <option value="products">Specific products</option>
+                <option value="all">{tr("All products")}</option>
+                <option value="tags">{tr("Products with tags")}</option>
+                <option value="collections">{tr("Collections")}</option>
+                <option value="products">{tr("Specific products")}</option>
               </select>
             </div>
             <div>
               <span className="cp-label">
-                {assignType === "all" ? "Shows on every product" : "Pick from your store"}
+                {assignType === "all"
+                  ? tr("Shows on every product")
+                  : tr("Pick from your store")}
               </span>
-              <input type="hidden" name="assignValue" value={selectedTargets.join(",")} />
+              <input
+                type="hidden"
+                name="assignValue"
+                value={selectedTargets.join(",")}
+              />
               {assignType === "all" ? (
                 <p style={{ fontSize: "13px", color: COLORS.muted, margin: 0 }}>
-                  Nothing to choose — this chart applies to all products.
+                  {tr(
+                    " Nothing to choose — this chart applies to all products. ",
+                  )}
                 </p>
               ) : (
                 <AssignmentPicker
@@ -699,7 +784,7 @@ function ChartEditor({
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+        <div className="sc-editor-actions">
           <button
             type="submit"
             name="intent"
@@ -708,6 +793,7 @@ function ChartEditor({
             disabled={saving}
             style={{ display: "inline-flex", alignItems: "center", gap: "7px" }}
           >
+            {!saving && <SizeChartIcon name="save" />}
             <SaveLabel saving={saving} saved={false} idleLabel="Save chart" />
           </button>
           <button
@@ -717,14 +803,18 @@ function ChartEditor({
             className="cp-btn cp-btn-ghost"
             disabled={saving}
           >
-            {status === "active" ? "Save as draft" : "Save and activate"}
+            <SizeChartIcon name="play" />
+            {status === "active"
+              ? tr("Save as draft")
+              : tr("Save and activate")}
           </button>
           <Link
             to={listHref}
             className="cp-btn cp-btn-ghost"
             style={{ textDecoration: "none", display: "inline-block" }}
           >
-            Cancel
+            <SizeChartIcon name="close" />
+            {tr(" Cancel ")}
           </Link>
         </div>
       </Form>
@@ -732,7 +822,10 @@ function ChartEditor({
   );
 }
 
-const FLASH_MESSAGES: Record<string, { text: string; tone: "success" | "danger" }> = {
+const FLASH_MESSAGES: Record<
+  string,
+  { text: string; tone: "success" | "danger" }
+> = {
   saved: { text: "Size chart saved", tone: "success" },
   deleted: { text: "Size chart deleted", tone: "danger" },
   duplicated: { text: "Size chart duplicated", tone: "success" },
@@ -740,12 +833,17 @@ const FLASH_MESSAGES: Record<string, { text: string; tone: "success" | "danger" 
 };
 
 export default function SizeCharts() {
+  const { tr, locale } = useTranslation();
+
   const { list, draft, templates, catalog } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const deleteFetcher = useFetcher();
 
-  const [pendingDelete, setPendingDelete] = useState<{ id: string; name: string } | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
 
   const flashKey = searchParams.get("done");
@@ -768,23 +866,31 @@ export default function SizeCharts() {
 
     window.setTimeout(() => {
       deleteFetcher.submit(
-        { intent: "delete", id, redirectTo: buildHref(searchParams, { id: null, new: null }) },
-        { method: "post", action: buildHref(searchParams, { id: null, new: null }) }
+        {
+          intent: "delete",
+          id,
+          redirectTo: buildHref(searchParams, { id: null, new: null }),
+        },
+        {
+          method: "post",
+          action: buildHref(searchParams, { id: null, new: null }),
+        },
       );
     }, 300);
   };
 
   if (draft) {
     return (
-      <Page>
-        <style>{STYLES}</style>
-        <ChartEditor
-          draft={draft as ChartDraft}
-          searchParams={searchParams}
-          catalog={catalog}
-          key={searchParams.toString()}
-        />
-      </Page>
+      <div className="size-charts-shell">
+        <div className="size-charts-page">
+          <ChartEditor
+            draft={draft as ChartDraft}
+            searchParams={searchParams}
+            catalog={catalog}
+            key={searchParams.toString()}
+          />
+        </div>
+      </div>
     );
   }
 
@@ -792,208 +898,240 @@ export default function SizeCharts() {
   const listHref = buildHref(searchParams, { id: null, new: null });
 
   return (
-    <Page>
-      <style>{STYLES}</style>
-
-      <div
-        style={{
-          marginBottom: "24px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-          gap: "16px",
-        }}
-      >
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
-            <div
-              style={{
-                width: "32px",
-                height: "32px",
-                background: COLORS.purpleSoft,
-                borderRadius: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={COLORS.purple} strokeWidth="2">
-                <path d="M3 7h18v10H3z" />
-                <path d="M7 7v4M11 7v4M15 7v4M19 7v4" />
-              </svg>
-            </div>
-            <h1 style={{ fontSize: "22px", fontWeight: 700, margin: 0, color: "#111" }}>Size charts</h1>
-          </div>
-          <p style={{ fontSize: "13px", color: COLORS.muted, margin: 0 }}>
-            Build size guides from a template, then assign them to products.
-          </p>
-        </div>
-        <div
-          style={{
-            background: COLORS.greenSoft,
-            borderRadius: "10px",
-            padding: "8px 16px",
-            fontSize: "13px",
-            color: COLORS.greenDark,
-            fontWeight: 500,
-          }}
-        >
-          {list.length} chart{list.length === 1 ? "" : "s"} &middot; {activeCount} active
-        </div>
-      </div>
-
-      <div className="cp-card" style={{ marginBottom: "16px" }}>
-        <SectionHeading
-          title="Start from a template"
-          hint="Everything stays editable after you pick one."
-        />
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))",
-            gap: "12px",
-          }}
-        >
-          {templates.map((tpl) => (
-            <Link
-              key={tpl.key}
-              to={buildHref(searchParams, { id: null, new: tpl.key })}
-              className="cp-tpl"
-            >
-              <p style={{ fontSize: "13px", fontWeight: 600, color: "#111", margin: "0 0 4px" }}>
-                {tpl.label}
-              </p>
-              <p style={{ fontSize: "12px", color: COLORS.purple, margin: 0, fontWeight: 600 }}>
-                Use template &rarr;
-              </p>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      <div className="cp-card" style={{ padding: 0, overflow: "hidden" }}>
-        <div style={{ padding: "20px 24px 16px", borderBottom: "1px solid " + COLORS.border }}>
-          <span style={{ fontSize: "15px", fontWeight: 600, color: "#111" }}>Your size charts</span>
-        </div>
-
-        {list.length === 0 ? (
-          <div style={{ padding: "60px 24px", textAlign: "center" }}>
-            <div
-              style={{
-                width: "56px",
-                height: "56px",
-                background: "#F1F5F9",
-                borderRadius: "16px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 16px",
-              }}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={COLORS.muted} strokeWidth="2">
-                <path d="M3 7h18v10H3z" />
-                <path d="M7 7v4M11 7v4M15 7v4M19 7v4" />
-              </svg>
-            </div>
-            <p style={{ fontSize: "15px", fontWeight: 600, color: "#374151", margin: "0 0 6px" }}>
-              No size charts yet
-            </p>
-            <p style={{ fontSize: "13px", color: COLORS.muted, margin: 0 }}>
-              Pick a template above to create your first one.
+    <div className="size-charts-shell">
+      <div className="size-charts-page">
+        <header className="size-charts-header">
+          <span className="size-charts-title-icon">
+            <SizeChartIcon name="ruler" />
+          </span>
+          <div>
+            <h1>{tr("Size Charts")}</h1>
+            <p>
+              {tr(
+                " Build size guides from a template, then assign them to products. ",
+              )}
             </p>
           </div>
-        ) : (
-          <table className="cp-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Size</th>
-                <th>Applies to</th>
-                <th>Updated</th>
-                <th style={{ textAlign: "right" }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {list.map((chart) => (
-                <tr key={chart.id} className={removingId === chart.id ? "ui-row-removing" : undefined}>
-                  <td>
-                    <Link
-                      to={buildHref(searchParams, { new: null, id: chart.id })}
-                      style={{ color: "#111", fontWeight: 600, textDecoration: "none" }}
-                    >
-                      {chart.name}
-                    </Link>
-                    <p style={{ fontSize: "11px", color: COLORS.muted, margin: "2px 0 0" }}>
-                      {chart.unitSystem}
-                    </p>
-                  </td>
-                  <td>
-                    <span className={chart.status === "active" ? "badge-active" : "badge-draft"}>
-                      {chart.status === "active" ? "Active" : "Draft"}
-                    </span>
-                  </td>
-                  <td>
-                    {chart.rowCount} &times; {chart.columnCount}
-                  </td>
-                  <td>
-                    {chart.assignType === "all"
-                      ? "All products"
-                      : chart.assignType + ": " + (chart.assignValue || "-")}
-                  </td>
-                  <td>{new Date(chart.updatedAt).toLocaleDateString()}</td>
-                  <td>
-                    <div style={{ display: "flex", gap: "6px", justifyContent: "flex-end" }}>
-                      <Form method="post" action={listHref}>
-                        <input type="hidden" name="intent" value="toggle" />
-                        <input type="hidden" name="redirectTo" value={listHref} />
-                        <input type="hidden" name="id" value={chart.id} />
-                        <button type="submit" className="cp-btn cp-btn-ghost">
-                          {chart.status === "active" ? "Deactivate" : "Activate"}
-                        </button>
-                      </Form>
-                      <Form method="post" action={listHref}>
-                        <input type="hidden" name="intent" value="duplicate" />
-                        <input type="hidden" name="redirectTo" value={listHref} />
-                        <input type="hidden" name="id" value={chart.id} />
-                        <button type="submit" className="cp-btn cp-btn-ghost">
-                          Duplicate
-                        </button>
-                      </Form>
-                      <button
-                        type="button"
-                        className="cp-btn cp-btn-danger"
-                        onClick={() => setPendingDelete({ id: chart.id, name: chart.name })}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
+          <span className="size-charts-count">
+            <SizeChartIcon name="layers" />
+            {tr(list.length === 1 ? "{0} chart" : "{0} charts", [
+              list.length,
+            ])}{" "}
+            {tr(" &middot;")}
+            {tr(" ")}
+            {tr(activeCount)} {tr(" active ")}
+          </span>
+        </header>
+        <SizeChartsHero />
+        <section
+          className="cp-card size-charts-templates"
+          aria-labelledby="size-charts-template-title"
+        >
+          <div className="size-charts-section-heading">
+            <SizeChartIcon name="layers" />
+            <div>
+              <h2 id="size-charts-template-title">
+                {tr("Start from a template")}
+              </h2>
+              <p>{tr("Everything stays editable after you pick one.")}</p>
+            </div>
+          </div>
+          <div className="size-charts-template-grid">
+            {templates.map((tpl) => (
+              <Link
+                key={tpl.key}
+                to={buildHref(searchParams, { id: null, new: tpl.key })}
+                className="cp-tpl"
+              >
+                <span className="size-charts-template-icon">
+                  <SizeChartIcon name={tpl.key} />
+                </span>
+                <span className="size-charts-template-copy">
+                  <strong>{tr(tpl.label)}</strong>
+                  <span>{tr("Use template &rarr;")}</span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section
+          className="cp-card size-charts-list"
+          aria-labelledby="size-charts-list-title"
+        >
+          <div className="size-charts-list-heading">
+            <SizeChartIcon name="chart" />
+            <h2 id="size-charts-list-title">{tr("Your size charts")}</h2>
+          </div>
+
+          {list.length === 0 ? (
+            <div className="size-charts-empty">
+              <SizeChartsEmptyArt />
+              <h3>{tr("No size charts yet")}</h3>
+              <p>{tr("Pick a template above to create your first one.")}</p>
+            </div>
+          ) : (
+            <table className="cp-table">
+              <thead>
+                <tr>
+                  <th>{tr("Name")}</th>
+                  <th>{tr("Status")}</th>
+                  <th>{tr("Size")}</th>
+                  <th>{tr("Applies to")}</th>
+                  <th>{tr("Updated")}</th>
+                  <th style={{ textAlign: "right" }}>{tr("Actions")}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              </thead>
+              <tbody>
+                {list.map((chart) => (
+                  <tr
+                    key={chart.id}
+                    className={
+                      removingId === chart.id ? "ui-row-removing" : undefined
+                    }
+                  >
+                    <td>
+                      <Link
+                        to={buildHref(searchParams, {
+                          new: null,
+                          id: chart.id,
+                        })}
+                        style={{
+                          color: "#111",
+                          fontWeight: 600,
+                          textDecoration: "none",
+                        }}
+                      >
+                        {chart.name}
+                      </Link>
+                      <p
+                        style={{
+                          fontSize: "11px",
+                          color: COLORS.muted,
+                          margin: "2px 0 0",
+                        }}
+                      >
+                        {tr(chart.unitSystem)}
+                      </p>
+                    </td>
+                    <td>
+                      <span
+                        className={
+                          chart.status === "active"
+                            ? "badge-active"
+                            : "badge-draft"
+                        }
+                      >
+                        {chart.status === "active" ? tr("Active") : tr("Draft")}
+                      </span>
+                    </td>
+                    <td>
+                      {tr(chart.rowCount)} {tr(" &times; ")}
+                      {tr(chart.columnCount)}
+                    </td>
+                    <td>
+                      {chart.assignType === "all"
+                        ? tr("All products")
+                        : tr(
+                            chart.assignType +
+                              ": " +
+                              (chart.assignValue || "-"),
+                          )}
+                    </td>
+                    <td>
+                      {tr(new Date(chart.updatedAt).toLocaleDateString(locale))}
+                    </td>
+                    <td>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "6px",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        <Form method="post" action={listHref}>
+                          <input type="hidden" name="intent" value="toggle" />
+                          <input
+                            type="hidden"
+                            name="redirectTo"
+                            value={listHref}
+                          />
+                          <input type="hidden" name="id" value={chart.id} />
+                          <button type="submit" className="cp-btn cp-btn-ghost">
+                            {chart.status === "active"
+                              ? tr("Deactivate")
+                              : tr("Activate")}
+                          </button>
+                        </Form>
+                        <Form method="post" action={listHref}>
+                          <input
+                            type="hidden"
+                            name="intent"
+                            value="duplicate"
+                          />
+                          <input
+                            type="hidden"
+                            name="redirectTo"
+                            value={listHref}
+                          />
+                          <input type="hidden" name="id" value={chart.id} />
+                          <button type="submit" className="cp-btn cp-btn-ghost">
+                            {tr(" Duplicate ")}
+                          </button>
+                        </Form>
+                        <button
+                          type="button"
+                          className="cp-btn cp-btn-danger"
+                          onClick={() =>
+                            setPendingDelete({ id: chart.id, name: chart.name })
+                          }
+                        >
+                          {tr(" Delete ")}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </section>
+
+        <p
+          style={{
+            textAlign: "center",
+            fontSize: "12px",
+            color: COLORS.muted,
+            marginTop: "20px",
+          }}
+        >
+          {tr(
+            " Next phase: a theme app extension so the size guide button places itself on product pages. ",
+          )}
+        </p>
+
+        <ConfirmDialog
+          open={pendingDelete !== null}
+          title={tr("Delete this size chart?")}
+          message={
+            pendingDelete
+              ? tr(
+                  '"{0}" will be removed permanently. Any product using it will stop showing a size guide. This cannot be undone.',
+                  [pendingDelete.name],
+                )
+              : tr("")
+          }
+          confirmLabel={tr("Delete chart")}
+          onConfirm={confirmDelete}
+          onCancel={() => setPendingDelete(null)}
+        />
+
+        <Toast
+          message={tr(flash?.text ?? null)}
+          tone={flash?.tone ?? "success"}
+          onDone={clearFlash}
+        />
       </div>
-
-      <p style={{ textAlign: "center", fontSize: "12px", color: COLORS.muted, marginTop: "20px" }}>
-        Next phase: a theme app extension so the size guide button places itself on product pages.
-      </p>
-
-      <ConfirmDialog
-        open={pendingDelete !== null}
-        title="Delete this size chart?"
-        message={
-          pendingDelete
-            ? `"${pendingDelete.name}" will be removed permanently. Any product using it will stop showing a size guide. This cannot be undone.`
-            : ""
-        }
-        confirmLabel="Delete chart"
-        onConfirm={confirmDelete}
-        onCancel={() => setPendingDelete(null)}
-      />
-
-      <Toast message={flash?.text ?? null} tone={flash?.tone ?? "success"} onDone={clearFlash} />
-    </Page>
+    </div>
   );
 }

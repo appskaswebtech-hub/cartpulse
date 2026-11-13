@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Session {
-  id                  String    @id
+  id                  String    @id @default(cuid())
   shop                String
   state               String
   isOnline            Boolean   @default(false)
@@ -30,7 +30,7 @@ model Session {
 model AbandonedCart {
   id            String             @id @default(cuid())
   shop          String
-  cartToken     String             @unique
+  cartToken     String             @unique(map: "AbandonedCart_cartToken_key")
   customerEmail String?
   customerPhone String?
   customerName  String?
@@ -41,7 +41,6 @@ model AbandonedCart {
   isRecovered   Boolean            @default(false)
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
-
   notifications CartNotification[]
 }
 
@@ -53,33 +52,9 @@ model CartNotification {
   status    String        @default("pending")
   sentAt    DateTime?
   createdAt DateTime      @default(now())
+  cart      AbandonedCart @relation(fields: [cartId], references: [id], map: "CartNotification_cartId_fkey")
 
-  cart      AbandonedCart @relation(fields: [cartId], references: [id])
-}
-
-model MerchantSettings {
-  id               String   @id @default(cuid())
-  shop             String   @unique
-  discountPercent  Int      @default(10)
-  discountExpiry   Int      @default(24)
-  pushEnabled      Boolean  @default(false)
-  whatsappEnabled  Boolean  @default(false)
-  emailEnabled     Boolean  @default(false)
-  whatsappApiKey   String?
-  emailFromName     String?
-  emailFromAddress  String?
-  emailAppPassword  String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-}
-
-model PushSubscription {
-  id        String   @id @default(cuid())
-  shop      String
-  endpoint  String   @unique @db.VarChar(500)
-  p256dh    String
-  auth      String
-  createdAt DateTime @default(now())
+  @@index([cartId], map: "CartNotification_cartId_fkey")
 }
 
 model JobQueue {
@@ -91,56 +66,34 @@ model JobQueue {
   createdAt   DateTime @default(now())
 }
 
-model EmailUnsubscribe {
-  id        String   @id @default(cuid())
-  shop      String
-  email     String
-  createdAt DateTime @default(now())
-
-  @@unique([shop, email])
-}
-
-model CartActivity {
-  id               String    @id @default(cuid())
-  shop             String
-  cartToken        String
-  variantId        String
-  productId        String?
-  title            String
-  quantity         Int       @default(1)
-  price            String    @default("0")
-  imageUrl         String?   @db.Text
-  customerEmail    String?
-  customerName     String?
-  currency         String    @default("INR")
-  addedAt          DateTime  @default(now())
-  status           String    @default("pending") // pending | awaiting_manual | scheduled | reminded | converted
-  remindedAt       DateTime?
-  sentVia          String? // "auto" | "manual"
-  scheduledSendAt  DateTime?
-  scheduledSubject String?
-  scheduledBody    String?   @db.LongText
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-
-  @@unique([shop, cartToken, variantId])
-}
-
-model CartActivitySettings {
+model MerchantSettings {
   id               String   @id @default(cuid())
-  shop             String   @unique
-  sendMode         String   @default("manual") // "auto" | "manual"
-  delayMinutes     Int      @default(60)
-  subject          String   @default("Still thinking it over?")
-  body             String   @db.LongText
-  trackerInstalled Boolean  @default(false)
+  shop             String   @unique(map: "MerchantSettings_shop_key")
+  discountPercent  Int      @default(10)
+  discountExpiry   Int      @default(24)
+  pushEnabled      Boolean  @default(false)
+  whatsappEnabled  Boolean  @default(false)
+  emailEnabled     Boolean  @default(false)
+  whatsappApiKey   String?
+  emailFromName    String?
+  emailAppPassword String?
+  emailFromAddress String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
 
+model PushSubscription {
+  id        String   @id @default(cuid())
+  shop      String
+  endpoint  String   @unique(map: "PushSubscription_endpoint_key") @db.VarChar(500)
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+}
+
 model ShopPlan {
   id               Int       @id @default(autoincrement())
-  shop             String    @unique
+  shop             String    @unique(map: "ShopPlan_shop_key")
   plan             String    @default("free")
   subscriptionId   String?
   status           String    @default("active")
@@ -149,8 +102,18 @@ model ShopPlan {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  @@index([shop])
+  @@index([shop], map: "ShopPlan_shop_idx")
 }
+
+model EmailUnsubscribe {
+  id        String   @id @default(cuid())
+  shop      String
+  email     String
+  createdAt DateTime @default(now())
+
+  @@unique([shop, email], map: "EmailUnsubscribe_shop_email_key")
+}
+
 model SizeChart {
   id          String   @id @default(cuid())
   shop        String
@@ -166,5 +129,40 @@ model SizeChart {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@index([shop])
+  @@index([shop], map: "SizeChart_shop_idx")
+}
+
+model CartActivity {
+  id               String    @id @default(cuid())
+  shop             String
+  cartToken        String
+  variantId        String
+  productId        String?
+  title            String
+  quantity         Int       @default(1)
+  price            String
+  imageUrl         String?   @db.Text
+  currency         String    @default("INR")
+  customerEmail    String?
+  customerName     String?
+  status           String    @default("pending")
+  addedAt          DateTime  @default(now())
+  remindedAt       DateTime?
+  sentVia          String?
+  scheduledSendAt  DateTime?
+  scheduledSubject String?   @db.Text
+  scheduledBody    String?   @db.LongText
+
+  @@unique([shop, cartToken, variantId])
+  @@index([shop, status])
+}
+
+model CartActivitySettings {
+  id               String  @id @default(cuid())
+  shop             String  @unique
+  sendMode         String  @default("manual")
+  delayMinutes     Int     @default(60)
+  subject          String  @db.Text
+  body             String  @db.LongText
+  trackerInstalled Boolean @default(false)
 }

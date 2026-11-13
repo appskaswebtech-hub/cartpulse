@@ -1,5 +1,10 @@
 import type { HeadersFunction, LoaderFunctionArgs } from "react-router";
-import { Outlet, useLoaderData, useRouteError, useLocation } from "react-router";
+import {
+  Outlet,
+  useLoaderData,
+  useRouteError,
+  useLocation,
+} from "react-router";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { AppProvider } from "@shopify/shopify-app-react-router/react";
 import { authenticate } from "../shopify.server";
@@ -8,7 +13,6 @@ import { getShopPlanFromDB } from "../utils/planUtils";
 import { BillingGate } from "../components/BillingGate";
 import { APP_CSS } from "../styles/theme";
 import { detectLocaleFromAcceptLanguage } from "../i18n";
-import { LanguageProvider } from "../i18n/LanguageContext";
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -39,7 +43,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     apiKey: process.env.SHOPIFY_API_KEY || "",
     showGate,
     isDevShop,
-    detectedLocale: detectLocaleFromAcceptLanguage(request.headers.get("accept-language")),
+    detectedLocale: detectLocaleFromAcceptLanguage(
+      request.headers.get("accept-language"),
+    ),
   };
 };
 
@@ -48,7 +54,8 @@ export default function App() {
   const location = useLocation();
 
   const isBillingPage =
-    location.pathname === "/app/billing" || location.pathname === "/app/billing-return";
+    location.pathname === "/app/billing" ||
+    location.pathname === "/app/billing-return";
 
   return (
     <AppProvider embedded apiKey={apiKey}>
@@ -63,7 +70,10 @@ export default function App() {
           one link may carry rel="home". App Bridge's types omit `rel`, so it
           is spread in.
         */}
-        <s-link href="/app/carts" {...({ rel: "home" } as Record<string, string>)}>
+        <s-link
+          href="/app/carts"
+          {...({ rel: "home" } as Record<string, string>)}
+        >
           Abandoned Carts
         </s-link>
         <s-link href="/app/carts">Abandoned Carts</s-link>
@@ -75,13 +85,21 @@ export default function App() {
         <s-link href="/app/billing">Billing</s-link>
       </s-app-nav>
 
-      <LanguageProvider detectedLocale={detectedLocale}>
-        <div style={{ display: "flex", justifyContent: "flex-end", padding: "12px 16px 0" }}>
-          <LanguageSwitcher />
-        </div>
+      <>
+        {location.pathname !== "/app/carts" && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              padding: "12px 16px 0",
+            }}
+          >
+            <LanguageSwitcher />
+          </div>
+        )}
         <BillingGate show={showGate && !isBillingPage} />
         <Outlet />
-      </LanguageProvider>
+      </>
       <SupportChatWidget />
     </AppProvider>
   );

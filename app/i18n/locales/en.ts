@@ -47,7 +47,8 @@ export const en: Dictionary = {
     never: "Never",
     customerOutreach: "Customer Outreach",
     noCustomersTitle: "No customers here",
-    noCustomersSubtitle: "Try a different filter or wait for more abandoned carts",
+    noCustomersSubtitle:
+      "Try a different filter or wait for more abandoned carts",
     total: "Total",
     abandonedOn: "Abandoned On",
     emailHistory: "Email History",
@@ -56,7 +57,8 @@ export const en: Dictionary = {
     resend: "Resend",
     privacyFooter: "All data is encrypted and your privacy is protected.",
     planLimitTitle: "Plan Limit Reached",
-    planLimitDesc: (plan, limit) => `Your ${plan} plan shows up to ${limit} carts. Upgrade to see more customers and send more recovery emails.`,
+    planLimitDesc: (plan, limit) =>
+      `Your ${plan} plan shows up to ${limit} carts. Upgrade to see more customers and send more recovery emails.`,
     maybeLater: "Maybe Later",
     upgradePlan: "Upgrade Plan →",
     modalTitle: "Send Recovery Email",
@@ -66,9 +68,11 @@ export const en: Dictionary = {
     messageLabel: "Message",
     variablesHint: "Available variables — personalized per customer",
     cancelBtn: "Cancel",
-    emailsSentSuccess: (count) => `${count} email${count !== 1 ? "s" : ""} sent successfully.`,
+    emailsSentSuccess: (count) =>
+      `${count} email${count !== 1 ? "s" : ""} sent successfully.`,
     skippedUnsub: (count) => `${count} skipped (unsubscribed).`,
-    emailError: "Failed to send emails. Check your GMAIL_USER and GMAIL_APP_PASSWORD in .env.",
+    emailError:
+      "Failed to send emails. Check your GMAIL_USER and GMAIL_APP_PASSWORD in .env.",
   },
   emailSettings: {
     title: "Email Settings",
@@ -84,7 +88,8 @@ export const en: Dictionary = {
     gmailHint: "Must be a Gmail account",
     appPassword: "App Password",
     appPasswordSaved: "Saved",
-    appPasswordHint: "Get it from myaccount.google.com/apppasswords — requires 2-Step Verification",
+    appPasswordHint:
+      "Get it from myaccount.google.com/apppasswords — requires 2-Step Verification",
     defaultSender: "Default sender",
     save: "Save Settings",
     saving: "Saving…",
@@ -98,7 +103,8 @@ export const en: Dictionary = {
     upgradeAnytime: "Upgrade anytime to unlock more features.",
     billingError: "Billing Error",
     redirecting: "Redirecting to Shopify billing…",
-    redirectingText: "Please wait while we redirect you to confirm your subscription.",
+    redirectingText:
+      "Please wait while we redirect you to confirm your subscription.",
     mostPopular: "Most Popular",
     current: "Current",
     perMonthEmails: (n) => `per month · ${n} emails included`,
@@ -107,7 +113,8 @@ export const en: Dictionary = {
     upgradeTo: (plan) => `Upgrade to ${plan}`,
     downgradeTo: (plan) => `Downgrade to ${plan}`,
     cancelSubscription: "Cancel Subscription",
-    cancelSubtitle: (plan) => `You'll lose access to ${plan} features immediately.`,
+    cancelSubtitle: (plan) =>
+      `You'll lose access to ${plan} features immediately.`,
     cancelPlan: "Cancel Plan",
     keepPlan: "Keep Plan",
     yesCancel: "Yes, Cancel",
@@ -172,7 +179,8 @@ export const en: Dictionary = {
   },
   reports: {
     title: "Reports",
-    subtitle: (rangeLabel) => `Top products found in abandoned carts — ${rangeLabel}`,
+    subtitle: (rangeLabel) =>
+      `Top products found in abandoned carts — ${rangeLabel}`,
     exportCsv: "Export CSV",
     last7Days: "Last 7 Days",
     last30Days: "Last 30 Days",

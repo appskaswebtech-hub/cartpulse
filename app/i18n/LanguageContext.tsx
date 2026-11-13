@@ -1,61 +1,95 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+﻿import {
+  useCallback,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { DEFAULT_LOCALE, type Dictionary, type Locale } from "./types";
 import { getDictionary, isSupportedLocale } from "./index";
+import { translateUI } from "./ui";
 
-const STORAGE_KEY = "cartpulse_locale";
-
+export const LANGUAGE_STORAGE_KEY = "cartpulse_locale";
 interface LanguageContextValue {
   locale: Locale;
   t: Dictionary;
+  tr: <T>(text: T, values?: unknown[]) => T;
   setLocale: (locale: Locale) => void;
 }
-
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
-interface LanguageProviderProps {
-  /** Locale auto-detected on the server from the request's Accept-Language header. */
+export function LanguageProvider({
+  detectedLocale,
+  children,
+}: {
   detectedLocale: Locale;
   children: ReactNode;
-}
-
-export function LanguageProvider({ detectedLocale, children }: LanguageProviderProps) {
+}) {
   const [locale, setLocaleState] = useState<Locale>(detectedLocale);
-
-  // On mount, a manually chosen language (saved in this browser) takes priority
-  // over the auto-detected one.
   useEffect(() => {
     try {
-      const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (isSupportedLocale(saved) && saved !== locale) {
-        setLocaleState(saved);
-      }
+      const saved = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+      if (isSupportedLocale(saved)) setLocaleState(saved);
     } catch {
-      // localStorage may be unavailable (e.g. blocked in iframe) — fall back to detected locale
+      /* Cookie and in-memory state remain available in restricted iframes. */
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const syncLanguage = (event: StorageEvent) => {
+      if (
+        event.key === LANGUAGE_STORAGE_KEY &&
+        isSupportedLocale(event.newValue)
+      )
+        setLocaleState(event.newValue);
+    };
+    window.addEventListener("storage", syncLanguage);
+    return () => window.removeEventListener("storage", syncLanguage);
   }, []);
-
-  const setLocale = (next: Locale) => {
-    setLocaleState(next);
+  useEffect(() => {
+    document.documentElement.lang = locale;
     try {
-      window.localStorage.setItem(STORAGE_KEY, next);
+      window.localStorage.setItem(LANGUAGE_STORAGE_KEY, locale);
     } catch {
-      // ignore persistence failures
+      /* Storage can be blocked in embedded apps. */
     }
-  };
-
+    try {
+      const cookiePolicy =
+        window.location.protocol === "https:"
+          ? "; SameSite=None; Secure"
+          : "; SameSite=Lax";
+      document.cookie = `${LANGUAGE_STORAGE_KEY}=${locale}; Path=/; Max-Age=31536000${cookiePolicy}`;
+    } catch {
+      /* The selected language still works for this app session. */
+    }
+  }, [locale]);
+  const setLocale = useCallback((next: Locale) => {
+    if (isSupportedLocale(next)) setLocaleState(next);
+  }, []);
   const value = useMemo<LanguageContextValue>(
-    () => ({ locale, t: getDictionary(locale), setLocale }),
-    [locale],
+    () => ({
+      locale,
+      t: getDictionary(locale),
+      tr: <T,>(text: T, values?: unknown[]) =>
+        translateUI(locale, text, values),
+      setLocale,
+    }),
+    [locale, setLocale],
   );
-
-  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
+  return (
+    <LanguageContext.Provider value={value}>
+      {children}
+    </LanguageContext.Provider>
+  );
 }
-
 export function useTranslation(): LanguageContextValue {
-  const ctx = useContext(LanguageContext);
-  if (!ctx) {
-    return { locale: DEFAULT_LOCALE, t: getDictionary(DEFAULT_LOCALE), setLocale: () => {} };
-  }
-  return ctx;
+  const context = useContext(LanguageContext);
+  return (
+    context ?? {
+      locale: DEFAULT_LOCALE,
+      t: getDictionary(DEFAULT_LOCALE),
+      tr: <T,>(text: T, values?: unknown[]) =>
+        translateUI(DEFAULT_LOCALE, text, values),
+      setLocale: () => {},
+    }
+  );
 }

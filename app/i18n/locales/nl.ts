@@ -47,7 +47,8 @@ export const nl: Dictionary = {
     never: "Nooit",
     customerOutreach: "Klantbenadering",
     noCustomersTitle: "Geen klanten hier",
-    noCustomersSubtitle: "Probeer een ander filter of wacht op meer verlaten winkelwagens",
+    noCustomersSubtitle:
+      "Probeer een ander filter of wacht op meer verlaten winkelwagens",
     total: "Totaal",
     abandonedOn: "Verlaten op",
     emailHistory: "E-mailgeschiedenis",
@@ -56,7 +57,8 @@ export const nl: Dictionary = {
     resend: "Opnieuw verzenden",
     privacyFooter: "Alle gegevens zijn versleuteld en je privacy is beschermd.",
     planLimitTitle: "Abonnementslimiet bereikt",
-    planLimitDesc: (plan, limit) => `Jouw ${plan}-abonnement toont tot ${limit} winkelwagens. Upgrade om meer klanten te zien en meer herstel-e-mails te sturen.`,
+    planLimitDesc: (plan, limit) =>
+      `Jouw ${plan}-abonnement toont tot ${limit} winkelwagens. Upgrade om meer klanten te zien en meer herstel-e-mails te sturen.`,
     maybeLater: "Misschien later",
     upgradePlan: "Abonnement upgraden →",
     modalTitle: "Herstel-e-mail verzenden",
@@ -66,13 +68,16 @@ export const nl: Dictionary = {
     messageLabel: "Bericht",
     variablesHint: "Beschikbare variabelen — gepersonaliseerd per klant",
     cancelBtn: "Annuleren",
-    emailsSentSuccess: (count) => `${count} e-mail${count !== 1 ? "s" : ""} succesvol verzonden.`,
+    emailsSentSuccess: (count) =>
+      `${count} e-mail${count !== 1 ? "s" : ""} succesvol verzonden.`,
     skippedUnsub: (count) => `${count} overgeslagen (uitgeschreven).`,
-    emailError: "Kan e-mails niet verzenden. Controleer GMAIL_USER en GMAIL_APP_PASSWORD in .env.",
+    emailError:
+      "Kan e-mails niet verzenden. Controleer GMAIL_USER en GMAIL_APP_PASSWORD in .env.",
   },
   emailSettings: {
     title: "E-mailinstellingen",
-    subtitle: "Configureer het e-mailadres voor het verzenden van herstel-e-mails",
+    subtitle:
+      "Configureer het e-mailadres voor het verzenden van herstel-e-mails",
     languageLabel: "Taal",
     languageHint: "Wijzigt de taal van de app-interface",
     providerLabel: "E-mailprovider",
@@ -84,7 +89,8 @@ export const nl: Dictionary = {
     gmailHint: "Moet een Gmail-account zijn",
     appPassword: "App-wachtwoord",
     appPasswordSaved: "Opgeslagen",
-    appPasswordHint: "Haal het op via myaccount.google.com/apppasswords — vereist verificatie in 2 stappen",
+    appPasswordHint:
+      "Haal het op via myaccount.google.com/apppasswords — vereist verificatie in 2 stappen",
     defaultSender: "Standaardafzender",
     save: "Instellingen opslaan",
     saving: "Opslaan…",
@@ -92,13 +98,15 @@ export const nl: Dictionary = {
   },
   billing: {
     title: "Kies je abonnement",
-    subtitle: "Selecteer het abonnement dat het beste past bij de behoeften van je winkel",
+    subtitle:
+      "Selecteer het abonnement dat het beste past bij de behoeften van je winkel",
     currentPlanBanner: (plan) => `Je gebruikt momenteel het ${plan}-abonnement`,
     allFeaturesAccess: "Je hebt toegang tot alle functies.",
     upgradeAnytime: "Upgrade op elk moment voor meer functies.",
     billingError: "Factureringsfout",
     redirecting: "Doorsturen naar Shopify facturering…",
-    redirectingText: "Even geduld terwijl we je doorsturen om je abonnement te bevestigen.",
+    redirectingText:
+      "Even geduld terwijl we je doorsturen om je abonnement te bevestigen.",
     mostPopular: "Meest populair",
     current: "Huidig",
     perMonthEmails: (n) => `per maand · ${n} e-mails inbegrepen`,
@@ -107,7 +115,8 @@ export const nl: Dictionary = {
     upgradeTo: (plan) => `Upgraden naar ${plan}`,
     downgradeTo: (plan) => `Downgraden naar ${plan}`,
     cancelSubscription: "Abonnement annuleren",
-    cancelSubtitle: (plan) => `Je verliest onmiddellijk toegang tot ${plan}-functies.`,
+    cancelSubtitle: (plan) =>
+      `Je verliest onmiddellijk toegang tot ${plan}-functies.`,
     cancelPlan: "Plan annuleren",
     keepPlan: "Plan behouden",
     yesCancel: "Ja, annuleren",

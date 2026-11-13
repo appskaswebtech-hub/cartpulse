@@ -21,13 +21,15 @@ export const fr: Dictionary = {
   },
   outreach: {
     title: "Campagne e-mail",
-    subtitle: "Envoyez des e-mails de récupération aux clients avec des paniers abandonnés",
+    subtitle:
+      "Envoyez des e-mails de récupération aux clients avec des paniers abandonnés",
     sendEmail: "Envoyer un e-mail",
     sending: "Envoi en cours…",
     sent: "Envoyé",
     emailSent: "E-mail envoyé",
     noCartsTitle: "Aucun panier disponible",
-    noCartsSubtitle: "Les paniers abandonnés avec des e-mails clients apparaîtront ici",
+    noCartsSubtitle:
+      "Les paniers abandonnés avec des e-mails clients apparaîtront ici",
     customer: "Client",
     cartValue: "Valeur du panier",
     products: "Produits",
@@ -47,16 +49,19 @@ export const fr: Dictionary = {
     never: "Jamais",
     customerOutreach: "Prospection client",
     noCustomersTitle: "Aucun client ici",
-    noCustomersSubtitle: "Essayez un autre filtre ou attendez plus de paniers abandonnés",
+    noCustomersSubtitle:
+      "Essayez un autre filtre ou attendez plus de paniers abandonnés",
     total: "Total",
     abandonedOn: "Abandonné le",
     emailHistory: "Historique e-mail",
     action: "Action",
     send: "Envoyer",
     resend: "Renvoyer",
-    privacyFooter: "Toutes les données sont chiffrées et votre confidentialité est protégée.",
+    privacyFooter:
+      "Toutes les données sont chiffrées et votre confidentialité est protégée.",
     planLimitTitle: "Limite du plan atteinte",
-    planLimitDesc: (plan, limit) => `Votre plan ${plan} affiche jusqu'à ${limit} paniers. Améliorez votre plan pour voir plus de clients et envoyer plus d'e-mails de récupération.`,
+    planLimitDesc: (plan, limit) =>
+      `Votre plan ${plan} affiche jusqu'à ${limit} paniers. Améliorez votre plan pour voir plus de clients et envoyer plus d'e-mails de récupération.`,
     maybeLater: "Peut-être plus tard",
     upgradePlan: "Améliorer le plan →",
     modalTitle: "Envoyer un e-mail de récupération",
@@ -66,13 +71,17 @@ export const fr: Dictionary = {
     messageLabel: "Message",
     variablesHint: "Variables disponibles — personnalisées par client",
     cancelBtn: "Annuler",
-    emailsSentSuccess: (count) => `${count} e-mail${count !== 1 ? "s" : ""} envoyé${count !== 1 ? "s" : ""} avec succès.`,
-    skippedUnsub: (count) => `${count} ignoré${count !== 1 ? "s" : ""} (désabonné${count !== 1 ? "s" : ""}).`,
-    emailError: "Échec de l'envoi des e-mails. Vérifiez votre GMAIL_USER et GMAIL_APP_PASSWORD dans .env.",
+    emailsSentSuccess: (count) =>
+      `${count} e-mail${count !== 1 ? "s" : ""} envoyé${count !== 1 ? "s" : ""} avec succès.`,
+    skippedUnsub: (count) =>
+      `${count} ignoré${count !== 1 ? "s" : ""} (désabonné${count !== 1 ? "s" : ""}).`,
+    emailError:
+      "Échec de l'envoi des e-mails. Vérifiez votre GMAIL_USER et GMAIL_APP_PASSWORD dans .env.",
   },
   emailSettings: {
     title: "Paramètres e-mail",
-    subtitle: "Configurez l'adresse e-mail pour envoyer des e-mails de récupération",
+    subtitle:
+      "Configurez l'adresse e-mail pour envoyer des e-mails de récupération",
     languageLabel: "Langue",
     languageHint: "Modifie la langue de l'interface de l'application",
     providerLabel: "Fournisseur d'e-mail",
@@ -84,7 +93,8 @@ export const fr: Dictionary = {
     gmailHint: "Doit être un compte Gmail",
     appPassword: "Mot de passe d'application",
     appPasswordSaved: "Enregistré",
-    appPasswordHint: "Obtenez-le sur myaccount.google.com/apppasswords — nécessite la validation en 2 étapes",
+    appPasswordHint:
+      "Obtenez-le sur myaccount.google.com/apppasswords — nécessite la validation en 2 étapes",
     defaultSender: "Expéditeur par défaut",
     save: "Enregistrer les paramètres",
     saving: "Enregistrement…",
@@ -95,10 +105,12 @@ export const fr: Dictionary = {
     subtitle: "Sélectionnez le plan qui convient le mieux à votre boutique",
     currentPlanBanner: (plan) => `Vous êtes actuellement sur le plan ${plan}`,
     allFeaturesAccess: "Vous avez accès à toutes les fonctionnalités.",
-    upgradeAnytime: "Améliorez votre plan à tout moment pour débloquer plus de fonctionnalités.",
+    upgradeAnytime:
+      "Améliorez votre plan à tout moment pour débloquer plus de fonctionnalités.",
     billingError: "Erreur de facturation",
     redirecting: "Redirection vers la facturation Shopify…",
-    redirectingText: "Veuillez patienter pendant que nous vous redirigeons pour confirmer votre abonnement.",
+    redirectingText:
+      "Veuillez patienter pendant que nous vous redirigeons pour confirmer votre abonnement.",
     mostPopular: "Le plus populaire",
     current: "Actuel",
     perMonthEmails: (n) => `par mois · ${n} e-mails inclus`,
@@ -107,7 +119,8 @@ export const fr: Dictionary = {
     upgradeTo: (plan) => `Passer à ${plan}`,
     downgradeTo: (plan) => `Rétrograder à ${plan}`,
     cancelSubscription: "Annuler l'abonnement",
-    cancelSubtitle: (plan) => `Vous perdrez immédiatement accès aux fonctionnalités ${plan}.`,
+    cancelSubtitle: (plan) =>
+      `Vous perdrez immédiatement accès aux fonctionnalités ${plan}.`,
     cancelPlan: "Annuler le plan",
     keepPlan: "Conserver le plan",
     yesCancel: "Oui, annuler",
@@ -144,7 +157,8 @@ export const fr: Dictionary = {
     waiting: "En attente",
     firingNotifications: "Envoi de notifications en cours",
     noCartsYet: "Aucun panier pour le moment",
-    privacyFooter: "Toutes les données sont chiffrées et votre confidentialité est protégée.",
+    privacyFooter:
+      "Toutes les données sont chiffrées et votre confidentialité est protégée.",
   },
   carts: {
     title: "Paniers abandonnés",
@@ -168,7 +182,8 @@ export const fr: Dictionary = {
     sentCount: (count) => `${count} envoyées`,
     recoveredBadge: "Récupéré",
     abandonedBadge: "Abandonné",
-    privacyFooter: "Toutes les données sont chiffrées et votre confidentialité est protégée.",
+    privacyFooter:
+      "Toutes les données sont chiffrées et votre confidentialité est protégée.",
   },
   reports: {
     title: "Rapports",

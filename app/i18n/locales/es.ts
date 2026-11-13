@@ -21,13 +21,15 @@ export const es: Dictionary = {
   },
   outreach: {
     title: "Correo de recuperación",
-    subtitle: "Envía correos de recuperación a clientes con carritos abandonados",
+    subtitle:
+      "Envía correos de recuperación a clientes con carritos abandonados",
     sendEmail: "Enviar correo",
     sending: "Enviando…",
     sent: "Enviado",
     emailSent: "Correo enviado",
     noCartsTitle: "No hay carritos disponibles",
-    noCartsSubtitle: "Los carritos abandonados con correos de clientes aparecerán aquí",
+    noCartsSubtitle:
+      "Los carritos abandonados con correos de clientes aparecerán aquí",
     customer: "Cliente",
     cartValue: "Valor del carrito",
     products: "Productos",
@@ -47,16 +49,19 @@ export const es: Dictionary = {
     never: "Nunca",
     customerOutreach: "Alcance al cliente",
     noCustomersTitle: "No hay clientes aquí",
-    noCustomersSubtitle: "Prueba un filtro diferente o espera más carritos abandonados",
+    noCustomersSubtitle:
+      "Prueba un filtro diferente o espera más carritos abandonados",
     total: "Total",
     abandonedOn: "Abandonado el",
     emailHistory: "Historial de correos",
     action: "Acción",
     send: "Enviar",
     resend: "Reenviar",
-    privacyFooter: "Todos los datos están cifrados y tu privacidad está protegida.",
+    privacyFooter:
+      "Todos los datos están cifrados y tu privacidad está protegida.",
     planLimitTitle: "Límite del plan alcanzado",
-    planLimitDesc: (plan, limit) => `Tu plan ${plan} muestra hasta ${limit} carritos. Actualiza para ver más clientes y enviar más correos de recuperación.`,
+    planLimitDesc: (plan, limit) =>
+      `Tu plan ${plan} muestra hasta ${limit} carritos. Actualiza para ver más clientes y enviar más correos de recuperación.`,
     maybeLater: "Quizás más tarde",
     upgradePlan: "Actualizar plan →",
     modalTitle: "Enviar correo de recuperación",
@@ -66,25 +71,31 @@ export const es: Dictionary = {
     messageLabel: "Mensaje",
     variablesHint: "Variables disponibles — personalizadas por cliente",
     cancelBtn: "Cancelar",
-    emailsSentSuccess: (count) => `${count} correo${count !== 1 ? "s" : ""} enviado${count !== 1 ? "s" : ""} exitosamente.`,
-    skippedUnsub: (count) => `${count} omitido${count !== 1 ? "s" : ""} (dado${count !== 1 ? "s" : ""} de baja).`,
-    emailError: "No se pudieron enviar los correos. Verifica tu GMAIL_USER y GMAIL_APP_PASSWORD en .env.",
+    emailsSentSuccess: (count) =>
+      `${count} correo${count !== 1 ? "s" : ""} enviado${count !== 1 ? "s" : ""} exitosamente.`,
+    skippedUnsub: (count) =>
+      `${count} omitido${count !== 1 ? "s" : ""} (dado${count !== 1 ? "s" : ""} de baja).`,
+    emailError:
+      "No se pudieron enviar los correos. Verifica tu GMAIL_USER y GMAIL_APP_PASSWORD en .env.",
   },
   emailSettings: {
     title: "Configuración de correo",
-    subtitle: "Configura el correo electrónico para enviar correos de recuperación",
+    subtitle:
+      "Configura el correo electrónico para enviar correos de recuperación",
     languageLabel: "Idioma",
     languageHint: "Cambia el idioma de la interfaz de la aplicación",
     providerLabel: "Proveedor de correo",
     providerPlaceholder: "— Selecciona un proveedor —",
     providerHint: "Más proveedores próximamente",
     fromName: "Nombre del remitente",
-    fromNameHint: "Se muestra como nombre del remitente en la bandeja de entrada",
+    fromNameHint:
+      "Se muestra como nombre del remitente en la bandeja de entrada",
     gmailAddress: "Dirección de Gmail",
     gmailHint: "Debe ser una cuenta de Gmail",
     appPassword: "Contraseña de aplicación",
     appPasswordSaved: "Guardada",
-    appPasswordHint: "Obtén la contraseña en myaccount.google.com/apppasswords — requiere verificación en 2 pasos",
+    appPasswordHint:
+      "Obtén la contraseña en myaccount.google.com/apppasswords — requiere verificación en 2 pasos",
     defaultSender: "Remitente predeterminado",
     save: "Guardar configuración",
     saving: "Guardando…",
@@ -92,13 +103,16 @@ export const es: Dictionary = {
   },
   billing: {
     title: "Elige tu plan",
-    subtitle: "Selecciona el plan que mejor se adapte a las necesidades de tu tienda",
+    subtitle:
+      "Selecciona el plan que mejor se adapte a las necesidades de tu tienda",
     currentPlanBanner: (plan) => `Actualmente estás en el plan ${plan}`,
     allFeaturesAccess: "Tienes acceso a todas las funciones.",
-    upgradeAnytime: "Mejora en cualquier momento para desbloquear más funciones.",
+    upgradeAnytime:
+      "Mejora en cualquier momento para desbloquear más funciones.",
     billingError: "Error de facturación",
     redirecting: "Redirigiendo a la facturación de Shopify…",
-    redirectingText: "Por favor espera mientras te redirigimos para confirmar tu suscripción.",
+    redirectingText:
+      "Por favor espera mientras te redirigimos para confirmar tu suscripción.",
     mostPopular: "Más popular",
     current: "Actual",
     perMonthEmails: (n) => `por mes · ${n} correos incluidos`,
@@ -107,7 +121,8 @@ export const es: Dictionary = {
     upgradeTo: (plan) => `Mejorar a ${plan}`,
     downgradeTo: (plan) => `Reducir a ${plan}`,
     cancelSubscription: "Cancelar suscripción",
-    cancelSubtitle: (plan) => `Perderás acceso a las funciones ${plan} de inmediato.`,
+    cancelSubtitle: (plan) =>
+      `Perderás acceso a las funciones ${plan} de inmediato.`,
     cancelPlan: "Cancelar plan",
     keepPlan: "Mantener plan",
     yesCancel: "Sí, cancelar",
@@ -144,7 +159,8 @@ export const es: Dictionary = {
     waiting: "En espera",
     firingNotifications: "Enviando notificaciones",
     noCartsYet: "Aún no hay carritos",
-    privacyFooter: "Todos los datos están cifrados y tu privacidad está protegida.",
+    privacyFooter:
+      "Todos los datos están cifrados y tu privacidad está protegida.",
   },
   carts: {
     title: "Carritos abandonados",
@@ -168,7 +184,8 @@ export const es: Dictionary = {
     sentCount: (count) => `${count} enviadas`,
     recoveredBadge: "Recuperado",
     abandonedBadge: "Abandonado",
-    privacyFooter: "Todos los datos están cifrados y tu privacidad está protegida.",
+    privacyFooter:
+      "Todos los datos están cifrados y tu privacidad está protegida.",
   },
   reports: {
     title: "Informes",

@@ -3,7 +3,12 @@ import { es } from "./locales/es";
 import { nl } from "./locales/nl";
 import { fr } from "./locales/fr";
 import { it } from "./locales/it";
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Dictionary, type Locale } from "./types";
+import {
+  DEFAULT_LOCALE,
+  SUPPORTED_LOCALES,
+  type Dictionary,
+  type Locale,
+} from "./types";
 
 export { SUPPORTED_LOCALES, DEFAULT_LOCALE };
 export type { Locale, Dictionary };
@@ -14,7 +19,9 @@ export function getDictionary(locale: Locale): Dictionary {
   return dictionaries[locale] ?? dictionaries[DEFAULT_LOCALE];
 }
 
-export function isSupportedLocale(value: string | null | undefined): value is Locale {
+export function isSupportedLocale(
+  value: string | null | undefined,
+): value is Locale {
   return !!value && (SUPPORTED_LOCALES as readonly string[]).includes(value);
 }
 
@@ -39,4 +46,16 @@ export function detectLocaleFromAcceptLanguage(header: string | null): Locale {
   }
 
   return DEFAULT_LOCALE;
+}
+
+/** Prefer the merchant selection on every full page load. */
+export function resolveRequestLocale(request: Request): Locale {
+  const cookie = request.headers
+    .get("cookie")
+    ?.split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith("cartpulse_locale="))
+    ?.slice("cartpulse_locale=".length);
+  if (isSupportedLocale(cookie)) return cookie;
+  return detectLocaleFromAcceptLanguage(request.headers.get("accept-language"));
 }
